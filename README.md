@@ -1,6 +1,7 @@
-#Planner
-##Description
+# Planner
+
+## Description
 Responsive web application to plan, organize and track tasks.
 
-##Design
-<img src="designs/desktop.pdf>
+## Design
+<img src="designs/desktop.png">
