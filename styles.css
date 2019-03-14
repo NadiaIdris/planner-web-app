@@ -7,6 +7,7 @@
 }
 
 /*layout*/
+
 html {
     --dk_pink: RGBA(211, 1, 81, 100);
     --lt_pink: RGBA(249, 128, 173, 100);
@@ -37,11 +38,11 @@ header {
     padding-bottom: 26px;
 }
 
-#tasks_container {
+#tasks-container {
     width: 100%;
 }
 
-#task_headings {
+#task-headings {
     display: grid;
     grid-template-columns: 30px 1fr 100px 50px 50px;
     grid-template-rows: auto;
@@ -49,7 +50,7 @@ header {
     padding: 8px 3px;
 }
 
-.heading_cell {
+.heading-cell {
     text-align: left;
 }
 
@@ -68,11 +69,11 @@ header {
     border-bottom: none;
 }
 
-#tasks_done {
+#tasks-done {
     width: 100%;
 }
 
-.task_done {
+.task-done {
     display: grid;
     grid-template-columns: 30px 100%;
     border-bottom: 1px solid var(--mid_green);
@@ -83,34 +84,34 @@ header {
 }
 
 .checked {
-    content: url("images/checkbox_checked.svg");
+    content: url("images/checkbox-checked.svg");
     cursor: pointer;
 }
 
 /*-------------*/
 
-.chkbx_cell{
-    content: url("images/checkbox_unchecked.svg");
+.chkbx-cell{
+    content: url("images/checkbox-unchecked.svg");
     cursor: pointer;
 }
-.task_cell{
+.task-cell{
     width: 95%;
 }
 
-.icon_cell {
+.icon-cell {
     direction: rtl !important;
     display: flex;
     cursor: pointer;
 }
 
-.img_cell {
+.img-cell {
     direction: rtl !important;
     display: flex;
     cursor: grab;
     /*cursor: grabbing;*/
 }
 
-#main_content {
+#main-content {
     width: 870px;
     padding: 47px 30px 2px 30px;
     background-color: var(--white);
@@ -131,7 +132,7 @@ aside {
     padding: 47px 30px 2px 30px;
 }
 
-#add_tasks {
+#add-tasks {
     display: flex;
     flex-direction: row;
     position: sticky;
@@ -143,28 +144,28 @@ aside {
     background-color: var(--white);
 }
 
-#add_tasks form {
+#add-tasks form {
     display: flex;
     justify-content: space-between;
     width: 100%;
     margin-right: 8px;
 }
 
-#add_tasks input::placeholder {
+#add-tasks input::placeholder {
     color: var(--mid_gray);
 }
 
-#add_task {
+#add-task {
     width: 80%;
 }
 
-#add_task:focus {
+#add-task:focus {
     outline: none;
     caret-color: var(--lt_pink);
     caret-size: 2px;
 }
 
-#add_button {
+#add-button {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -177,11 +178,11 @@ aside {
     cursor: pointer;
 }
 
-#add_button img {
+#add-button img {
     padding: 4px 4px 4px 0;
 }
 
-#search_button {
+#search-button {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -189,7 +190,6 @@ aside {
     border: none;
     cursor: pointer;
 }
-
 
 /*style*/
 
@@ -221,10 +221,6 @@ th {
 p {
     font-family: 'Nunito Sans', sans-serif;
 }
-
-/*td {*/
-/*    display: flex;*/
-/*}*/
 
 .deadline {
     cursor: pointer;
