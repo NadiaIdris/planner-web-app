@@ -1,0 +1,242 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 14px;
+}
+
+/*layout*/
+html {
+    --dk_pink: RGBA(211, 1, 81, 100);
+    --lt_pink: RGBA(249, 128, 173, 100);
+    --black: RGBA(0, 0, 0, 100);
+    --lt_green: RGBA(185, 216, 112, 100);
+    --mid_green: RGBA(151, 191, 56, 100);
+    --white: RGBA(255, 255, 255, 100);
+    --lt_gray: RGBA(213, 213, 213, 100);
+    --mid_gray: RGBA(114, 114, 114, 100);
+    background: linear-gradient(to right, var(--white) 0%, var(--white) 50%, var(--lt_green) 50%, var(--lt_green) 100%)
+}
+body {
+    /*max-width: 1024px;*/
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+main {
+    display: flex;
+    flex-direction: row;
+}
+
+header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-bottom: 26px;
+}
+
+#tasks_container {
+    width: 100%;
+}
+
+#task_headings {
+    display: grid;
+    grid-template-columns: 30px 1fr 100px 50px 50px;
+    grid-template-rows: auto;
+    border-bottom: 1px solid var(--black);
+    padding: 8px 3px;
+}
+
+.heading_cell {
+    text-align: left;
+}
+
+.task {
+    display: grid;
+    grid-template-columns: 30px 1fr 100px 50px 50px;
+    grid-template-rows: auto;
+    border-bottom: 1px solid var(--lt_gray);
+    padding: 11px 0;
+    margin: 0 3px;
+    align-items: center;
+    height: 47px;
+}
+
+.last_task {
+    border-bottom: none;
+}
+
+#tasks_done {
+    width: 100%;
+}
+
+.task_done {
+    display: grid;
+    grid-template-columns: 30px 100%;
+    border-bottom: 1px solid var(--mid_green);
+    padding: 11px 0;
+    margin: 0 3px;
+    align-items: center;
+    height: 47px;
+}
+
+.checked {
+    content: url("images/checkbox_checked.svg");
+    cursor: pointer;
+}
+
+/*-------------*/
+
+.chkbx_cell{
+    content: url("images/checkbox_unchecked.svg");
+    cursor: pointer;
+}
+.task_cell{
+    width: 95%;
+}
+
+.icon_cell {
+    direction: rtl !important;
+    display: flex;
+    cursor: pointer;
+}
+
+.img_cell {
+    direction: rtl !important;
+    display: flex;
+    cursor: grab;
+    /*cursor: grabbing;*/
+}
+
+#main_content {
+    width: 870px;
+    padding: 47px 30px 2px 30px;
+    background-color: var(--white);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: scroll;
+}
+
+#test {
+    flex-grow: 1;
+}
+
+aside {
+    width: 530px;
+    overflow: scroll;
+    background-color: #B9D870;
+    padding: 47px 30px 2px 30px;
+}
+
+#add_tasks {
+    display: flex;
+    flex-direction: row;
+    position: sticky;
+    bottom: 0;
+    flex-basis: auto;
+    flex-shrink: 0;
+    border-top: 2px solid var(--black);
+    height: 60px;
+    background-color: var(--white);
+}
+
+#add_tasks form {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-right: 8px;
+}
+
+#add_tasks input::placeholder {
+    color: var(--mid_gray);
+}
+
+#add_task {
+    width: 80%;
+}
+
+#add_task:focus {
+    outline: none;
+    caret-color: var(--lt_pink);
+    caret-size: 2px;
+}
+
+#add_button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 120px;
+    background-color: var(--white);
+    border: none;
+    font-weight: 800;
+    font-size: 12px;
+    color: var(--dk_pink);
+    cursor: pointer;
+}
+
+#add_button img {
+    padding: 4px 4px 4px 0;
+}
+
+#search_button {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+
+/*style*/
+
+h1 {
+    color: var(--dk_pink);
+}
+
+.heading {
+    font-family: 'Poppins', sans-serif;
+    font-size: 34px;
+    font-weight: 700;
+}
+
+h2 {
+    font-size: 11px;
+    font-weight: 400;
+}
+
+h4 {
+    color: var(--black);
+    padding-bottom: 20px;
+}
+
+th {
+    font-size: 11px;
+    font-weight: 800;
+}
+
+p {
+    font-family: 'Nunito Sans', sans-serif;
+}
+
+/*td {*/
+/*    display: flex;*/
+/*}*/
+
+.deadline {
+    cursor: pointer;
+}
+
+input[type="text"] {
+    border: none;
+}
+
+
+
+
+
+
+
