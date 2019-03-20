@@ -13,13 +13,13 @@
 <body>
 <main>
     <div id="main-content">
-        <div id="test">
+        <div id="tasks-container">
             <header>
                 <h1 class="heading">Planner</h1>
                 <h2>Today | March 4</h2>
             </header>
 
-            <table id="tasks-container">
+            <table id="tasks-table">
                 <thead>
                 <tr id="task-headings">
                     <th></th>
@@ -34,7 +34,8 @@
                 <tr class="task">
                     <td class="chkbx-cell"><input type="checkbox"></td>
                     <td><input type="text" class="task-cell"
-                               value="Lorem Ipsum is simply dummy text of the printing and typesetting industry."></td>
+                               value="Lorem Ipsum is simply dummy text of the printing and typesetting industry.">
+                    </td>
                     <td>
                         <div class="deadline">Mar 14</div>
                     </td>
@@ -46,7 +47,7 @@
                     <td class="chkbx-cell"><input type="checkbox"></td>
                     <td><input type="text" class="task-cell" value="Task name"></td>
                     <td>
-                        <div class="deadline">Mar 14</div>
+                        <div class="deadline">Mar 31</div>
                     </td>
                     <td class="icon-cell"><i class="material-icons">delete</i></td>
                     <td class="img-cell"><img src="images/move-icon.svg" alt="move tasks icon"></td>
@@ -56,7 +57,7 @@
                     <td class="chkbx-cell"><input type="checkbox"></td>
                     <td><input type="text" class="task-cell" value="Task name"></td>
                     <td>
-                        <div class="deadline">Mar 14</div>
+                        <div class="deadline">Mar 1</div>
                     </td>
                     <td class="icon-cell"><i class="material-icons">delete</i></td>
                     <td class="img-cell"><img src="images/move-icon.svg" alt="move tasks icon"></td>
@@ -68,37 +69,44 @@
         </div>
 
         <div id="add-tasks">
-            <form>
+            <form id="form">
                 <input type="text" id="add-task" placeholder="Task..." autofocus>
                 <button
                         id="add-button"><img src="images/add.svg"
                                              alt="add icon"><span>Add task</span></button>
+                <button id="add-button-small"><img src="images/add.svg" alt="add icon"></button>
             </form>
 
             <button id="search-button"><i class="material-icons">search</i></button>
-            <!--            <button><img src="images/checkbox.svg"></button>-->
+            <button id="checkbox-button"><img src="images/checkbox-checked.svg"></button>
         </div>
     </div>
 
-    <aside>
-        <h4 class="heading">Done</h4>
+    <aside id="done-container">
+        <div id="done-tasks-container">
+            <h4 class="heading">Done</h4>
 
-        <table id="tasks-done">
-            <tr class="task-done">
-                <td class="checked"><input type="checkbox" checked></td>
-                <td>Task name</td>
-            </tr>
+            <table id="tasks-done">
+                <tr class="task-done">
+                    <td class="checked"><input type="checkbox" checked></td>
+                    <td>Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                    </td>
+                </tr>
 
-            <tr class="task-done">
-                <td class="checked"><input type="checkbox" checked></td>
-                <td>Task name</td>
-            </tr>
+                <tr class="task-done">
+                    <td class="checked"><input type="checkbox" checked></td>
+                    <td>Task name</td>
+                </tr>
 
-            <tr class="task-done">
-                <td class="checked"><input type="checkbox" checked></td>
-                <td>Task name</td>
-            </tr>
-        </table>
+                <tr class="task-done">
+                    <td class="checked"><input type="checkbox" checked></td>
+                    <td>Task name</td>
+                </tr>
+            </table>
+        </div>
+
+        <button id="back-to-planner"><i class="material-icons">chevron_left</i><span>Planner
+        </span></button>
     </aside>
 </main>
 
