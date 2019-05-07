@@ -24,7 +24,9 @@ body {
     /*max-width: 1024px;*/
     max-width: 1400px;
     margin: 0 auto;
+    overflow-y: hidden;
 }
+
 
 main {
     display: flex;
@@ -112,7 +114,7 @@ header {
 #main-content {
     display: flex;
     flex-direction: column;
-    overflow: scroll;
+    overflow-y: auto;
     width: 870px;
     padding: 47px 30px 0 30px;
     background-color: var(--white);
@@ -134,7 +136,7 @@ header {
     display: flex;
     flex-direction: column;
     width: 530px;
-    overflow-y:scroll;
+    overflow-y: auto;
     background-color: #B9D870;
     padding: 47px 30px 0 30px;
     height: 100vh;
@@ -193,6 +195,7 @@ header {
 
 #add-task {
     width: 80%;
+    z-index: 1;
 }
 
 #add-task:focus {
