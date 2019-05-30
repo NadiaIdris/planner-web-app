@@ -1,24 +1,41 @@
+// import autosize from 'autosize';
+import {deleteElementBySelector} from './util';
+import autosize from "autosize/src/autosize";
+
+
 // Globals.
 
 const formElement = document.querySelector('#form');
+const tasksContainer = document.querySelector('#tasks-container');
+const doneTasksContainer = document.querySelector('#done-tasks-container');
 
 const main = () => {
+  generateTodaysDateAndTime();
   loadFromLocalStorage();
-  formElement.addEventListener('submit', addTask);
-  createEmptyState();
-  window.addEventListener('load', paintScreen);
+  loadTasksDoneFromLocalStorage();
+  createEmptyStatePlanner();
+  createEmptyStateDone();
   initializePlannerUI();
   initializeDoneUI();
-  tasksContainer.addEventListener('change', selectPriority);
-  tasksContainer.addEventListener('click', toggleDone);
-  tasksContainer.addEventListener('click', deleteTask);
-  tasksContainer.addEventListener('change', addDeadline);
-  tasksContainer.addEventListener('focusout', editTaskText);
-  generateTodaysDateAndTime();
-  checkboxButton.addEventListener('click', viewDoneTasks);
   handleWindowResize();
-  tasksContainer.addEventListener('keydown', keydownListener);
+
+  window.addEventListener('load', generatePageLayout);
+  formElement.addEventListener('submit', addTask);
+  checkboxButton.addEventListener('click', viewCompletedTasks);
+
+  tasksContainer.addEventListener('click', markTaskCompleted);
+  tasksContainer.addEventListener('change', selectPriority);
+  tasksContainer.addEventListener('click', deleteTask);
+  tasksContainer.addEventListener('change', addDeadlineToTask);
+  tasksContainer.addEventListener('keyup', editTaskText);
+  tasksContainer.addEventListener('keydown', keyboardShortcutToSaveTaskText);
+  tasksContainer.addEventListener('focusout', deleteTaskIfTaskTextRemoved);
+
+  doneTasksContainer.addEventListener('click', markTaskUncompleted);
+  doneTasksContainer.addEventListener('keyup', editTextInTaskCompleted);
+  doneTasksContainer.addEventListener('focusout', deleteCompletedTaskIfTaskTextRemoved);
 };
+
 
 // Tasks.
 
@@ -26,6 +43,78 @@ let tasks;
 const loadFromLocalStorage = () => {
   tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 };
+
+// Tasks that are done, parsed from local storage.
+let tasksDone;
+const loadTasksDoneFromLocalStorage = () => {
+  tasksDone = JSON.parse(localStorage.getItem('tasksDone')) || [];
+};
+
+// Function to move task to done section once completed
+const markTaskCompleted = (event) => {
+      const doneEmptyState = document.querySelector('#empty-stage-done');
+
+      const element = event.target;
+      const index = element.dataset.index;
+      if (!element.matches(`img[data-index="${index}"]`)) return;
+
+      // Remove empty state from done section if present
+      if (doneEmptyState) {
+        deleteElementBySelector('#empty-stage-done');
+      }
+
+      tasks[index].done = !tasks[index].done;
+
+      // Remove the element from the tasks array
+      const checkedTask = tasks.splice(index, 1);
+
+      // Push the element to tasksDone
+      tasksDone.push(checkedTask[0]);
+
+      // Set the tasksDone in local storage
+      localStorage.setItem('tasksDone', JSON.stringify(tasksDone));
+      // Repaint the tasks done UI
+      generateListOfTasksDone(tasksDone);
+
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+      generateListOfTasks(tasks);
+
+      if (tasks.length === 0) {
+        deleteElementBySelector('#tasks-table');
+        createEmptyStatePlanner();
+      }
+    }
+;
+
+const markTaskUncompleted = (event) => {
+  // Get the element
+  console.log("markTaskUncompleted is activated on click");
+  const element = event.target;
+  const index = element.dataset.index;
+  if (!element.matches(`img[data-index="${index}"]`)) return;
+  //Set tasksdone[index].done to false.
+  tasksDone[index].done = !tasksDone[index].done;
+
+  // Remove the element from tasksDone array.
+  const uncheckedTask = tasksDone.splice(index, 1);
+  // Add the removed element back to tasks array.
+  tasks.push(uncheckedTask[0]);
+
+  // Set the tasksDone in local storage
+  localStorage.setItem('tasksDone', JSON.stringify(tasksDone));
+  // Repaint the tasks done UI
+  generateListOfTasksDone(tasksDone);
+
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+  generateTableWithHeader();
+  generateListOfTasks(tasks);
+
+  if (tasksDone.length === 0) {
+    deleteElementBySelector('#tasks-done');
+    createEmptyStateDone();
+  }
+};
+
 
 /**
  * Create a task table given an event. The event is generated on form submit.
@@ -66,10 +155,6 @@ const checkIfTaskIsEmpty = (taskText) => {
     return true;
   }
 };
-
-// Tasks container.
-
-const tasksContainer = document.querySelector('#tasks-container');
 
 /**
  * If some tasks present, return and add a task to the existing table with
@@ -116,9 +201,10 @@ const generateListOfTasks = (tasksArray = []) => {
        <tr class="task">
            <td class="chkbx-cell">
              <img 
-               src="${task.done ? `images/checkbox-checked.svg` : `images/checkbox-unchecked.svg`}" 
+               class="chkbx-img-unchecked"
+               src="${task.done ? `../images/checkbox-checked.svg` : `../images/checkbox-unchecked.svg`}" 
                data-index="${index}"></td>
-           <td><input type="text" class="task-cell" value="${task.text}" data-index="${index}"></td>
+           <td><textarea rows="1" class="text-cell" data-index="${index}">${task.text}</textarea></td>
            <td class="priority-cell">
               <select class="priority" data-index="${index}">
                     <option value="P0" ${task.priority === "P0" ? "selected" : ""}>P0</option>
@@ -134,20 +220,17 @@ const generateListOfTasks = (tasksArray = []) => {
        </tr>
        `;
   }).join('');
+
+  autosize(tableBody.querySelectorAll('textarea'));
 };
+
 
 const selectPriority = (event) => {
   const element = event.target;
   const index = element.dataset.index;
   if (!element.matches('.priority')) return;
 
-  if (element.value === "P0") {
-    tasks[index].priority = "P0";
-  } else if (element.value === "P1") {
-    tasks[index].priority = "P1";
-  } else if (element.value === "P2") {
-    tasks[index].priority = "P2";
-  }
+  tasks[index].priority = element.value;
 
   localStorage.setItem('tasks', JSON.stringify(tasks));
 };
@@ -165,13 +248,14 @@ const initializePlannerUI = () => {
 /**
  * If no tasks created, then paint the empty state into on planner page.
  */
-const createEmptyState = () => {
+const createEmptyStatePlanner = () => {
   if (tasks.length > 0) return;
   const tasksTable = document.querySelector('#tasks-table');
   if (!tasksTable) {
     addEmptyStateToPlanner();
   }
 };
+
 
 /**
  * Function to add empty state paragraph to Planner section.
@@ -183,18 +267,23 @@ const addEmptyStateToPlanner = () => {
   div.setAttribute('id', 'empty-stage-planner');
   div.setAttribute('class', 'empty-stage');
 
-  div.innerHTML = `<img class="sun" src="images/sun.svg"><p class="empty-stage-text gray">You have no tasks.<br>Add a task below.</p>`;
+  div.innerHTML = `<img class="sun" src="../images/sun.svg"><p class="empty-stage-text gray">You have no tasks.<br>Add a task below.</p>`;
 };
 
-// Function to toggle done and undone. Still needs work!
-const toggleDone = event => {
-  const element = event.target;
-  const index = element.dataset.index;
-  if (!element.matches(`img[data-index="${index}"]`)) return;
-  tasks[index].done = !tasks[index].done;
+const ifNoTasksAddEmptyStateToPlanner = () => {
+  if (tasks.length === 0) {
+    deleteElementBySelector('#tasks-table');
+    createEmptyStatePlanner();
+    document.querySelector('#add-task').focus();
+  }
+};
 
-  localStorage.setItem('tasks', JSON.stringify(tasks));
-  generateListOfTasks(tasks);
+const ifNoCompletedTasksAddEmptyStateToDone = () => {
+  if (tasksDone.length === 0) {
+    deleteElementBySelector('#tasks-done');
+    createEmptyStateDone();
+    document.querySelector('#add-task').focus();
+  }
 };
 
 // Function to delete a task.
@@ -207,16 +296,11 @@ function deleteTask(event) {
 
   localStorage.setItem('tasks', JSON.stringify(tasks));
   generateListOfTasks(tasks);
-
-  if(tasks.length === 0){
-    deleteElementBySelector('#tasks-table');
-    createEmptyState();
-  }
+  ifNoTasksAddEmptyStateToPlanner();
 }
 
-
-function addDeadline(event) {
-  // debugger;
+const addDeadlineToTask = (event) => {
+  event.preventDefault();
   const element = event.target;
   const index = element.dataset.index;
   if (!element.matches('.deadline-cell input[type="date"]')) return;
@@ -228,35 +312,63 @@ function addDeadline(event) {
   generateListOfTasks(tasks);
 }
 
-// Function to store edited task value in local storage.
+// Function that records every key pressed inside task textarea and stores the
+// value inside of tasks array object's text key.
 const editTaskText = (event) => {
+  event.preventDefault();
   const element = event.target;
   const text = element.value;
   const index = element.dataset.index;
-  if (!element.matches('.task-cell')) return;
+  if (!element.matches('.text-cell')) return;
   tasks[index].text = text;
-
   localStorage.setItem('tasks', JSON.stringify(tasks));
 };
 
 
-// Function to store edited task value in local storage on click "Enter".
+const editTextInTaskCompleted = (event) => {
+  event.preventDefault();
+  const element = event.target;
+  const text = element.value;
+  const index = element.dataset.index;
+  if (!element.matches('.done-text-cell')) return;
+  tasksDone[index].text = text;
 
-const keydownListener = (event) => {
-  if (event.key === "Enter") {
-    event.preventDefault();
+  localStorage.setItem('tasksDone', JSON.stringify(tasksDone));
+};
 
-    const element = event.target;
-    const text = element.value;
-    const index = element.dataset.index;
-    if (!element.matches('.task-cell')) return;
-    tasks[index].text = text;
-
+const deleteTaskIfTaskTextRemoved = (event) => {
+  event.preventDefault();
+  const element = event.target;
+  const text = element.value;
+  const index = element.dataset.index;
+  if (!element.matches('.text-cell')) return;
+  if (text.trim() === '') {
+    tasks.splice(index, 1);
     localStorage.setItem('tasks', JSON.stringify(tasks));
-    // generateTableWithHeader();
-    // generateListOfTasks(tasks); if I add this, it will brake the code. Why??
-    element.blur();
+    generateListOfTasks(tasks);
+    ifNoTasksAddEmptyStateToPlanner();
   }
+  document.querySelector('#add-task').focus();
+};
+
+const deleteCompletedTaskIfTaskTextRemoved = (event) => {
+  event.preventDefault();
+  const element = event.target;
+  const text = element.value;
+  const index = element.dataset.index;
+  if (!element.matches('.done-text-cell')) return;
+  if (text.trim() === '') {
+    tasksDone.splice(index, 1);
+    localStorage.setItem('tasksDone', JSON.stringify(tasksDone));
+    generateListOfTasksDone(tasksDone);
+    ifNoCompletedTasksAddEmptyStateToDone();
+  }
+  document.querySelector('#add-task').focus();
+};
+
+// Function
+const keyboardShortcutToSaveTaskText = () => {
+
 };
 
 
@@ -283,6 +395,45 @@ const generateTodaysDateAndTime = () => {
 
 // TODO Clean up code below.
 
+// Function to generate list of tasks that are done
+const generateListOfTasksDone = (tasksDoneArray = []) => {
+  const tasksDoneContainer = document.querySelector('#done-tasks-container');
+
+  // Delete all the done tasks on UI
+  deleteElementBySelector('#tasks-done');
+
+  const table = document.createElement('table');
+  table.setAttribute('id', 'tasks-done');
+  tasksDoneContainer.appendChild(table);
+
+  const tasksDoneTable = document.querySelector('#tasks-done');
+
+  tasksDoneTable.innerHTML = tasksDoneArray.map((task, index) => {
+    return `
+        <tr class="task-done">
+          <td class="chkbx-cell"><img
+               class="chkbx-img-checked"
+               src="${task.done ? `../images/checkbox-checked.svg` : `../images/checkbox-unchecked-green.svg`}"
+               data-index="${index}"></td>
+          <td><textarea class="done-text-cell" rows="1" data-index="${index}">${task.text}</textarea></td>
+        </tr>
+    `;
+  }).join('');
+
+  autosize(tasksDoneTable.querySelectorAll('textarea'));
+};
+
+/**
+ * If no tasks completed, then paint the empty state into on done page.
+ */
+const createEmptyStateDone = () => {
+  if (tasksDone.length > 0) return;
+  const tasksDoneTable = document.querySelector('#tasks-done');
+  if (!tasksDoneTable) {
+    addEmptyStateToDone();
+  }
+};
+
 
 // Function to add empty state paragraph to Done section
 const addEmptyStateToDone = () => {
@@ -292,16 +443,14 @@ const addEmptyStateToDone = () => {
   div.setAttribute('class', 'empty-stage top-padding');
   container.appendChild(div);
 
-  div.innerHTML = `<img class="checkbox" src="images/checkbox_icon.svg"><p class="empty-stage-text">Tasks you get done<br>will appear here.</p>`;
+  div.innerHTML = `<img class="checkbox" src="../images/checkbox_icon.svg"><p class="empty-stage-text">Tasks you get done<br>will appear here.</p>`;
 };
 
-// If no tasks completed, run addEmptyStateToDone() function
-const tasksDone = document.querySelector('#tasks-done');
 const initializeDoneUI = () => {
-  if (!tasksDone) {
-    addEmptyStateToDone();
-  }
+  if (tasksDone.length === 0) return;
+  generateListOfTasksDone(tasksDone);
 };
+
 
 // Responsive design JS
 
@@ -318,13 +467,13 @@ const handleWindowResize = () => {
 
     resizeTaskId = setTimeout(() => {
       resizeTaskId = null;
-      paintScreen();
+      generatePageLayout();
     }, delay);
   });
 };
 
 
-const paintScreen = () => {
+const generatePageLayout = () => {
   const checkboxButton = document.querySelector('#checkbox-button');
   const addButtonSmall = document.querySelector('#add-button-small');
   const addButton = document.querySelector('#add-button');
@@ -343,7 +492,6 @@ const paintScreen = () => {
     mainContent.style.display = 'flex';
     doneContainer.style.display = 'flex';
     checkboxClicked = false;
-
   }
 
   if (window.matchMedia("(max-width: 799px)").matches) {
@@ -354,7 +502,6 @@ const paintScreen = () => {
     toPlannerButton.style.display = 'flex';
     doneContainer.style.display = 'none';
     mainContent.style.display = 'flex';
-
   }
 
   if (window.matchMedia("(max-width: 799px)").matches && checkboxClicked === true) {
@@ -371,9 +518,7 @@ const paintScreen = () => {
 const checkboxButton = document.querySelector('#checkbox-button');
 let checkboxClicked = false;
 
-const viewDoneTasks = () => {
-  console.log("Checkbox button is working");
-
+const viewCompletedTasks = () => {
   checkboxClicked = true;
   const doneContainer = document.querySelector('#done-container');
   doneContainer.style.display = 'flex';

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Planner</title>
-  <link rel="stylesheet" type="text/css" href="styles.css">
+  <link rel="stylesheet" type="text/css" href="../styles.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
         rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,14 +25,14 @@
       <form id="form">
         <input type="text" id="add-task" placeholder="Task..." autofocus>
         <button
-            id="add-button"><img src="images/add.svg"
+            id="add-button"><img src="../images/add.svg"
                                  alt="add icon"><span>Add task</span></button>
-        <button id="add-button-small"><img src="images/add.svg" alt="add icon">
+        <button id="add-button-small"><img src="../images/add.svg" alt="add icon">
         </button>
       </form>
 
       <button id="search-button"><i class="material-icons">search</i></button>
-      <button id="checkbox-button"><img src="images/checkbox-checked.svg">
+      <button id="checkbox-button"><img src="../images/checkbox-checked.svg">
       </button>
     </div>
   </div>
@@ -41,24 +41,8 @@
     <div id="done-tasks-container">
       <h4 class="heading">Done</h4>
 
-      <table id="tasks-done">
-        <tr class="task-done">
-          <td class="checked"><input type="checkbox"></td>
-          <td>Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry.
-          </td>
-        </tr>
-
-        <tr class="task-done">
-          <td class="checked"><input type="checkbox"></td>
-          <td>Task name</td>
-        </tr>
-
-        <tr class="task-done">
-          <td class="checked"><input type="checkbox"></td>
-          <td>Task name</td>
-        </tr>
-      </table>
+<!--      <table id="tasks-done">-->
+<!--      </table>-->
     </div>
 
     <button id="back-to-planner"><i
@@ -67,7 +51,6 @@
   </aside>
 </main>
 
-<script src="util.js"></script>
 <script src="main.js"></script>
 </body>
 </html>

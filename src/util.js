@@ -5,3 +5,4 @@ const deleteElementBySelector = (selector) => {
   divToRemove.parentNode.removeChild(divToRemove);
 };
 
+export { deleteElementBySelector };

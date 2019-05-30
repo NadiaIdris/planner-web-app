@@ -64,7 +64,7 @@ header {
   padding: 11px 0;
   margin: 0 3px;
   align-items: center;
-  height: 47px;
+  min-height: 47px;
 }
 
 .last_task {
@@ -82,7 +82,7 @@ header {
   padding: 11px 0;
   margin: 0 3px;
   align-items: center;
-  height: 47px;
+  min-height: 47px;
 }
 
 .checked {
@@ -90,11 +90,10 @@ header {
   cursor: pointer;
 }
 
-/*.unchecked {*/
-/*  content: url("images/checkbox-unchecked.svg");*/
-/*  cursor: pointer;*/
-/*}*/
-
+.done-text-cell {
+  background-color: var(--lt_green);
+  width: 100%;
+}
 /*-------------*/
 
 .chkbx-cell {
@@ -102,7 +101,15 @@ header {
   cursor: pointer;
 }
 
-.task-cell {
+.chkbx-img-unchecked:hover {
+  content: url(images/checkbox-checked.svg);
+}
+
+.chkbx-img-checked:hover {
+  content: url("images/checkbox-unchecked-green.svg");
+}
+
+.text-cell {
   width: 95%;
 }
 
@@ -135,13 +142,6 @@ i.arrow-down {
   display: flex;
   cursor: pointer;
 }
-
-/*.img-cell {*/
-/*  direction: rtl !important;*/
-/*  display: flex;*/
-/*  cursor: grab;*/
-/*  !*cursor: grabbing;*!*/
-/*}*/
 
 #main-content {
   display: flex;
@@ -191,7 +191,6 @@ i.arrow-down {
 #done-tasks-container {
   flex-grow: 1;
   width: 100%;
-  /*min-width: 320px;*/
 }
 
 #back-to-planner {
@@ -203,7 +202,6 @@ i.arrow-down {
   flex-shrink: 0;
   border-top: 2px solid var(--black);
   height: 60px;
-  /*min-width: 320px;*/
   align-items: center;
   background-color: var(--lt_green);
   font-weight: 800;
@@ -253,12 +251,6 @@ i.arrow-down {
   padding: 4px 4px 4px 0;
 }
 
-/*#add-button-small {*/
-/*    padding: 0 10px;*/
-/*    border: none;*/
-/*    background-color: var(--white);*/
-/*    display: flex;*/
-/*}*/
 #add-button-small {
   display: none;
 }
@@ -306,6 +298,17 @@ p {
 input {
   border: none;
   font-size: 13px;
+}
+
+textarea {
+  border: none;
+  display: flex;
+  resize: none;
+  /*height: max-content;*/
+}
+
+input:focus, textarea:focus {
+  outline-style: none;
 }
 
 .empty-stage {
@@ -379,7 +382,7 @@ input {
     font-size: 13px;
   }
 
-  .task-cell {
+  .text-cell {
     width: 93%;
   }
 
@@ -427,12 +430,17 @@ input {
     grid-template-rows: auto;
   }
 
-  .task-cell {
+  .text-cell {
     width: 85%;
   }
 
 }
 
+/*@media only screen and (max-width: 500px) {*/
+/*  .heading {*/
+/*    color: blue;*/
+/*  }*/
+/*}*/
 
 
 
