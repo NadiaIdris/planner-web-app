@@ -1,0 +1,29 @@
+{
+  "name": "planner-web-app",
+  "version": "1.0.0",
+  "description": "Responsive web application to plan, organize and track tasks.",
+  "main": "src/main.js",
+  "dependencies": {
+    "autosize": "^4.0.2"
+  },
+  "devDependencies": {
+    "webpack": "^4.32.1",
+    "webpack-cli": "^3.3.2",
+    "webpack-dev-server": "^3.4.1"
+  },
+  "scripts": {
+    "build": "webpack",
+    "watch": "webpack --watch",
+    "start": "webpack-dev-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MaretIdris/planner-web-app.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MaretIdris/planner-web-app/issues"
+  },
+  "homepage": "https://github.com/MaretIdris/planner-web-app#readme"
+}
