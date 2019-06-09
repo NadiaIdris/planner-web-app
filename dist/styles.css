@@ -56,6 +56,10 @@ header {
   cursor: pointer;
 }
 
+#task {
+  cursor: default;
+}
+
 .task {
   display: grid;
   grid-template-columns: 30px 1fr 80px 125px 50px;

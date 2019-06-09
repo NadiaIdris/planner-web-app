@@ -36,11 +36,7 @@ const main = () => {
   doneTasksContainer.addEventListener('keyup', editTextInTaskCompleted);
   doneTasksContainer.addEventListener('focusout', deleteCompletedTaskIfTaskTextRemoved);
 
-  tasksContainer.addEventListener('change', sortTasksOnChange);
   window.addEventListener('load', sortTasksOnPageLoad);
-  // tasksContainer load event listener needed to be added. Don't know why,
-  // but the code didn't just work with the window event listener above.
-  tasksContainer.addEventListener('load', sortTasksOnPageLoad);
   tasksContainer.addEventListener('click', sortTasksOnClick);
 };
 
@@ -115,19 +111,16 @@ const sorting = (value) => {
 
 // Function to sort tasks when dropdown option is present.
 const sortTasksOnChange = (event) => {
-  event.preventDefault();
+  // event.preventDefault();
   const element = event.target;
-  if (!element.matches('.sort-by')) return;
-  const elementValue = element.value;
-
-  sorting(elementValue);
+  if (!element.matches('.priority')) return;
+  sortTasks();
 };
 
 // Function to sort tasks when page is loaded.
 const sortTasksOnPageLoad = () => {
-  // On page load, get from local storage the correct sorting name
-  const currentlySelected = sortBy[0].selectedValue;
-  sorting(currentlySelected);
+  if (tasks.length === 0) return;
+  sortTasks();
 };
 
 //
@@ -172,7 +165,6 @@ const loadTasksDoneFromLocalStorage = () => {
 
 // Function to move task to done section once completed
 const markTaskCompleted = (event) => {
-  debugger;
   const doneEmptyState = document.querySelector('#empty-stage-done');
 
       const element = event.target;
@@ -225,23 +217,28 @@ const markTaskUncompleted = (event) => {
   // Repaint the tasks done UI
   generateListOfTasksDone(tasksDone);
 
+  // Sort the undone tasks list based on what sorting option is selected.
+  sortTasks();
   localStorage.setItem('tasks', JSON.stringify(tasks));
 
-  // Sort the undone tasks list based on what sorting option is selected.
-  if (document.querySelector('#deadline i').classList.contains('visible')) {
-    sorting('Deadline');
-    // In order to highlight the background of the task, I need task object
-    // to have unique identifier in order to be able to find it from the
-    // list of tasks.
-  } else {
-    sorting('Priority');
-  }
-
-
+  // If sorted by Priority and if task has P0, move it on the top of all P0.
+  // If sorted by Deadline and task has same deadline as another task, move
+  // it on the top of all tasks with the same deadline.
 
   if (tasksDone.length === 0) {
     deleteElementBySelector('#tasks-done');
     createEmptyStateDone();
+  }
+};
+
+// Function to sort the undone tasks list based on what sorting option is
+// selected.
+const sortTasks = () => {
+  const deadlineArrowIcon = document.querySelector('#deadline i');
+  if (deadlineArrowIcon.classList.contains('visible')) {
+    sorting('Deadline');
+  } else {
+    sorting('Priority');
   }
 };
 
@@ -303,7 +300,7 @@ const generateTableWithHeader = () => {
                 <thead>
                 <tr id="task-headings">
                     <th></th>
-                    <th class="heading-cell">Task</th>
+                    <th id="task" class="heading-cell">Task</th>
                     <th id="priority" class="heading-cell"><i class="material-icons arrow-down ${sortBy[0].selectedValue === "Priority" ? "visible'" : "hidden"}">arrow_drop_down</i>Priority</th>
                     <th id="deadline" class="heading-cell"><i class="material-icons arrow-down ${sortBy[0].selectedValue === "Deadline" ? "visible" : "hidden"}">arrow_drop_down</i>Deadline</th>
                     <th class="sorting-cell">
@@ -361,23 +358,12 @@ const generateListOfTasks = (tasksArray = []) => {
 
 
 const selectPriority = (event) => {
-  // event.preventDefault();
   const element = event.target;
   const index = element.dataset.index;
   if (!element.matches('.priority')) return;
   tasks[index].priority = element.value;
   localStorage.setItem('tasks', JSON.stringify(tasks));
-
-  // If (#priority i) includes class visible, then run sort function
-  const priorityArrowIcon = document.querySelector('#priority i');
-  if (priorityArrowIcon.classList.contains('visible')) {
-    console.log("Change event listener worked");
-
-    sorting("Priority");
-    // In order to highlight the background of the task, I need task object
-    // to have unique identifier in order to be able to find it from the
-    // list of tasks.
-  }
+  sortTasks();
 };
 
 
