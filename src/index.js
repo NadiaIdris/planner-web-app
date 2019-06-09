@@ -109,14 +109,6 @@ const sorting = (value) => {
   }
 };
 
-// Function to sort tasks when dropdown option is present.
-const sortTasksOnChange = (event) => {
-  // event.preventDefault();
-  const element = event.target;
-  if (!element.matches('.priority')) return;
-  sortTasks();
-};
-
 // Function to sort tasks when page is loaded.
 const sortTasksOnPageLoad = () => {
   if (tasks.length === 0) return;
@@ -209,6 +201,7 @@ const markTaskUncompleted = (event) => {
 
   // Remove the element from tasksDone array.
   const uncheckedTask = tasksDone.splice(index, 1);
+
   // Add the removed element back to tasks array.
   tasks.push(uncheckedTask[0]);
 
@@ -219,11 +212,27 @@ const markTaskUncompleted = (event) => {
 
   // Sort the undone tasks list based on what sorting option is selected.
   sortTasks();
+  // Set the local storage with the correct tasks order.
   localStorage.setItem('tasks', JSON.stringify(tasks));
 
-  // If sorted by Priority and if task has P0, move it on the top of all P0.
-  // If sorted by Deadline and task has same deadline as another task, move
-  // it on the top of all tasks with the same deadline.
+  // // Move the task in front of others that have the same priority or deadline.
+  // // If sorted by Deadline
+  // const deadlineArrowIcon = document.querySelector('#deadline i');
+  // if (deadlineArrowIcon.classList.contains('visible')) {
+  //   // Get the task deadline value/date.
+  //
+  //   // If another task with the same deadline exists, then get its index.
+  //
+  //       // Add the task front of the first task that has same date.
+  //   // Do I need to sort again or can I just set the tasks in localStorage
+  //   // again?
+  //   // sorting function sets the local storage with the correct order
+  //   sorting('Deadline');
+  // } else {
+  //   sorting('Priority');
+  // }
+
+  console.table(tasks);
 
   if (tasksDone.length === 0) {
     deleteElementBySelector('#tasks-done');
