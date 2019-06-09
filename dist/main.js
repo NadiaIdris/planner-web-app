@@ -1,1 +1,1081 @@
-!function(e){var t={};function n(o){if(t[o])return t[o].exports;var s=t[o]={i:o,l:!1,exports:{}};return e[o].call(s.exports,s,s.exports,n),s.l=!0,s.exports}n.m=e,n.c=t,n.d=function(e,t,o){n.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:o})},n.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},n.t=function(e,t){if(1&t&&(e=n(e)),8&t)return e;if(4&t&&"object"==typeof e&&e&&e.__esModule)return e;var o=Object.create(null);if(n.r(o),Object.defineProperty(o,"default",{enumerable:!0,value:e}),2&t&&"string"!=typeof e)for(var s in e)n.d(o,s,function(t){return e[t]}.bind(null,s));return o},n.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return n.d(t,"a",t),t},n.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},n.p="",n(n.s=0)}([function(e,t,n){"use strict";n.r(t);const o=e=>{if(!e)return;const t=document.querySelector(e);t&&t.parentNode.removeChild(t)},s="function"==typeof Map?new Map:function(){const e=[],t=[];return{has:t=>e.indexOf(t)>-1,get:n=>t[e.indexOf(n)],set(n,o){-1===e.indexOf(n)&&(e.push(n),t.push(o))},delete(n){const o=e.indexOf(n);o>-1&&(e.splice(o,1),t.splice(o,1))}}}();let a=e=>new Event(e,{bubbles:!0});try{new Event("test")}catch(e){a=(e=>{const t=document.createEvent("Event");return t.initEvent(e,!0,!1),t})}function r(e){if(!e||!e.nodeName||"TEXTAREA"!==e.nodeName||s.has(e))return;let t=null,n=null,o=null;function r(t){{const t=e.style.width;e.style.width="0px",e.offsetWidth,e.style.width=t}e.style.overflowY=t}function l(){if(0===e.scrollHeight)return;const o=function(e){const t=[];for(;e&&e.parentNode&&e.parentNode instanceof Element;)e.parentNode.scrollTop&&t.push({node:e.parentNode,scrollTop:e.parentNode.scrollTop}),e=e.parentNode;return t}(e),s=document.documentElement&&document.documentElement.scrollTop;e.style.height="",e.style.height=e.scrollHeight+t+"px",n=e.clientWidth,o.forEach(e=>{e.node.scrollTop=e.scrollTop}),s&&(document.documentElement.scrollTop=s)}function d(){l();const t=Math.round(parseFloat(e.style.height)),n=window.getComputedStyle(e,null);var s="content-box"===n.boxSizing?Math.round(parseFloat(n.height)):e.offsetHeight;if(s<t?"hidden"===n.overflowY&&(r("scroll"),l(),s="content-box"===n.boxSizing?Math.round(parseFloat(window.getComputedStyle(e,null).height)):e.offsetHeight):"hidden"!==n.overflowY&&(r("hidden"),l(),s="content-box"===n.boxSizing?Math.round(parseFloat(window.getComputedStyle(e,null).height)):e.offsetHeight),o!==s){o=s;const t=a("autosize:resized");try{e.dispatchEvent(t)}catch(e){}}}const i=()=>{e.clientWidth!==n&&d()},c=(t=>{window.removeEventListener("resize",i,!1),e.removeEventListener("input",d,!1),e.removeEventListener("keyup",d,!1),e.removeEventListener("autosize:destroy",c,!1),e.removeEventListener("autosize:update",d,!1),Object.keys(t).forEach(n=>{e.style[n]=t[n]}),s.delete(e)}).bind(e,{height:e.style.height,resize:e.style.resize,overflowY:e.style.overflowY,overflowX:e.style.overflowX,wordWrap:e.style.wordWrap});e.addEventListener("autosize:destroy",c,!1),"onpropertychange"in e&&"oninput"in e&&e.addEventListener("keyup",d,!1),window.addEventListener("resize",i,!1),e.addEventListener("input",d,!1),e.addEventListener("autosize:update",d,!1),e.style.overflowX="hidden",e.style.wordWrap="break-word",s.set(e,{destroy:c,update:d}),function(){const n=window.getComputedStyle(e,null);"vertical"===n.resize?e.style.resize="none":"both"===n.resize&&(e.style.resize="horizontal"),t="content-box"===n.boxSizing?-(parseFloat(n.paddingTop)+parseFloat(n.paddingBottom)):parseFloat(n.borderTopWidth)+parseFloat(n.borderBottomWidth),isNaN(t)&&(t=0),d()}()}function l(e){const t=s.get(e);t&&t.destroy()}function d(e){const t=s.get(e);t&&t.update()}let i=null;"undefined"==typeof window||"function"!=typeof window.getComputedStyle?((i=(e=>e)).destroy=(e=>e),i.update=(e=>e)):((i=((e,t)=>(e&&Array.prototype.forEach.call(e.length?e:[e],e=>r(e)),e))).destroy=(e=>(e&&Array.prototype.forEach.call(e.length?e:[e],l),e)),i.update=(e=>(e&&Array.prototype.forEach.call(e.length?e:[e],d),e)));var c=i;const u=document.querySelector("#form"),p=document.querySelector("#tasks-container"),y=document.querySelector("#done-tasks-container");let m;const h=()=>{m=JSON.parse(localStorage.getItem("tasks"))||[]};let g;const f=()=>{g=JSON.parse(localStorage.getItem("tasksDone"))||[]},x=e=>{const t=document.querySelector("#empty-stage-done"),n=e.target,s=n.dataset.index;if(!n.matches(`img[data-index="${s}"]`))return;t&&o("#empty-stage-done"),m[s].done=!m[s].done;const a=m.splice(s,1);g.push(a[0]),localStorage.setItem("tasksDone",JSON.stringify(g)),J(g),localStorage.setItem("tasks",JSON.stringify(m)),w(m),0===m.length&&(o("#tasks-table"),q())},v=e=>{console.log("markTaskUncompleted is activated on click");const t=e.target,n=t.dataset.index;if(!t.matches(`img[data-index="${n}"]`))return;g[n].done=!g[n].done;const s=g.splice(n,1);m.push(s[0]),localStorage.setItem("tasksDone",JSON.stringify(g)),J(g),localStorage.setItem("tasks",JSON.stringify(m)),b(),w(m),0===g.length&&(o("#tasks-done"),C())},k=e=>{e.preventDefault();const t=document.querySelector("#add-task").value;if(S(t))return;const n={text:t,done:!1,priority:"P2",deadline:void 0};m.push(n),u.reset(),localStorage.setItem("tasks",JSON.stringify(m)),b(),w(m)},S=e=>{if(""===e.trim())return alert("Task is empty"),u.reset(),!0},b=()=>{if(!document.querySelector("#tasks-table")){o("#empty-stage-planner");const e=document.createElement("table");e.setAttribute("id","tasks-table"),p.appendChild(e),e.innerHTML='\n                <thead>\n                <tr id="task-headings">\n                    <th></th>\n                    <th class="heading-cell">Task</th>\n                    <th class="heading-cell"><i class="material-icons arrow-down">keyboard_arrow_down</i>Priority</th>\n                    <th class="heading-cell">Deadline</th>\n                    <th></th>\n                </tr>\n                </thead>'}},w=(e=[])=>{const t=document.querySelector("#tasks-table");o("#tasks-table > tbody");const n=document.createElement("tbody");t.appendChild(n),n.innerHTML=e.map((e,t)=>{const n=e.deadline?`value="${e.deadline}"`:"";return`\n       <tr class="task">\n           <td class="chkbx-cell">\n             <img \n               class="chkbx-img-unchecked"\n               src="${e.done?"../images/checkbox-checked.svg":"../images/checkbox-unchecked.svg"}" \n               data-index="${t}"></td>\n           <td class="textarea-cell"><textarea rows="1" class="text-cell" data-index="${t}">${e.text}</textarea></td>\n           <td class="priority-cell">\n              <select class="priority" data-index="${t}">\n                    <option value="P0" ${"P0"===e.priority?"selected":""}>P0</option>\n                    <option value="P1" ${"P1"===e.priority?"selected":""}>P1</option>\n                    <option value="P2" ${"P2"===e.priority?"selected":""}>P2</option>\n              </select></td>\n           <td class="deadline-cell">\n             <input type="date" class="deadline" ${n} data-index="${t}">\n           </td>\n           <td class="icon-cell">\n             <i class="material-icons" data-index="${t}">delete</i>\n           </td>\n       </tr>\n       `}).join(""),c(n.querySelectorAll("textarea"))},E=e=>{const t=e.target,n=t.dataset.index;t.matches(".priority")&&(m[n].priority=t.value,localStorage.setItem("tasks",JSON.stringify(m)))},L=()=>{0!==m.length&&(b(),w(m))},q=()=>{if(m.length>0)return;document.querySelector("#tasks-table")||O()},O=()=>{const e=document.querySelector("#tasks-container"),t=document.createElement("div");e.appendChild(t),t.setAttribute("id","empty-stage-planner"),t.setAttribute("class","empty-stage"),t.innerHTML='<img class="sun" src="../images/sun.svg"><p class="empty-stage-text gray">You have no tasks.<br>Add a task below.</p>'},T=()=>{0===m.length&&(o("#tasks-table"),q(),document.querySelector("#add-task").focus())};function N(e){const t=e.target,n=t.dataset.index;t.matches(".icon-cell i.material-icons")&&(m.splice(`${n}`,1),localStorage.setItem("tasks",JSON.stringify(m)),w(m),T())}const $=e=>{e.preventDefault();const t=e.target,n=t.dataset.index;if(!t.matches('.deadline-cell input[type="date"]'))return;const o=t.value;m[n].deadline=o,localStorage.setItem("tasks",JSON.stringify(m)),w(m)},z=e=>{e.preventDefault();const t=e.target,n=t.value,o=t.dataset.index;t.matches(".text-cell")&&(m[o].text=n,localStorage.setItem("tasks",JSON.stringify(m)))},M=e=>{e.preventDefault();const t=e.target,n=t.value,o=t.dataset.index;t.matches(".done-text-cell")&&(g[o].text=n,localStorage.setItem("tasksDone",JSON.stringify(g)))},P=e=>{e.preventDefault();const t=e.target,n=t.value,o=t.dataset.index;t.matches(".text-cell")&&(""===n.trim()&&(m.splice(o,1),localStorage.setItem("tasks",JSON.stringify(m)),w(m),T()),document.querySelector("#add-task").focus())},D=e=>{e.preventDefault();const t=e.target,n=t.value,s=t.dataset.index;t.matches(".done-text-cell")&&(""===n.trim()&&(g.splice(s,1),localStorage.setItem("tasksDone",JSON.stringify(g)),J(g),0===g.length&&(o("#tasks-done"),C(),document.querySelector("#add-task").focus())),document.querySelector("#add-task").focus())},I=()=>{},A=()=>{setInterval(()=>{const e=document.querySelector("#date"),t=new Date,n=t.toLocaleDateString("en-US",{month:"long",day:"numeric"}),o=t.toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"});e.innerHTML=`Today   |   ${n}   |   ${o}`},1e3)},J=(e=[])=>{const t=document.querySelector("#done-tasks-container");o("#tasks-done");const n=document.createElement("table");n.setAttribute("id","tasks-done"),t.appendChild(n);const s=document.querySelector("#tasks-done");s.innerHTML=e.map((e,t)=>`\n        <tr class="task-done">\n          <td class="chkbx-cell"><img\n               class="chkbx-img-checked"\n               src="${e.done?"../images/checkbox-checked.svg":"../images/checkbox-unchecked-green.svg"}"\n               data-index="${t}"></td>\n          <td><textarea class="done-text-cell" rows="1" data-index="${t}">${e.text}</textarea></td>\n        </tr>\n    `).join(""),c(s.querySelectorAll("textarea"))},C=()=>{if(g.length>0)return;document.querySelector("#tasks-done")||H()},H=()=>{const e=document.querySelector("#done-tasks-container"),t=document.createElement("div");t.setAttribute("id","empty-stage-done"),t.setAttribute("class","empty-stage top-padding"),e.appendChild(t),t.innerHTML='<img class="checkbox" src="../images/checkbox_icon.svg"><p class="empty-stage-text">Tasks you get done<br>will appear here.</p>'},j=()=>{0!==g.length&&J(g)},W=()=>{let e=null;window.addEventListener("resize",t=>{null!==e&&clearTimeout(e),e=setTimeout(()=>{e=null,_()},1)})},_=()=>{const e=document.querySelector("#checkbox-button"),t=document.querySelector("#add-button-small"),n=document.querySelector("#add-button"),o=document.querySelector("#add-tasks"),s=document.querySelector("#back-to-planner"),a=document.querySelector("#done-container"),r=document.querySelector("#main-content");window.matchMedia("(min-width: 800px)").matches&&(n.style.display="flex",e.style.display="none",t.style.display="none",o.style.padding="0",s.style.display="none",a.style.width="530px",r.style.display="flex",a.style.display="flex",Y=!1),window.matchMedia("(max-width: 799px)").matches&&(n.style.display="none",e.style.display="flex",t.style.display="flex",o.style.padding="0 15px",s.style.display="flex",a.style.display="none",r.style.display="flex"),window.matchMedia("(max-width: 799px)").matches&&!0===Y&&(a.style.display="flex",r.style.display="none",console.log("screen width < 719 && checkboxClicked === true"))},F=document.querySelector("#checkbox-button");let Y=!1;const X=()=>{Y=!0;const e=document.querySelector("#done-container");e.style.display="flex",e.style.height="100vh",e.style.width="100%",e.style.minWidth="320px",document.querySelector("#main-content").style.display="none"};document.addEventListener("DOMContentLoaded",()=>{A(),h(),f(),q(),C(),L(),j(),W(),window.addEventListener("load",_),u.addEventListener("submit",k),F.addEventListener("click",X),p.addEventListener("click",x),p.addEventListener("change",E),p.addEventListener("click",N),p.addEventListener("change",$),p.addEventListener("keyup",z),p.addEventListener("keydown",I),p.addEventListener("focusout",P),y.addEventListener("click",v),y.addEventListener("keyup",M),y.addEventListener("focusout",D)})}]);
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/index.js");
+/******/ })
+/************************************************************************/
+/******/ ({
+
+/***/ "./node_modules/autosize/src/autosize.js":
+/*!***********************************************!*\
+  !*** ./node_modules/autosize/src/autosize.js ***!
+  \***********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+const map = (typeof Map === "function") ? new Map() : (function () {
+	const keys = [];
+	const values = [];
+
+	return {
+		has(key) {
+			return keys.indexOf(key) > -1;
+		},
+		get(key) {
+			return values[keys.indexOf(key)];
+		},
+		set(key, value) {
+			if (keys.indexOf(key) === -1) {
+				keys.push(key);
+				values.push(value);
+			}
+		},
+		delete(key) {
+			const index = keys.indexOf(key);
+			if (index > -1) {
+				keys.splice(index, 1);
+				values.splice(index, 1);
+			}
+		},
+	}
+})();
+
+let createEvent = (name)=> new Event(name, {bubbles: true});
+try {
+	new Event('test');
+} catch(e) {
+	// IE does not support `new Event()`
+	createEvent = (name)=> {
+		const evt = document.createEvent('Event');
+		evt.initEvent(name, true, false);
+		return evt;
+	};
+}
+
+function assign(ta) {
+	if (!ta || !ta.nodeName || ta.nodeName !== 'TEXTAREA' || map.has(ta)) return;
+
+	let heightOffset = null;
+	let clientWidth = null;
+	let cachedHeight = null;
+
+	function init() {
+		const style = window.getComputedStyle(ta, null);
+
+		if (style.resize === 'vertical') {
+			ta.style.resize = 'none';
+		} else if (style.resize === 'both') {
+			ta.style.resize = 'horizontal';
+		}
+
+		if (style.boxSizing === 'content-box') {
+			heightOffset = -(parseFloat(style.paddingTop)+parseFloat(style.paddingBottom));
+		} else {
+			heightOffset = parseFloat(style.borderTopWidth)+parseFloat(style.borderBottomWidth);
+		}
+		// Fix when a textarea is not on document body and heightOffset is Not a Number
+		if (isNaN(heightOffset)) {
+			heightOffset = 0;
+		}
+
+		update();
+	}
+
+	function changeOverflow(value) {
+		{
+			// Chrome/Safari-specific fix:
+			// When the textarea y-overflow is hidden, Chrome/Safari do not reflow the text to account for the space
+			// made available by removing the scrollbar. The following forces the necessary text reflow.
+			const width = ta.style.width;
+			ta.style.width = '0px';
+			// Force reflow:
+			/* jshint ignore:start */
+			ta.offsetWidth;
+			/* jshint ignore:end */
+			ta.style.width = width;
+		}
+
+		ta.style.overflowY = value;
+	}
+
+	function getParentOverflows(el) {
+		const arr = [];
+
+		while (el && el.parentNode && el.parentNode instanceof Element) {
+			if (el.parentNode.scrollTop) {
+				arr.push({
+					node: el.parentNode,
+					scrollTop: el.parentNode.scrollTop,
+				})
+			}
+			el = el.parentNode;
+		}
+
+		return arr;
+	}
+
+	function resize() {
+		if (ta.scrollHeight === 0) {
+			// If the scrollHeight is 0, then the element probably has display:none or is detached from the DOM.
+			return;
+		}
+
+		const overflows = getParentOverflows(ta);
+		const docTop = document.documentElement && document.documentElement.scrollTop; // Needed for Mobile IE (ticket #240)
+
+		ta.style.height = '';
+		ta.style.height = (ta.scrollHeight+heightOffset)+'px';
+
+		// used to check if an update is actually necessary on window.resize
+		clientWidth = ta.clientWidth;
+
+		// prevents scroll-position jumping
+		overflows.forEach(el => {
+			el.node.scrollTop = el.scrollTop
+		});
+
+		if (docTop) {
+			document.documentElement.scrollTop = docTop;
+		}
+	}
+
+	function update() {
+		resize();
+
+		const styleHeight = Math.round(parseFloat(ta.style.height));
+		const computed = window.getComputedStyle(ta, null);
+
+		// Using offsetHeight as a replacement for computed.height in IE, because IE does not account use of border-box
+		var actualHeight = computed.boxSizing === 'content-box' ? Math.round(parseFloat(computed.height)) : ta.offsetHeight;
+
+		// The actual height not matching the style height (set via the resize method) indicates that 
+		// the max-height has been exceeded, in which case the overflow should be allowed.
+		if (actualHeight < styleHeight) {
+			if (computed.overflowY === 'hidden') {
+				changeOverflow('scroll');
+				resize();
+				actualHeight = computed.boxSizing === 'content-box' ? Math.round(parseFloat(window.getComputedStyle(ta, null).height)) : ta.offsetHeight;
+			}
+		} else {
+			// Normally keep overflow set to hidden, to avoid flash of scrollbar as the textarea expands.
+			if (computed.overflowY !== 'hidden') {
+				changeOverflow('hidden');
+				resize();
+				actualHeight = computed.boxSizing === 'content-box' ? Math.round(parseFloat(window.getComputedStyle(ta, null).height)) : ta.offsetHeight;
+			}
+		}
+
+		if (cachedHeight !== actualHeight) {
+			cachedHeight = actualHeight;
+			const evt = createEvent('autosize:resized');
+			try {
+				ta.dispatchEvent(evt);
+			} catch (err) {
+				// Firefox will throw an error on dispatchEvent for a detached element
+				// https://bugzilla.mozilla.org/show_bug.cgi?id=889376
+			}
+		}
+	}
+
+	const pageResize = () => {
+		if (ta.clientWidth !== clientWidth) {
+			update();
+		}
+	};
+
+	const destroy = (style => {
+		window.removeEventListener('resize', pageResize, false);
+		ta.removeEventListener('input', update, false);
+		ta.removeEventListener('keyup', update, false);
+		ta.removeEventListener('autosize:destroy', destroy, false);
+		ta.removeEventListener('autosize:update', update, false);
+
+		Object.keys(style).forEach(key => {
+			ta.style[key] = style[key];
+		});
+
+		map.delete(ta);
+	}).bind(ta, {
+		height: ta.style.height,
+		resize: ta.style.resize,
+		overflowY: ta.style.overflowY,
+		overflowX: ta.style.overflowX,
+		wordWrap: ta.style.wordWrap,
+	});
+
+	ta.addEventListener('autosize:destroy', destroy, false);
+
+	// IE9 does not fire onpropertychange or oninput for deletions,
+	// so binding to onkeyup to catch most of those events.
+	// There is no way that I know of to detect something like 'cut' in IE9.
+	if ('onpropertychange' in ta && 'oninput' in ta) {
+		ta.addEventListener('keyup', update, false);
+	}
+
+	window.addEventListener('resize', pageResize, false);
+	ta.addEventListener('input', update, false);
+	ta.addEventListener('autosize:update', update, false);
+	ta.style.overflowX = 'hidden';
+	ta.style.wordWrap = 'break-word';
+
+	map.set(ta, {
+		destroy,
+		update,
+	});
+
+	init();
+}
+
+function destroy(ta) {
+	const methods = map.get(ta);
+	if (methods) {
+		methods.destroy();
+	}
+}
+
+function update(ta) {
+	const methods = map.get(ta);
+	if (methods) {
+		methods.update();
+	}
+}
+
+let autosize = null;
+
+// Do nothing in Node.js environment and IE8 (or lower)
+if (typeof window === 'undefined' || typeof window.getComputedStyle !== 'function') {
+	autosize = el => el;
+	autosize.destroy = el => el;
+	autosize.update = el => el;
+} else {
+	autosize = (el, options) => {
+		if (el) {
+			Array.prototype.forEach.call(el.length ? el : [el], x => assign(x, options));
+		}
+		return el;
+	};
+	autosize.destroy = el => {
+		if (el) {
+			Array.prototype.forEach.call(el.length ? el : [el], destroy);
+		}
+		return el;
+	};
+	autosize.update = el => {
+		if (el) {
+			Array.prototype.forEach.call(el.length ? el : [el], update);
+		}
+		return el;
+	};
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (autosize);
+
+
+/***/ }),
+
+/***/ "./src/index.js":
+/*!**********************!*\
+  !*** ./src/index.js ***!
+  \**********************/
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util */ "./src/util.js");
+/* harmony import */ var autosize_src_autosize__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! autosize/src/autosize */ "./node_modules/autosize/src/autosize.js");
+// import autosize from 'autosize';
+
+
+
+
+// Globals.
+
+const formElement = document.querySelector('#form');
+const tasksContainer = document.querySelector('#tasks-container');
+const doneTasksContainer = document.querySelector('#done-tasks-container');
+
+const main = () => {
+  generateTodaysDateAndTime();
+  loadTasksFromLocalStorage();
+  loadTasksDoneFromLocalStorage();
+  loadSortedByFromLocalStorage();
+  createEmptyStatePlanner();
+  createEmptyStateDone();
+  initializePlannerUI();
+  initializeDoneUI();
+  handleWindowResize();
+
+  window.addEventListener('load', generatePageLayout);
+  formElement.addEventListener('submit', addTask);
+  checkboxButton.addEventListener('click', viewCompletedTasks);
+
+  tasksContainer.addEventListener('click', markTaskCompleted);
+  tasksContainer.addEventListener('change', selectPriority);
+  tasksContainer.addEventListener('click', deleteTask);
+  tasksContainer.addEventListener('change', addDeadlineToTask);
+  tasksContainer.addEventListener('keyup', editTaskText);
+  tasksContainer.addEventListener('keydown', keyboardShortcutToSaveTaskText);
+  tasksContainer.addEventListener('focusout', deleteTaskIfTaskTextRemoved);
+
+  doneTasksContainer.addEventListener('click', markTaskUncompleted);
+  doneTasksContainer.addEventListener('keyup', editTextInTaskCompleted);
+  doneTasksContainer.addEventListener('focusout', deleteCompletedTaskIfTaskTextRemoved);
+
+  tasksContainer.addEventListener('change', sortTasksOnChange);
+  window.addEventListener('load', sortTasksOnPageLoad);
+  // tasksContainer load event listener needed to be added. Don't know why,
+  // but the code didn't just work with the window event listener above.
+  tasksContainer.addEventListener('load', sortTasksOnPageLoad);
+  tasksContainer.addEventListener('click', sortTasksOnClick);
+};
+
+
+// Tasks.
+
+let tasks;
+const loadTasksFromLocalStorage = () => {
+  tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+  // tasksContainer.addEventListener('change', sortTasksOnChange);
+};
+
+let sortBy;
+const loadSortedByFromLocalStorage = () => {
+  sortBy = JSON.parse(localStorage.getItem('sortBy')) || [{selectedValue: "Priority"}];
+};
+
+// Function to sort an array. Takes a param which is dropdown selected value.
+const sorting = (value) => {
+  const selected = {
+    selectedValue: "Priority",
+  };
+
+  // Check if change value is "Deadline".
+  if (value === "Deadline") {
+    selected.selectedValue = value;
+    // Separating tasks without deadline
+    let noDeadlineTasks = [];
+    let deadlineTasks = [];
+    tasks.forEach((task) => {
+      if (task.deadline === '' || 'deadline' in task === false) {
+        noDeadlineTasks.push(task);
+      } else {
+        deadlineTasks.push(task);
+      }
+    });
+
+    // Sorting array by deadline.
+    deadlineTasks.sort((a, b) => {
+      if (a.deadline < b.deadline) return -1;
+      if (a.deadline > b.deadline) return 1;
+      return 0;
+    });
+
+    tasks = [...deadlineTasks, ...noDeadlineTasks];
+
+    sortBy.length = 0;
+    sortBy.push(selected);
+    localStorage.setItem('sortBy', JSON.stringify(sortBy));
+    generateTableWithHeader();
+    generateListOfTasks(tasks);
+  }
+
+  // If change value is "Priority".
+  if (value === "Priority") {
+    selected.selectedValue = value;
+    // Sort the array by priority.
+    tasks.sort((a, b) => {
+      if (a.priority < b.priority) return -1;
+      if (a.priority > b.priority) return 1;
+      return 0;
+    });
+
+    // Clear the array.
+    sortBy.length = 0;
+    sortBy.push(selected);
+    localStorage.setItem('sortBy', JSON.stringify(sortBy));
+    generateTableWithHeader();
+    generateListOfTasks(tasks);
+  }
+};
+
+// Function to sort tasks when dropdown option is present.
+const sortTasksOnChange = (event) => {
+  event.preventDefault();
+  const element = event.target;
+  if (!element.matches('.sort-by')) return;
+  const elementValue = element.value;
+
+  sorting(elementValue);
+};
+
+// Function to sort tasks when page is loaded.
+const sortTasksOnPageLoad = () => {
+  // On page load, get from local storage the correct sorting name
+  const currentlySelected = sortBy[0].selectedValue;
+  sorting(currentlySelected);
+};
+
+//
+const sortTasksOnClick = (event) => {
+  // event.preventDefault();
+  let element = event.target;
+  let elementValue;
+
+  if (!element.matches('#priority') && !element.matches('#deadline') && !element.matches('i.arrow-down')) return;
+
+  const priorityArrowIcon = document.querySelector('#priority i');
+  const deadlineArrowIcon = document.querySelector('#deadline i');
+
+  if (element.textContent.includes('Priority') || element.matches('#priority' +
+      ' i.arrow-down')) {
+    elementValue = "Priority";
+
+    // Add arrow to priority.
+    priorityArrowIcon.classList.add('visible');
+    priorityArrowIcon.classList.remove('hidden');
+    // If arrow exists in deadline, remove arrow.
+    deadlineArrowIcon.classList.remove('visible');
+    deadlineArrowIcon.classList.add('hidden');
+  } else if (element.textContent.includes('Deadline') || element.matches('#deadline i.arrow-down')) {
+    elementValue = "Deadline";
+    // Add arrow to deadline.
+    deadlineArrowIcon.classList.add('visible');
+    deadlineArrowIcon.classList.remove('hidden');
+    // If arrow exists in priority, remove arrow.
+    priorityArrowIcon.classList.remove('visible');
+    priorityArrowIcon.classList.add('hidden');
+  }
+  sorting(elementValue);
+};
+
+
+// Tasks that are done, parsed from local storage.
+let tasksDone;
+const loadTasksDoneFromLocalStorage = () => {
+  tasksDone = JSON.parse(localStorage.getItem('tasksDone')) || [];
+};
+
+// Function to move task to done section once completed
+const markTaskCompleted = (event) => {
+  debugger;
+  const doneEmptyState = document.querySelector('#empty-stage-done');
+
+      const element = event.target;
+      const index = element.dataset.index;
+      if (!element.matches(`img[data-index="${index}"]`)) return;
+
+      // Remove empty state from done section if present
+      if (doneEmptyState) {
+        Object(_util__WEBPACK_IMPORTED_MODULE_0__["deleteElementBySelector"])('#empty-stage-done');
+      }
+
+      tasks[index].done = !tasks[index].done;
+
+      // Remove the element from the tasks array
+      const checkedTask = tasks.splice(index, 1);
+
+      // Push the element to tasksDone
+      tasksDone.push(checkedTask[0]);
+
+      // Set the tasksDone in local storage
+      localStorage.setItem('tasksDone', JSON.stringify(tasksDone));
+      // Repaint the tasks done UI
+      generateListOfTasksDone(tasksDone);
+
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+      generateListOfTasks(tasks);
+
+      if (tasks.length === 0) {
+        Object(_util__WEBPACK_IMPORTED_MODULE_0__["deleteElementBySelector"])('#tasks-table');
+        createEmptyStatePlanner();
+      }
+    }
+;
+
+const markTaskUncompleted = (event) => {
+  // Get the element
+  const element = event.target;
+  const index = element.dataset.index;
+  if (!element.matches(`img[data-index="${index}"]`)) return;
+  //Set tasksDone[index].done to false.
+  tasksDone[index].done = !tasksDone[index].done;
+
+  // Remove the element from tasksDone array.
+  const uncheckedTask = tasksDone.splice(index, 1);
+  // Add the removed element back to tasks array.
+  tasks.push(uncheckedTask[0]);
+
+  // Set the tasksDone in local storage
+  localStorage.setItem('tasksDone', JSON.stringify(tasksDone));
+  // Repaint the tasks done UI
+  generateListOfTasksDone(tasksDone);
+
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+
+  // Sort the undone tasks list based on what sorting option is selected.
+  if (document.querySelector('#deadline i').classList.contains('visible')) {
+    sorting('Deadline');
+    // In order to highlight the background of the task, I need task object
+    // to have unique identifier in order to be able to find it from the
+    // list of tasks.
+  } else {
+    sorting('Priority');
+  }
+
+
+
+  if (tasksDone.length === 0) {
+    Object(_util__WEBPACK_IMPORTED_MODULE_0__["deleteElementBySelector"])('#tasks-done');
+    createEmptyStateDone();
+  }
+};
+
+
+/**
+ * Create a task table given an event. The event is generated on form submit.
+ * @param {Event} event
+ */
+const addTask = (event) => {
+  event.preventDefault();
+  // Store the value in an object. Store object inside an array in local
+  // storage.
+  const text = document.querySelector('#add-task').value;
+
+  // If text field is empty, stop executing the rest of the function.
+  if (checkIfTaskIsEmpty(text)) return;
+
+  const task = {
+    text,
+    done: false,
+    priority: "P2",
+    deadline: undefined,
+  };
+
+  tasks.push(task);
+  formElement.reset();
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+  generateTableWithHeader();
+  generateListOfTasks(tasks);
+};
+
+/**
+ * Check if task entered is empty.
+ * @param taskText
+ * @returns {boolean} true
+ */
+const checkIfTaskIsEmpty = (taskText) => {
+  if (taskText.trim() === '') {
+    alert("Task is empty");
+    formElement.reset();
+    return true;
+  }
+};
+
+/**
+ * If some tasks present, return and add a task to the existing table with
+ * the next function.
+ */
+const generateTableWithHeader = () => {
+  const tasksTable = document.querySelector('#tasks-table');
+  if (!tasksTable) {
+    // clear the empty state
+    Object(_util__WEBPACK_IMPORTED_MODULE_0__["deleteElementBySelector"])('#empty-stage-planner');
+
+    const tasksHeader = document.createElement('table');
+    tasksHeader.setAttribute('id', 'tasks-table');
+    tasksContainer.appendChild(tasksHeader);
+    tasksHeader.innerHTML = `
+                <thead>
+                <tr id="task-headings">
+                    <th></th>
+                    <th class="heading-cell">Task</th>
+                    <th id="priority" class="heading-cell"><i class="material-icons arrow-down ${sortBy[0].selectedValue === "Priority" ? "visible'" : "hidden"}">arrow_drop_down</i>Priority</th>
+                    <th id="deadline" class="heading-cell"><i class="material-icons arrow-down ${sortBy[0].selectedValue === "Deadline" ? "visible" : "hidden"}">arrow_drop_down</i>Deadline</th>
+                    <th class="sorting-cell">
+                       <select class="sort-by">
+                          <option value="Priority" ${sortBy[0].selectedValue === "Priority" ? "selected" : ""}>Priority</option>
+                          <option value="Deadline" ${sortBy[0].selectedValue === "Deadline" ? "selected" : ""}>Deadline</option>
+                       </select>
+                    </th>
+                </tr>
+                </thead>`;
+  }
+};
+
+/**
+ * @param {Array<Object>} tasksArray this is painted to the screen.
+ */
+const generateListOfTasks = (tasksArray = []) => {
+  const tasksTable = document.querySelector('#tasks-table');
+
+  Object(_util__WEBPACK_IMPORTED_MODULE_0__["deleteElementBySelector"])("#tasks-table > tbody");
+
+  // Make a table body container to store all tasks.
+  const tableBody = document.createElement('tbody');
+  tasksTable.appendChild(tableBody);
+
+  // Map over each array element and paint them on screen.
+  tableBody.innerHTML = tasksArray.map((task, index) => {
+    const deadlineAttributeHTML = task.deadline ? `value="${task.deadline}"` : '';
+    return `
+       <tr class="task">
+           <td class="chkbx-cell">
+             <img 
+               class="chkbx-img-unchecked"
+               src="${task.done ? `../images/checkbox-checked.svg` : `../images/checkbox-unchecked.svg`}" 
+               data-index="${index}"></td>
+           <td class="textarea-cell"><textarea rows="1" class="text-cell" data-index="${index}">${task.text}</textarea></td>
+           <td class="priority-cell">
+              <select class="priority" data-index="${index}">
+                    <option value="P0" ${task.priority === "P0" ? "selected" : ""}>P0</option>
+                    <option value="P1" ${task.priority === "P1" ? "selected" : ""}>P1</option>
+                    <option value="P2" ${task.priority === "P2" ? "selected" : ""}>P2</option>
+              </select></td>
+           <td class="deadline-cell">
+             <input type="date" class="deadline" ${deadlineAttributeHTML} data-index="${index}">
+           </td>
+           <td class="icon-cell">
+             <i class="material-icons" data-index="${index}">delete</i>
+           </td>
+       </tr>
+       `;
+  }).join('');
+
+  Object(autosize_src_autosize__WEBPACK_IMPORTED_MODULE_1__["default"])(tableBody.querySelectorAll('textarea'));
+};
+
+
+const selectPriority = (event) => {
+  // event.preventDefault();
+  const element = event.target;
+  const index = element.dataset.index;
+  if (!element.matches('.priority')) return;
+  tasks[index].priority = element.value;
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+
+  // If (#priority i) includes class visible, then run sort function
+  const priorityArrowIcon = document.querySelector('#priority i');
+  if (priorityArrowIcon.classList.contains('visible')) {
+    console.log("Change event listener worked");
+
+    sorting("Priority");
+    // In order to highlight the background of the task, I need task object
+    // to have unique identifier in order to be able to find it from the
+    // list of tasks.
+  }
+};
+
+
+/**
+ * If item(s) in tasks, then generate table with the task(s).
+ */
+const initializePlannerUI = () => {
+  if (tasks.length === 0) return;
+  generateTableWithHeader();
+  generateListOfTasks(tasks);
+};
+
+/**
+ * If no tasks created, then paint the empty state into on planner page.
+ */
+const createEmptyStatePlanner = () => {
+  if (tasks.length > 0) return;
+  const tasksTable = document.querySelector('#tasks-table');
+  if (!tasksTable) {
+    addEmptyStateToPlanner();
+  }
+};
+
+
+/**
+ * Function to add empty state paragraph to Planner section.
+ */
+const addEmptyStateToPlanner = () => {
+  const container = document.querySelector('#tasks-container');
+  const div = document.createElement('div');
+  container.appendChild(div);
+  div.setAttribute('id', 'empty-stage-planner');
+  div.setAttribute('class', 'empty-stage');
+
+  div.innerHTML = `<img class="sun" src="../images/sun.svg"><p class="empty-stage-text gray">You have no tasks.<br>Add a task below.</p>`;
+};
+
+const ifNoTasksAddEmptyStateToPlanner = () => {
+  if (tasks.length === 0) {
+    Object(_util__WEBPACK_IMPORTED_MODULE_0__["deleteElementBySelector"])('#tasks-table');
+    createEmptyStatePlanner();
+    document.querySelector('#add-task').focus();
+  }
+};
+
+const ifNoCompletedTasksAddEmptyStateToDone = () => {
+  if (tasksDone.length === 0) {
+    Object(_util__WEBPACK_IMPORTED_MODULE_0__["deleteElementBySelector"])('#tasks-done');
+    createEmptyStateDone();
+    document.querySelector('#add-task').focus();
+  }
+};
+
+// Function to delete a task.
+const deleteTask = (event) => {
+  const element = event.target;
+  const index = element.dataset.index;
+  // Only register the click on delete icon.
+  if (!element.matches('.icon-cell i.material-icons')) return;
+  tasks.splice(`${index}`, 1);
+
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+  generateListOfTasks(tasks);
+  ifNoTasksAddEmptyStateToPlanner();
+}
+
+const addDeadlineToTask = (event) => {
+  // event.preventDefault();
+  const element = event.target;
+  const index = element.dataset.index;
+  if (!element.matches('.deadline-cell input[type="date"]')) return;
+
+  const dateInShort = element.value;
+  tasks[index].deadline = dateInShort;
+
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+  // If (#deadline i) includes class visible, then run sort function
+  const deadlineArrowIcon = document.querySelector('#deadline i');
+  if (deadlineArrowIcon.classList.contains('visible')) {
+    sorting("Deadline");
+    // Add a highlighter to a task.
+  }
+};
+
+// Function that adds highlighter
+
+
+// Function that records every key pressed inside task textarea and stores the
+// value inside of tasks array object's text key.
+const editTaskText = (event) => {
+  event.preventDefault();
+  const element = event.target;
+  const text = element.value;
+  const index = element.dataset.index;
+  if (!element.matches('.text-cell')) return;
+  tasks[index].text = text;
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+};
+
+
+const editTextInTaskCompleted = (event) => {
+  event.preventDefault();
+  const element = event.target;
+  const text = element.value;
+  const index = element.dataset.index;
+  if (!element.matches('.done-text-cell')) return;
+  tasksDone[index].text = text;
+
+  localStorage.setItem('tasksDone', JSON.stringify(tasksDone));
+};
+
+const deleteTaskIfTaskTextRemoved = (event) => {
+  event.preventDefault();
+  const element = event.target;
+  const text = element.value;
+  const index = element.dataset.index;
+  if (!element.matches('.text-cell')) return;
+  if (text.trim() === '') {
+    tasks.splice(index, 1);
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+    generateListOfTasks(tasks);
+    ifNoTasksAddEmptyStateToPlanner();
+  }
+  document.querySelector('#add-task').focus();
+};
+
+const deleteCompletedTaskIfTaskTextRemoved = (event) => {
+  event.preventDefault();
+  const element = event.target;
+  const text = element.value;
+  const index = element.dataset.index;
+  if (!element.matches('.done-text-cell')) return;
+  if (text.trim() === '') {
+    tasksDone.splice(index, 1);
+    localStorage.setItem('tasksDone', JSON.stringify(tasksDone));
+    generateListOfTasksDone(tasksDone);
+    ifNoCompletedTasksAddEmptyStateToDone();
+  }
+  document.querySelector('#add-task').focus();
+};
+
+// Function
+const keyboardShortcutToSaveTaskText = () => {
+
+};
+
+
+// Function to add a current date on the website.
+const generateTodaysDateAndTime = () => {
+  setInterval(() => {
+    const dateContainer = document.querySelector('#date');
+    const today = new Date();
+
+    const date = today.toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric'
+    });
+
+    const time = today.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
+    dateContainer.innerHTML = `Today \u00A0\u00A0|\u00A0\u00A0 ${date} \u00A0\u00A0|\u00A0\u00A0 ${time}`;
+  }, 1000);
+};
+
+
+// TODO Clean up code below.
+
+// Function to generate list of tasks that are done
+const generateListOfTasksDone = (tasksDoneArray = []) => {
+  const tasksDoneContainer = document.querySelector('#done-tasks-container');
+
+  // Delete all the done tasks on UI
+  Object(_util__WEBPACK_IMPORTED_MODULE_0__["deleteElementBySelector"])('#tasks-done');
+
+  const table = document.createElement('table');
+  table.setAttribute('id', 'tasks-done');
+  tasksDoneContainer.appendChild(table);
+
+  const tasksDoneTable = document.querySelector('#tasks-done');
+
+  tasksDoneTable.innerHTML = tasksDoneArray.map((task, index) => {
+    return `
+        <tr class="task-done">
+          <td class="chkbx-cell"><img
+               class="chkbx-img-checked"
+               src="${task.done ? `../images/checkbox-checked.svg` : `../images/checkbox-unchecked-green.svg`}"
+               data-index="${index}"></td>
+          <td><textarea class="done-text-cell" rows="1" data-index="${index}">${task.text}</textarea></td>
+        </tr>
+    `;
+  }).join('');
+
+  Object(autosize_src_autosize__WEBPACK_IMPORTED_MODULE_1__["default"])(tasksDoneTable.querySelectorAll('textarea'));
+};
+
+/**
+ * If no tasks completed, then paint the empty state into on done page.
+ */
+const createEmptyStateDone = () => {
+  if (tasksDone.length > 0) return;
+  const tasksDoneTable = document.querySelector('#tasks-done');
+  if (!tasksDoneTable) {
+    addEmptyStateToDone();
+  }
+};
+
+
+// Function to add empty state paragraph to Done section
+const addEmptyStateToDone = () => {
+  const container = document.querySelector('#done-tasks-container');
+  const div = document.createElement('div');
+  div.setAttribute('id', 'empty-stage-done');
+  div.setAttribute('class', 'empty-stage top-padding');
+  container.appendChild(div);
+
+  div.innerHTML = `<img class="checkbox" src="../images/checkbox_icon.svg"><p class="empty-stage-text">Tasks you get done<br>will appear here.</p>`;
+};
+
+const initializeDoneUI = () => {
+  if (tasksDone.length === 0) return;
+  generateListOfTasksDone(tasksDone);
+};
+
+
+// Responsive design JS
+
+
+const delay = 1;
+
+const handleWindowResize = () => {
+  let resizeTaskId = null;
+
+  window.addEventListener('resize', evt => {
+    if (resizeTaskId !== null) {
+      clearTimeout(resizeTaskId);
+    }
+
+    resizeTaskId = setTimeout(() => {
+      resizeTaskId = null;
+      generatePageLayout();
+    }, delay);
+  });
+};
+
+
+const generatePageLayout = () => {
+  const checkboxButton = document.querySelector('#checkbox-button');
+  const addButtonSmall = document.querySelector('#add-button-small');
+  const addButton = document.querySelector('#add-button');
+  const addTasks = document.querySelector('#add-tasks');
+  const toPlannerButton = document.querySelector('#back-to-planner');
+  const doneContainer = document.querySelector('#done-container');
+  const mainContent = document.querySelector('#main-content');
+
+  if (window.matchMedia("(min-width: 800px)").matches) {
+    addButton.style.display = 'flex';
+    checkboxButton.style.display = 'none';
+    addButtonSmall.style.display = 'none';
+    addTasks.style.padding = '0';
+    toPlannerButton.style.display = 'none';
+    doneContainer.style.width = '530px';
+    mainContent.style.display = 'flex';
+    doneContainer.style.display = 'flex';
+    checkboxClicked = false;
+  }
+
+  if (window.matchMedia("(max-width: 799px)").matches) {
+    addButton.style.display = 'none';
+    checkboxButton.style.display = 'flex';
+    addButtonSmall.style.display = 'flex';
+    addTasks.style.padding = '0 15px';
+    toPlannerButton.style.display = 'flex';
+    doneContainer.style.display = 'none';
+    mainContent.style.display = 'flex';
+  }
+
+  if (window.matchMedia("(max-width: 799px)").matches && checkboxClicked === true) {
+    doneContainer.style.display = 'flex';
+    mainContent.style.display = 'none';
+    console.log("screen width < 719 && checkboxClicked === true")
+  }
+};
+
+// Function to view done tasks if screen is smaller then 720px;
+
+// Add event listener to the checkbox button
+const checkboxButton = document.querySelector('#checkbox-button');
+let checkboxClicked = false;
+
+const viewCompletedTasks = () => {
+  checkboxClicked = true;
+  const doneContainer = document.querySelector('#done-container');
+  doneContainer.style.display = 'flex';
+  doneContainer.style.height = '100vh';
+  doneContainer.style.width = '100%';
+  doneContainer.style.minWidth = '320px';
+
+  const mainContent = document.querySelector('#main-content');
+  mainContent.style.display = 'none';
+};
+
+
+// Run on document loaded.
+document.addEventListener("DOMContentLoaded", main);
+
+/***/ }),
+
+/***/ "./src/util.js":
+/*!*********************!*\
+  !*** ./src/util.js ***!
+  \*********************/
+/*! exports provided: deleteElementBySelector */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "deleteElementBySelector", function() { return deleteElementBySelector; });
+const deleteElementBySelector = (selector) => {
+  if (!selector) return;
+  const divToRemove = document.querySelector(selector);
+  if (!divToRemove) return;
+  divToRemove.parentNode.removeChild(divToRemove);
+};
+
+
+
+/***/ })
+
+/******/ });
+//# sourceMappingURL=main.js.map

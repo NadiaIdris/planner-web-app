@@ -11,8 +11,9 @@ const doneTasksContainer = document.querySelector('#done-tasks-container');
 
 const main = () => {
   generateTodaysDateAndTime();
-  loadFromLocalStorage();
+  loadTasksFromLocalStorage();
   loadTasksDoneFromLocalStorage();
+  loadSortedByFromLocalStorage();
   createEmptyStatePlanner();
   createEmptyStateDone();
   initializePlannerUI();
@@ -34,15 +35,134 @@ const main = () => {
   doneTasksContainer.addEventListener('click', markTaskUncompleted);
   doneTasksContainer.addEventListener('keyup', editTextInTaskCompleted);
   doneTasksContainer.addEventListener('focusout', deleteCompletedTaskIfTaskTextRemoved);
+
+  tasksContainer.addEventListener('change', sortTasksOnChange);
+  window.addEventListener('load', sortTasksOnPageLoad);
+  // tasksContainer load event listener needed to be added. Don't know why,
+  // but the code didn't just work with the window event listener above.
+  tasksContainer.addEventListener('load', sortTasksOnPageLoad);
+  tasksContainer.addEventListener('click', sortTasksOnClick);
 };
 
 
 // Tasks.
 
 let tasks;
-const loadFromLocalStorage = () => {
+const loadTasksFromLocalStorage = () => {
   tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+  // tasksContainer.addEventListener('change', sortTasksOnChange);
 };
+
+let sortBy;
+const loadSortedByFromLocalStorage = () => {
+  sortBy = JSON.parse(localStorage.getItem('sortBy')) || [{selectedValue: "Priority"}];
+};
+
+// Function to sort an array. Takes a param which is dropdown selected value.
+const sorting = (value) => {
+  const selected = {
+    selectedValue: "Priority",
+  };
+
+  // Check if change value is "Deadline".
+  if (value === "Deadline") {
+    selected.selectedValue = value;
+    // Separating tasks without deadline
+    let noDeadlineTasks = [];
+    let deadlineTasks = [];
+    tasks.forEach((task) => {
+      if (task.deadline === '' || 'deadline' in task === false) {
+        noDeadlineTasks.push(task);
+      } else {
+        deadlineTasks.push(task);
+      }
+    });
+
+    // Sorting array by deadline.
+    deadlineTasks.sort((a, b) => {
+      if (a.deadline < b.deadline) return -1;
+      if (a.deadline > b.deadline) return 1;
+      return 0;
+    });
+
+    tasks = [...deadlineTasks, ...noDeadlineTasks];
+
+    sortBy.length = 0;
+    sortBy.push(selected);
+    localStorage.setItem('sortBy', JSON.stringify(sortBy));
+    generateTableWithHeader();
+    generateListOfTasks(tasks);
+  }
+
+  // If change value is "Priority".
+  if (value === "Priority") {
+    selected.selectedValue = value;
+    // Sort the array by priority.
+    tasks.sort((a, b) => {
+      if (a.priority < b.priority) return -1;
+      if (a.priority > b.priority) return 1;
+      return 0;
+    });
+
+    // Clear the array.
+    sortBy.length = 0;
+    sortBy.push(selected);
+    localStorage.setItem('sortBy', JSON.stringify(sortBy));
+    generateTableWithHeader();
+    generateListOfTasks(tasks);
+  }
+};
+
+// Function to sort tasks when dropdown option is present.
+const sortTasksOnChange = (event) => {
+  event.preventDefault();
+  const element = event.target;
+  if (!element.matches('.sort-by')) return;
+  const elementValue = element.value;
+
+  sorting(elementValue);
+};
+
+// Function to sort tasks when page is loaded.
+const sortTasksOnPageLoad = () => {
+  // On page load, get from local storage the correct sorting name
+  const currentlySelected = sortBy[0].selectedValue;
+  sorting(currentlySelected);
+};
+
+//
+const sortTasksOnClick = (event) => {
+  // event.preventDefault();
+  let element = event.target;
+  let elementValue;
+
+  if (!element.matches('#priority') && !element.matches('#deadline') && !element.matches('i.arrow-down')) return;
+
+  const priorityArrowIcon = document.querySelector('#priority i');
+  const deadlineArrowIcon = document.querySelector('#deadline i');
+
+  if (element.textContent.includes('Priority') || element.matches('#priority' +
+      ' i.arrow-down')) {
+    elementValue = "Priority";
+
+    // Add arrow to priority.
+    priorityArrowIcon.classList.add('visible');
+    priorityArrowIcon.classList.remove('hidden');
+    // If arrow exists in deadline, remove arrow.
+    deadlineArrowIcon.classList.remove('visible');
+    deadlineArrowIcon.classList.add('hidden');
+  } else if (element.textContent.includes('Deadline') || element.matches('#deadline i.arrow-down')) {
+    elementValue = "Deadline";
+    // Add arrow to deadline.
+    deadlineArrowIcon.classList.add('visible');
+    deadlineArrowIcon.classList.remove('hidden');
+    // If arrow exists in priority, remove arrow.
+    priorityArrowIcon.classList.remove('visible');
+    priorityArrowIcon.classList.add('hidden');
+  }
+  sorting(elementValue);
+};
+
 
 // Tasks that are done, parsed from local storage.
 let tasksDone;
@@ -52,7 +172,8 @@ const loadTasksDoneFromLocalStorage = () => {
 
 // Function to move task to done section once completed
 const markTaskCompleted = (event) => {
-      const doneEmptyState = document.querySelector('#empty-stage-done');
+  debugger;
+  const doneEmptyState = document.querySelector('#empty-stage-done');
 
       const element = event.target;
       const index = element.dataset.index;
@@ -88,11 +209,10 @@ const markTaskCompleted = (event) => {
 
 const markTaskUncompleted = (event) => {
   // Get the element
-  console.log("markTaskUncompleted is activated on click");
   const element = event.target;
   const index = element.dataset.index;
   if (!element.matches(`img[data-index="${index}"]`)) return;
-  //Set tasksdone[index].done to false.
+  //Set tasksDone[index].done to false.
   tasksDone[index].done = !tasksDone[index].done;
 
   // Remove the element from tasksDone array.
@@ -106,8 +226,18 @@ const markTaskUncompleted = (event) => {
   generateListOfTasksDone(tasksDone);
 
   localStorage.setItem('tasks', JSON.stringify(tasks));
-  generateTableWithHeader();
-  generateListOfTasks(tasks);
+
+  // Sort the undone tasks list based on what sorting option is selected.
+  if (document.querySelector('#deadline i').classList.contains('visible')) {
+    sorting('Deadline');
+    // In order to highlight the background of the task, I need task object
+    // to have unique identifier in order to be able to find it from the
+    // list of tasks.
+  } else {
+    sorting('Priority');
+  }
+
+
 
   if (tasksDone.length === 0) {
     deleteElementBySelector('#tasks-done');
@@ -166,17 +296,22 @@ const generateTableWithHeader = () => {
     // clear the empty state
     deleteElementBySelector('#empty-stage-planner');
 
-    const table = document.createElement('table');
-    table.setAttribute('id', 'tasks-table');
-    tasksContainer.appendChild(table);
-    table.innerHTML = `
+    const tasksHeader = document.createElement('table');
+    tasksHeader.setAttribute('id', 'tasks-table');
+    tasksContainer.appendChild(tasksHeader);
+    tasksHeader.innerHTML = `
                 <thead>
                 <tr id="task-headings">
                     <th></th>
                     <th class="heading-cell">Task</th>
-                    <th class="heading-cell"><i class="material-icons arrow-down">keyboard_arrow_down</i>Priority</th>
-                    <th class="heading-cell">Deadline</th>
-                    <th></th>
+                    <th id="priority" class="heading-cell"><i class="material-icons arrow-down ${sortBy[0].selectedValue === "Priority" ? "visible'" : "hidden"}">arrow_drop_down</i>Priority</th>
+                    <th id="deadline" class="heading-cell"><i class="material-icons arrow-down ${sortBy[0].selectedValue === "Deadline" ? "visible" : "hidden"}">arrow_drop_down</i>Deadline</th>
+                    <th class="sorting-cell">
+                       <select class="sort-by">
+                          <option value="Priority" ${sortBy[0].selectedValue === "Priority" ? "selected" : ""}>Priority</option>
+                          <option value="Deadline" ${sortBy[0].selectedValue === "Deadline" ? "selected" : ""}>Deadline</option>
+                       </select>
+                    </th>
                 </tr>
                 </thead>`;
   }
@@ -204,7 +339,7 @@ const generateListOfTasks = (tasksArray = []) => {
                class="chkbx-img-unchecked"
                src="${task.done ? `../images/checkbox-checked.svg` : `../images/checkbox-unchecked.svg`}" 
                data-index="${index}"></td>
-           <td><textarea rows="1" class="text-cell" data-index="${index}">${task.text}</textarea></td>
+           <td class="textarea-cell"><textarea rows="1" class="text-cell" data-index="${index}">${task.text}</textarea></td>
            <td class="priority-cell">
               <select class="priority" data-index="${index}">
                     <option value="P0" ${task.priority === "P0" ? "selected" : ""}>P0</option>
@@ -226,13 +361,23 @@ const generateListOfTasks = (tasksArray = []) => {
 
 
 const selectPriority = (event) => {
+  // event.preventDefault();
   const element = event.target;
   const index = element.dataset.index;
   if (!element.matches('.priority')) return;
-
   tasks[index].priority = element.value;
-
   localStorage.setItem('tasks', JSON.stringify(tasks));
+
+  // If (#priority i) includes class visible, then run sort function
+  const priorityArrowIcon = document.querySelector('#priority i');
+  if (priorityArrowIcon.classList.contains('visible')) {
+    console.log("Change event listener worked");
+
+    sorting("Priority");
+    // In order to highlight the background of the task, I need task object
+    // to have unique identifier in order to be able to find it from the
+    // list of tasks.
+  }
 };
 
 
@@ -287,7 +432,7 @@ const ifNoCompletedTasksAddEmptyStateToDone = () => {
 };
 
 // Function to delete a task.
-function deleteTask(event) {
+const deleteTask = (event) => {
   const element = event.target;
   const index = element.dataset.index;
   // Only register the click on delete icon.
@@ -300,7 +445,7 @@ function deleteTask(event) {
 }
 
 const addDeadlineToTask = (event) => {
-  event.preventDefault();
+  // event.preventDefault();
   const element = event.target;
   const index = element.dataset.index;
   if (!element.matches('.deadline-cell input[type="date"]')) return;
@@ -309,8 +454,16 @@ const addDeadlineToTask = (event) => {
   tasks[index].deadline = dateInShort;
 
   localStorage.setItem('tasks', JSON.stringify(tasks));
-  generateListOfTasks(tasks);
-}
+  // If (#deadline i) includes class visible, then run sort function
+  const deadlineArrowIcon = document.querySelector('#deadline i');
+  if (deadlineArrowIcon.classList.contains('visible')) {
+    sorting("Deadline");
+    // Add a highlighter to a task.
+  }
+};
+
+// Function that adds highlighter
+
 
 // Function that records every key pressed inside task textarea and stores the
 // value inside of tasks array object's text key.
@@ -510,7 +663,6 @@ const generatePageLayout = () => {
     console.log("screen width < 719 && checkboxClicked === true")
   }
 };
-
 
 // Function to view done tasks if screen is smaller then 720px;
 

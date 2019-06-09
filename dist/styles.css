@@ -86,7 +86,7 @@ header {
 }
 
 .checked {
-  content: url("images/checkbox-checked.svg");
+  content: url("../images/checkbox-checked.svg");
   cursor: pointer;
 }
 
@@ -102,11 +102,11 @@ header {
 }
 
 .chkbx-img-unchecked:hover {
-  content: url(images/checkbox-checked.svg);
+  content: url(../images/checkbox-checked.svg);
 }
 
 .chkbx-img-checked:hover {
-  content: url("images/checkbox-unchecked-green.svg");
+  content: url("../images/checkbox-unchecked-green.svg");
 }
 
 .text-cell {
@@ -130,6 +130,13 @@ select.priority > option {
 
 i.arrow-down {
   font-size: 18px;
+}
+
+i.visible {
+  display: block!important;
+}
+i.hidden {
+  display: none!important;
 }
 
 .deadline-cell {
@@ -349,6 +356,10 @@ input:focus, textarea:focus {
   display: none;
 }
 
+.sort-by {
+  display: none;
+}
+
 @media only screen and (max-width: 800px) {
   #done-container {
     display: none;
@@ -408,6 +419,10 @@ input:focus, textarea:focus {
   #add-button {
     display: none;
   }
+
+  .sort-by {
+    display: none;
+  }
 }
 
 
@@ -434,13 +449,91 @@ input:focus, textarea:focus {
     width: 85%;
   }
 
+  .sort-by {
+    display: none;
+  }
 }
 
-/*@media only screen and (max-width: 500px) {*/
-/*  .heading {*/
-/*    color: blue;*/
-/*  }*/
-/*}*/
+@media only screen and (max-width: 500px) {
+  .task {
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    grid-template-rows: auto;
+  }
+
+  .chkbx-cell {
+    grid-column: 1/2;
+    grid-row: 1/2;
+    margin-bottom: 10px;
+  }
+
+  .textarea-cell {
+    grid-column: 2/6;
+    grid-row: 1/2;
+    margin-bottom: 10px;
+  }
+
+  .text-cell {
+    width: 100%;
+  }
+
+  .priority-cell {
+    grid-column: 3/4;
+    grid-row: 2/3;
+    width: 80px;
+    margin-top: 10px;
+  }
+
+  .deadline-cell {
+    grid-column: 4/5;
+    grid-row: 2/3;
+    width: 125px;
+    margin-top: 10px;
+  }
+
+  .icon-cell {
+    grid-column: 5/6;
+    /*grid-row: 2/3;*/
+    /*width: 45px;*/
+    /*margin-top: 10px;*/
+  }
+
+  .sort-by {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 359px) {
+  #task-headings {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .heading-cell {
+    display: none;
+  }
+
+  .sorting-cell {
+    display: flex;
+    /*direction: rtl !important;*/
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .sort-by {
+    display: flex;
+    padding: 3px 5px;
+    border: none;
+    font-size: 11px;
+    font-weight: 800;
+  }
+
+  .sort-by * {
+    font-size: 11px;
+    font-weight: 800;
+  }
+
+}
 
 
 

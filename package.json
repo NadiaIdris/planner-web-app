@@ -12,9 +12,9 @@
     "webpack-dev-server": "^3.4.1"
   },
   "scripts": {
-    "build": "webpack",
+    "build": "webpack --devtool source-map --mode=development",
     "watch": "webpack --watch",
-    "start": "webpack-dev-server"
+    "start": "webpack-dev-server --mode development --content-base dist --hot"
   },
   "repository": {
     "type": "git",
