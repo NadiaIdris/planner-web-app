@@ -157,7 +157,7 @@ const loadTasksDoneFromLocalStorage = () => {
 
 // Function to move task to done section once completed
 const markTaskCompleted = (event) => {
-  const doneEmptyState = document.querySelector('#empty-stage-done');
+      const doneEmptyState = document.querySelector('#empty-stage-done');
 
       const element = event.target;
       const index = element.dataset.index;
@@ -196,14 +196,55 @@ const markTaskUncompleted = (event) => {
   const element = event.target;
   const index = element.dataset.index;
   if (!element.matches(`img[data-index="${index}"]`)) return;
-  //Set tasksDone[index].done to false.
+
+  //Set done to false.
   tasksDone[index].done = !tasksDone[index].done;
 
-  // Remove the element from tasksDone array.
-  const uncheckedTask = tasksDone.splice(index, 1);
+  // Move the task in front of others that have the same priority or deadline.
+  // If sorted by Deadline
+  let deadlineArrowIcon = document.querySelector('#deadline i');
+  if(deadlineArrowIcon === null) {
+    generateTableWithHeader();
+  }
+  deadlineArrowIcon = document.querySelector('#deadline i');
 
-  // Add the removed element back to tasks array.
-  tasks.push(uncheckedTask[0]);
+  if (deadlineArrowIcon.classList.contains('visible')) {
+    // Get the task deadline value from the tasksDone in localStorage.
+    const deadline = tasksDone[index].deadline;
+    // Check tasks array to see is there at least one task with the same
+    // deadline.
+    const found = tasks.find(task => task.deadline === deadline);
+
+    if (found === undefined) {
+      // Remove the element from tasksDone array.
+      const uncheckedTask = tasksDone.splice(index, 1);
+      // Add the unchecked task to tasks array.
+      tasks.push(uncheckedTask[0]);
+    } else {
+      // If another task has the same deadline, then get its index.
+      const indexOfDuplicate = tasks.indexOf(found);
+      // Remove the element from tasksDone array.
+      const uncheckedTask = tasksDone.splice(index, 1);
+      // Add the task in front of the first task that has same date.
+      tasks.splice(indexOfDuplicate, 0, uncheckedTask[0]);
+    }
+  } else {
+    // Get the task priority value from the tasksDone in localStorage.
+    const priority = tasksDone[index].priority;
+
+    // Check tasks array to see is there at least one task with the same
+    // priority.
+    const found = tasks.find(task => task.priority === priority);
+
+    if (found === undefined) {
+      const uncheckedTask = tasksDone.splice(index, 1);
+      tasks.push(uncheckedTask[0]);
+    } else {
+      const indexOfDuplicate = tasks.indexOf(found);
+      const uncheckedTask = tasksDone.splice(index, 1);
+      tasks.splice(indexOfDuplicate, 0, uncheckedTask[0]);
+    }
+  }
 
   // Set the tasksDone in local storage
   localStorage.setItem('tasksDone', JSON.stringify(tasksDone));
@@ -214,25 +255,6 @@ const markTaskUncompleted = (event) => {
   sortTasks();
   // Set the local storage with the correct tasks order.
   localStorage.setItem('tasks', JSON.stringify(tasks));
-
-  // // Move the task in front of others that have the same priority or deadline.
-  // // If sorted by Deadline
-  // const deadlineArrowIcon = document.querySelector('#deadline i');
-  // if (deadlineArrowIcon.classList.contains('visible')) {
-  //   // Get the task deadline value/date.
-  //
-  //   // If another task with the same deadline exists, then get its index.
-  //
-  //       // Add the task front of the first task that has same date.
-  //   // Do I need to sort again or can I just set the tasks in localStorage
-  //   // again?
-  //   // sorting function sets the local storage with the correct order
-  //   sorting('Deadline');
-  // } else {
-  //   sorting('Priority');
-  // }
-
-  console.table(tasks);
 
   if (tasksDone.length === 0) {
     deleteElementBySelector('#tasks-done');
@@ -273,10 +295,20 @@ const addTask = (event) => {
   };
 
   tasks.push(task);
+
+  // setTimeout(task => {
+  //   task.style.backgroundColor = '#FF0000';
+  // }, 2000);
+
   formElement.reset();
   localStorage.setItem('tasks', JSON.stringify(tasks));
   generateTableWithHeader();
   generateListOfTasks(tasks);
+
+  // setTimeout(task => {
+  //   task.style.backgroundColor = 'none';
+  // }, 2000);
+
 };
 
 /**
