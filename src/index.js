@@ -203,7 +203,7 @@ const markTaskUncompleted = (event) => {
   // Move the task in front of others that have the same priority or deadline.
   // If sorted by Deadline
   let deadlineArrowIcon = document.querySelector('#deadline i');
-  if(deadlineArrowIcon === null) {
+  if (deadlineArrowIcon === null) {
     generateTableWithHeader();
   }
   deadlineArrowIcon = document.querySelector('#deadline i');
@@ -303,6 +303,17 @@ const addTask = (event) => {
   formElement.reset();
   localStorage.setItem('tasks', JSON.stringify(tasks));
   generateTableWithHeader();
+
+  // Sort tasks by priority by default.
+  const priorityArrowIcon = document.querySelector('#priority i');
+  const deadlineArrowIcon = document.querySelector('#deadline i');
+  // Add arrow to priority.
+  priorityArrowIcon.classList.add('visible');
+  priorityArrowIcon.classList.remove('hidden');
+  // If arrow exists in deadline, remove arrow.
+  deadlineArrowIcon.classList.remove('visible');
+  deadlineArrowIcon.classList.add('hidden');
+
   generateListOfTasks(tasks);
 
   // setTimeout(task => {
