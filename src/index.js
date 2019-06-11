@@ -292,13 +292,21 @@ const addTask = (event) => {
     done: false,
     priority: "P2",
     deadline: undefined,
+    id: (() => {
+      const now = new Date;
+      let timestamp = now.getFullYear().toString();
+      timestamp += now.getMonth().toString();
+      timestamp += now.getDate().toString();
+      timestamp += now.getDay().toString();
+      timestamp += now.getHours().toString();
+      timestamp += now.getMinutes().toString();
+      timestamp += now.getSeconds().toString();
+      timestamp += now.getMilliseconds().toString();
+      return timestamp;
+    })()
   };
 
   tasks.push(task);
-
-  // setTimeout(task => {
-  //   task.style.backgroundColor = '#FF0000';
-  // }, 2000);
 
   formElement.reset();
   localStorage.setItem('tasks', JSON.stringify(tasks));
@@ -316,11 +324,49 @@ const addTask = (event) => {
 
   generateListOfTasks(tasks);
 
-  // setTimeout(task => {
-  //   task.style.backgroundColor = 'none';
-  // }, 2000);
+  const index = tasks.findIndex(function (taskInTasksArray) {
+    return taskInTasksArray.id === task.id;
+  });
 
+  // const element = tasks.find(taskInTasksArray => {
+  //   return taskInTasksArray.id === task.id;
+  // });
+  //
+  // console.log(element);
+
+  const gray = "#dddddd";
+  const white = "RGB(255, 255, 255)";
+
+  // Paint the backgrounds of the elements inside the taskContainer same
+  // color as taskContainer.
+  const textBox = document.querySelector(`.text-cell[data-index="${index}"]`);
+  textBox.style.backgroundColor = gray;
+  textBox.style.transition = "background-color .3s";
+  const prioritySelector = document.querySelector(`.priority[data-index="${index}"]`);
+  prioritySelector.style.backgroundColor = gray;
+  prioritySelector.style.transition = "background-color .3s";
+  const deadlineSelector = document.querySelector(`.deadline[data-index="${index}"]`);
+  deadlineSelector.style.backgroundColor = gray;
+  deadlineSelector.style.transition = "background-color .3s";
+
+  // Select task to paint background image
+  const taskContainer = document.querySelector(`.task[data-index="${index}"]`);
+  taskContainer.style.backgroundColor = gray;
+  taskContainer.style.transition = "background-color .3s";
+
+  // Clear all the styling
+  setTimeout(() => {
+    textBox.style.backgroundColor = white;
+    textBox.style.transition = "background-color .4s";
+    prioritySelector.style.backgroundColor = white;
+    prioritySelector.style.transition = "background-color .4s";
+    deadlineSelector.style.backgroundColor = white;
+    deadlineSelector.style.transition = "background-color .4s";
+    taskContainer.style.backgroundColor = white;
+    taskContainer.style.transition = "background-color .4s";
+  },300);
 };
+
 
 /**
  * Check if task entered is empty.
@@ -382,7 +428,7 @@ const generateListOfTasks = (tasksArray = []) => {
   tableBody.innerHTML = tasksArray.map((task, index) => {
     const deadlineAttributeHTML = task.deadline ? `value="${task.deadline}"` : '';
     return `
-       <tr class="task">
+       <tr class="task" data-index="${index}">
            <td class="chkbx-cell">
              <img 
                class="chkbx-img-unchecked"
