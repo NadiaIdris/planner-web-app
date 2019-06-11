@@ -720,31 +720,36 @@ const generatePageLayout = () => {
   const mainContent = document.querySelector('#main-content');
 
   if (window.matchMedia("(min-width: 800px)").matches) {
-    addButton.style.display = 'flex';
-    checkboxButton.style.display = 'none';
     addButtonSmall.style.display = 'none';
+    checkboxButton.style.display = 'none';
     addTasks.style.padding = '0';
     toPlannerButton.style.display = 'none';
     doneContainer.style.width = '530px';
-    mainContent.style.display = 'flex';
     doneContainer.style.display = 'flex';
+    // mainContent.style.display = 'flex';
     checkboxClicked = false;
+    console.log("Min width 800 px is working");
   }
 
   if (window.matchMedia("(max-width: 799px)").matches) {
-    addButton.style.display = 'none';
+    addButtonSmall.style.display = 'none';
+    addButton.style.display = 'flex';
     checkboxButton.style.display = 'flex';
-    addButtonSmall.style.display = 'flex';
     addTasks.style.padding = '0 15px';
     toPlannerButton.style.display = 'flex';
     doneContainer.style.display = 'none';
     mainContent.style.display = 'flex';
   }
 
+  if (window.matchMedia("(max-width: 499px)").matches) {
+    addButton.style.display = 'none';
+    addButtonSmall.style.display = 'flex';
+  }
+
   if (window.matchMedia("(max-width: 799px)").matches && checkboxClicked === true) {
     doneContainer.style.display = 'flex';
     mainContent.style.display = 'none';
-    console.log("screen width < 719 && checkboxClicked === true")
+    console.log("screen width < 799 && checkboxClicked === true")
   }
 };
 

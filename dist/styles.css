@@ -227,7 +227,6 @@ i.hidden {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  margin-right: 8px;
 }
 
 #add-tasks input::placeholder {
@@ -235,14 +234,14 @@ i.hidden {
 }
 
 #add-task {
-  width: 80%;
+  width: 90%;
   z-index: 1;
 }
 
 #add-task:focus {
   outline: none;
   caret-color: var(--lt_pink);
-  caret-size: 2px;
+  /*caret-size: 2px;*/
 }
 
 #add-button {
@@ -403,7 +402,6 @@ input:focus, textarea:focus {
 
   #checkbox-button {
     display: flex;
-    margin-left: 19px;
     padding-left: 17px;
     padding-bottom: 4px;
     border-left: 1px solid black;
@@ -414,7 +412,7 @@ input:focus, textarea:focus {
   }
 
   #add-button-small {
-    padding: 0 10px;
+    padding: 0 20px;
     border: none;
     background-color: var(--white);
     display: flex;

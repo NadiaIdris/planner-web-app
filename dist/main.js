@@ -404,11 +404,7 @@ const main = () => {
   doneTasksContainer.addEventListener('keyup', editTextInTaskCompleted);
   doneTasksContainer.addEventListener('focusout', deleteCompletedTaskIfTaskTextRemoved);
 
-  tasksContainer.addEventListener('change', sortTasksOnChange);
   window.addEventListener('load', sortTasksOnPageLoad);
-  // tasksContainer load event listener needed to be added. Don't know why,
-  // but the code didn't just work with the window event listener above.
-  tasksContainer.addEventListener('load', sortTasksOnPageLoad);
   tasksContainer.addEventListener('click', sortTasksOnClick);
 };
 
@@ -481,21 +477,10 @@ const sorting = (value) => {
   }
 };
 
-// Function to sort tasks when dropdown option is present.
-const sortTasksOnChange = (event) => {
-  event.preventDefault();
-  const element = event.target;
-  if (!element.matches('.sort-by')) return;
-  const elementValue = element.value;
-
-  sorting(elementValue);
-};
-
 // Function to sort tasks when page is loaded.
 const sortTasksOnPageLoad = () => {
-  // On page load, get from local storage the correct sorting name
-  const currentlySelected = sortBy[0].selectedValue;
-  sorting(currentlySelected);
+  if (tasks.length === 0) return;
+  sortTasks();
 };
 
 //
@@ -540,8 +525,7 @@ const loadTasksDoneFromLocalStorage = () => {
 
 // Function to move task to done section once completed
 const markTaskCompleted = (event) => {
-  debugger;
-  const doneEmptyState = document.querySelector('#empty-stage-done');
+      const doneEmptyState = document.querySelector('#empty-stage-done');
 
       const element = event.target;
       const index = element.dataset.index;
@@ -580,36 +564,80 @@ const markTaskUncompleted = (event) => {
   const element = event.target;
   const index = element.dataset.index;
   if (!element.matches(`img[data-index="${index}"]`)) return;
-  //Set tasksDone[index].done to false.
+
+  //Set done to false.
   tasksDone[index].done = !tasksDone[index].done;
 
-  // Remove the element from tasksDone array.
-  const uncheckedTask = tasksDone.splice(index, 1);
-  // Add the removed element back to tasks array.
-  tasks.push(uncheckedTask[0]);
+  // Move the task in front of others that have the same priority or deadline.
+  // If sorted by Deadline
+  let deadlineArrowIcon = document.querySelector('#deadline i');
+  if (deadlineArrowIcon === null) {
+    generateTableWithHeader();
+  }
+  deadlineArrowIcon = document.querySelector('#deadline i');
+
+  if (deadlineArrowIcon.classList.contains('visible')) {
+    // Get the task deadline value from the tasksDone in localStorage.
+    const deadline = tasksDone[index].deadline;
+    // Check tasks array to see is there at least one task with the same
+    // deadline.
+    const found = tasks.find(task => task.deadline === deadline);
+
+    if (found === undefined) {
+      // Remove the element from tasksDone array.
+      const uncheckedTask = tasksDone.splice(index, 1);
+      // Add the unchecked task to tasks array.
+      tasks.push(uncheckedTask[0]);
+    } else {
+      // If another task has the same deadline, then get its index.
+      const indexOfDuplicate = tasks.indexOf(found);
+      // Remove the element from tasksDone array.
+      const uncheckedTask = tasksDone.splice(index, 1);
+      // Add the task in front of the first task that has same date.
+      tasks.splice(indexOfDuplicate, 0, uncheckedTask[0]);
+    }
+  } else {
+    // Get the task priority value from the tasksDone in localStorage.
+    const priority = tasksDone[index].priority;
+
+    // Check tasks array to see is there at least one task with the same
+    // priority.
+    const found = tasks.find(task => task.priority === priority);
+
+    if (found === undefined) {
+      const uncheckedTask = tasksDone.splice(index, 1);
+      tasks.push(uncheckedTask[0]);
+    } else {
+      const indexOfDuplicate = tasks.indexOf(found);
+      const uncheckedTask = tasksDone.splice(index, 1);
+      tasks.splice(indexOfDuplicate, 0, uncheckedTask[0]);
+    }
+  }
 
   // Set the tasksDone in local storage
   localStorage.setItem('tasksDone', JSON.stringify(tasksDone));
   // Repaint the tasks done UI
   generateListOfTasksDone(tasksDone);
 
-  localStorage.setItem('tasks', JSON.stringify(tasks));
-
   // Sort the undone tasks list based on what sorting option is selected.
-  if (document.querySelector('#deadline i').classList.contains('visible')) {
-    sorting('Deadline');
-    // In order to highlight the background of the task, I need task object
-    // to have unique identifier in order to be able to find it from the
-    // list of tasks.
-  } else {
-    sorting('Priority');
-  }
-
-
+  sortTasks();
+  // Set the local storage with the correct tasks order.
+  localStorage.setItem('tasks', JSON.stringify(tasks));
 
   if (tasksDone.length === 0) {
     Object(_util__WEBPACK_IMPORTED_MODULE_0__["deleteElementBySelector"])('#tasks-done');
     createEmptyStateDone();
+  }
+};
+
+// Function to sort the undone tasks list based on what sorting option is
+// selected.
+const sortTasks = () => {
+  const deadlineArrowIcon = document.querySelector('#deadline i');
+  if (deadlineArrowIcon.classList.contains('visible')) {
+    sorting('Deadline');
+  } else {
+    sorting('Priority');
   }
 };
 
@@ -632,14 +660,81 @@ const addTask = (event) => {
     done: false,
     priority: "P2",
     deadline: undefined,
+    id: (() => {
+      const now = new Date;
+      let timestamp = now.getFullYear().toString();
+      timestamp += now.getMonth().toString();
+      timestamp += now.getDate().toString();
+      timestamp += now.getDay().toString();
+      timestamp += now.getHours().toString();
+      timestamp += now.getMinutes().toString();
+      timestamp += now.getSeconds().toString();
+      timestamp += now.getMilliseconds().toString();
+      return timestamp;
+    })()
   };
 
   tasks.push(task);
+
   formElement.reset();
   localStorage.setItem('tasks', JSON.stringify(tasks));
   generateTableWithHeader();
+
+  // Sort tasks by priority by default.
+  const priorityArrowIcon = document.querySelector('#priority i');
+  const deadlineArrowIcon = document.querySelector('#deadline i');
+  // Add arrow to priority.
+  priorityArrowIcon.classList.add('visible');
+  priorityArrowIcon.classList.remove('hidden');
+  // If arrow exists in deadline, remove arrow.
+  deadlineArrowIcon.classList.remove('visible');
+  deadlineArrowIcon.classList.add('hidden');
+
   generateListOfTasks(tasks);
+
+  const index = tasks.findIndex(function (taskInTasksArray) {
+    return taskInTasksArray.id === task.id;
+  });
+
+  // const element = tasks.find(taskInTasksArray => {
+  //   return taskInTasksArray.id === task.id;
+  // });
+  //
+  // console.log(element);
+
+  const gray = "#dddddd";
+  const white = "RGB(255, 255, 255)";
+
+  // Paint the backgrounds of the elements inside the taskContainer same
+  // color as taskContainer.
+  const textBox = document.querySelector(`.text-cell[data-index="${index}"]`);
+  textBox.style.backgroundColor = gray;
+  textBox.style.transition = "background-color .3s";
+  const prioritySelector = document.querySelector(`.priority[data-index="${index}"]`);
+  prioritySelector.style.backgroundColor = gray;
+  prioritySelector.style.transition = "background-color .3s";
+  const deadlineSelector = document.querySelector(`.deadline[data-index="${index}"]`);
+  deadlineSelector.style.backgroundColor = gray;
+  deadlineSelector.style.transition = "background-color .3s";
+
+  // Select task to paint background image
+  const taskContainer = document.querySelector(`.task[data-index="${index}"]`);
+  taskContainer.style.backgroundColor = gray;
+  taskContainer.style.transition = "background-color .3s";
+
+  // Clear all the styling
+  setTimeout(() => {
+    textBox.style.backgroundColor = white;
+    textBox.style.transition = "background-color .4s";
+    prioritySelector.style.backgroundColor = white;
+    prioritySelector.style.transition = "background-color .4s";
+    deadlineSelector.style.backgroundColor = white;
+    deadlineSelector.style.transition = "background-color .4s";
+    taskContainer.style.backgroundColor = white;
+    taskContainer.style.transition = "background-color .4s";
+  },300);
 };
+
 
 /**
  * Check if task entered is empty.
@@ -671,7 +766,7 @@ const generateTableWithHeader = () => {
                 <thead>
                 <tr id="task-headings">
                     <th></th>
-                    <th class="heading-cell">Task</th>
+                    <th id="task" class="heading-cell">Task</th>
                     <th id="priority" class="heading-cell"><i class="material-icons arrow-down ${sortBy[0].selectedValue === "Priority" ? "visible'" : "hidden"}">arrow_drop_down</i>Priority</th>
                     <th id="deadline" class="heading-cell"><i class="material-icons arrow-down ${sortBy[0].selectedValue === "Deadline" ? "visible" : "hidden"}">arrow_drop_down</i>Deadline</th>
                     <th class="sorting-cell">
@@ -701,7 +796,7 @@ const generateListOfTasks = (tasksArray = []) => {
   tableBody.innerHTML = tasksArray.map((task, index) => {
     const deadlineAttributeHTML = task.deadline ? `value="${task.deadline}"` : '';
     return `
-       <tr class="task">
+       <tr class="task" data-index="${index}">
            <td class="chkbx-cell">
              <img 
                class="chkbx-img-unchecked"
@@ -729,23 +824,12 @@ const generateListOfTasks = (tasksArray = []) => {
 
 
 const selectPriority = (event) => {
-  // event.preventDefault();
   const element = event.target;
   const index = element.dataset.index;
   if (!element.matches('.priority')) return;
   tasks[index].priority = element.value;
   localStorage.setItem('tasks', JSON.stringify(tasks));
-
-  // If (#priority i) includes class visible, then run sort function
-  const priorityArrowIcon = document.querySelector('#priority i');
-  if (priorityArrowIcon.classList.contains('visible')) {
-    console.log("Change event listener worked");
-
-    sorting("Priority");
-    // In order to highlight the background of the task, I need task object
-    // to have unique identifier in order to be able to find it from the
-    // list of tasks.
-  }
+  sortTasks();
 };
 
 
@@ -1016,13 +1100,18 @@ const generatePageLayout = () => {
   }
 
   if (window.matchMedia("(max-width: 799px)").matches) {
-    addButton.style.display = 'none';
+    addButtonSmall.style.display = 'none';
     checkboxButton.style.display = 'flex';
-    addButtonSmall.style.display = 'flex';
+    addButton.style.display = 'flex';
     addTasks.style.padding = '0 15px';
     toPlannerButton.style.display = 'flex';
     doneContainer.style.display = 'none';
     mainContent.style.display = 'flex';
+  }
+
+  if (window.matchMedia("(max-width: 499px)").matches) {
+    addButton.style.display = 'none';
+    addButtonSmall.style.display = 'flex';
   }
 
   if (window.matchMedia("(max-width: 799px)").matches && checkboxClicked === true) {
