@@ -157,57 +157,49 @@ const loadTasksDoneFromLocalStorage = () => {
 
 // Function to move task to done section once completed
 const markTaskCompleted = (event) => {
-      const doneEmptyState = document.querySelector('#empty-stage-done');
+  const doneEmptyState = document.querySelector('#empty-stage-done');
 
-      const element = event.target;
-      const index = element.dataset.index;
-      if (!element.matches(`img[data-index="${index}"]`)) return;
-
-      // Remove empty state from done section if present
-      if (doneEmptyState) {
-        deleteElementBySelector('#empty-stage-done');
-      }
-
-      tasks[index].done = !tasks[index].done;
-
-      // Remove the element from the tasks array
-      const checkedTask = tasks.splice(index, 1);
-
-      // Push the element to tasksDone
-      tasksDone.push(checkedTask[0]);
-
-      // Set the tasksDone in local storage
-      localStorage.setItem('tasksDone', JSON.stringify(tasksDone));
-      // Repaint the tasks done UI
-      generateListOfTasksDone(tasksDone);
-
-      localStorage.setItem('tasks', JSON.stringify(tasks));
-      generateListOfTasks(tasks);
-
-      if (tasks.length === 0) {
-        deleteElementBySelector('#tasks-table');
-        createEmptyStatePlanner();
-      }
-    }
-;
-
-const markTaskUncompleted = (event) => {
-  // Get the element
   const element = event.target;
   const index = element.dataset.index;
   if (!element.matches(`img[data-index="${index}"]`)) return;
 
-  //Set done to false.
+  // Remove empty state from done section if present
+  if (doneEmptyState) {
+    deleteElementBySelector('#empty-stage-done');
+  }
+
+  tasks[index].done = !tasks[index].done;
+  // Remove the element from the tasks array
+  const checkedTask = tasks.splice(index, 1);
+  // Push the element to tasksDone
+  tasksDone.push(checkedTask[0]);
+  // Set the tasksDone in local storage
+  localStorage.setItem('tasksDone', JSON.stringify(tasksDone));
+  // Repaint the tasks done UI
+  generateListOfTasksDone(tasksDone);
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+  generateListOfTasks(tasks);
+
+  if (tasks.length === 0) {
+    deleteElementBySelector('#tasks-table');
+    createEmptyStatePlanner();
+  }
+};
+
+const markTaskUncompleted = (event) => {
+  const element = event.target;
+  const index = element.dataset.index;
+  if (!element.matches(`img[data-index="${index}"]`)) return;
   tasksDone[index].done = !tasksDone[index].done;
 
-  // Move the task in front of others that have the same priority or deadline.
-  // If sorted by Deadline
-  let deadlineArrowIcon = document.querySelector('#deadline i');
+  const deadlineArrowIcon = document.querySelector('#deadline i');
   if (deadlineArrowIcon === null) {
     generateTableWithHeader();
   }
-  deadlineArrowIcon = document.querySelector('#deadline i');
 
+  let uncheckedTask;
+
+  // Move the task in front of others that have the same priority or deadline.
   if (deadlineArrowIcon.classList.contains('visible')) {
     // Get the task deadline value from the tasksDone in localStorage.
     const deadline = tasksDone[index].deadline;
@@ -217,14 +209,15 @@ const markTaskUncompleted = (event) => {
 
     if (found === undefined) {
       // Remove the element from tasksDone array.
-      const uncheckedTask = tasksDone.splice(index, 1);
+      uncheckedTask = tasksDone.splice(index, 1);
       // Add the unchecked task to tasks array.
       tasks.push(uncheckedTask[0]);
+      // Find the task & highlight the background
     } else {
       // If another task has the same deadline, then get its index.
       const indexOfDuplicate = tasks.indexOf(found);
       // Remove the element from tasksDone array.
-      const uncheckedTask = tasksDone.splice(index, 1);
+      uncheckedTask = tasksDone.splice(index, 1);
       // Add the task in front of the first task that has same date.
       tasks.splice(indexOfDuplicate, 0, uncheckedTask[0]);
     }
@@ -237,24 +230,25 @@ const markTaskUncompleted = (event) => {
     const found = tasks.find(task => task.priority === priority);
 
     if (found === undefined) {
-      const uncheckedTask = tasksDone.splice(index, 1);
+      uncheckedTask = tasksDone.splice(index, 1);
       tasks.push(uncheckedTask[0]);
     } else {
       const indexOfDuplicate = tasks.indexOf(found);
-      const uncheckedTask = tasksDone.splice(index, 1);
+      uncheckedTask = tasksDone.splice(index, 1);
       tasks.splice(indexOfDuplicate, 0, uncheckedTask[0]);
     }
   }
 
-  // Set the tasksDone in local storage
+  // Set the tasksDone in local storage.
   localStorage.setItem('tasksDone', JSON.stringify(tasksDone));
   // Repaint the tasks done UI
   generateListOfTasksDone(tasksDone);
 
-  // Sort the undone tasks list based on what sorting option is selected.
+  // Sort the tasks.
   sortTasks();
   // Set the local storage with the correct tasks order.
   localStorage.setItem('tasks', JSON.stringify(tasks));
+  highlightTask(uncheckedTask[0]);
 
   if (tasksDone.length === 0) {
     deleteElementBySelector('#tasks-done');
@@ -280,10 +274,29 @@ const sortTasks = () => {
  */
 const addTask = (event) => {
   event.preventDefault();
-  // Store the value in an object. Store object inside an array in local
-  // storage.
-  const text = document.querySelector('#add-task').value;
 
+  // If no tasks present, set the default sorting to priority.
+  const tasksTable = document.querySelector('#tasks-table');
+  if (!tasksTable) {
+    // Sort tasks by default by priority .
+    sortBy.length = 0;
+    const priority = {
+      selectedValue: "Priority"
+    };
+    sortBy.push(priority);
+    localStorage.setItem('sortBy', JSON.stringify(sortBy));
+    // Add table header.
+    generateTableWithHeader();
+    // Add arrow to priority and remove arrow from deadline.
+    const priorityArrowIcon = document.querySelector('#priority i');
+    const deadlineArrowIcon = document.querySelector('#deadline i');
+    priorityArrowIcon.classList.add('visible');
+    priorityArrowIcon.classList.remove('hidden');
+    deadlineArrowIcon.classList.remove('visible');
+    deadlineArrowIcon.classList.add('hidden');
+  }
+
+  const text = document.querySelector('#add-task').value;
   // If text field is empty, stop executing the rest of the function.
   if (checkIfTaskIsEmpty(text)) return;
 
@@ -310,61 +323,46 @@ const addTask = (event) => {
 
   formElement.reset();
   localStorage.setItem('tasks', JSON.stringify(tasks));
-  generateTableWithHeader();
-
-  // Sort tasks by priority by default.
-  const priorityArrowIcon = document.querySelector('#priority i');
-  const deadlineArrowIcon = document.querySelector('#deadline i');
-  // Add arrow to priority.
-  priorityArrowIcon.classList.add('visible');
-  priorityArrowIcon.classList.remove('hidden');
-  // If arrow exists in deadline, remove arrow.
-  deadlineArrowIcon.classList.remove('visible');
-  deadlineArrowIcon.classList.add('hidden');
 
   generateListOfTasks(tasks);
+  highlightTask(task);
+};
 
-  const index = tasks.findIndex(function (taskInTasksArray) {
-    return taskInTasksArray.id === task.id;
-  });
-
-  // const element = tasks.find(taskInTasksArray => {
-  //   return taskInTasksArray.id === task.id;
-  // });
-  //
-  // console.log(element);
+const highlightTask = (taskElementInArray) => {
+  const index = tasks.findIndex(task => task.id === taskElementInArray.id);
 
   const gray = "#dddddd";
   const white = "RGB(255, 255, 255)";
+  const timeItTakesToAddHighlight = ".3s";
+  const timeItTakesToRemoveHighlight = "1.5s";
 
   // Paint the backgrounds of the elements inside the taskContainer same
   // color as taskContainer.
   const textBox = document.querySelector(`.text-cell[data-index="${index}"]`);
   textBox.style.backgroundColor = gray;
-  textBox.style.transition = "background-color .3s";
+  textBox.style.transition = `background-color ${timeItTakesToAddHighlight}`;
   const prioritySelector = document.querySelector(`.priority[data-index="${index}"]`);
   prioritySelector.style.backgroundColor = gray;
-  prioritySelector.style.transition = "background-color .3s";
+  prioritySelector.style.transition = `background-color ${timeItTakesToAddHighlight}`;
   const deadlineSelector = document.querySelector(`.deadline[data-index="${index}"]`);
   deadlineSelector.style.backgroundColor = gray;
-  deadlineSelector.style.transition = "background-color .3s";
-
+  deadlineSelector.style.transition = `background-color ${timeItTakesToAddHighlight}`;
   // Select task to paint background image
   const taskContainer = document.querySelector(`.task[data-index="${index}"]`);
   taskContainer.style.backgroundColor = gray;
-  taskContainer.style.transition = "background-color .3s";
+  taskContainer.style.transition = `background-color ${timeItTakesToAddHighlight}`;
 
   // Clear all the styling
   setTimeout(() => {
     textBox.style.backgroundColor = white;
-    textBox.style.transition = "background-color .4s";
+    textBox.style.transition = `background-color ${timeItTakesToRemoveHighlight}`;
     prioritySelector.style.backgroundColor = white;
-    prioritySelector.style.transition = "background-color .4s";
+    prioritySelector.style.transition = `background-color ${timeItTakesToRemoveHighlight}`;
     deadlineSelector.style.backgroundColor = white;
-    deadlineSelector.style.transition = "background-color .4s";
+    deadlineSelector.style.transition = `background-color ${timeItTakesToRemoveHighlight}`;
     taskContainer.style.backgroundColor = white;
-    taskContainer.style.transition = "background-color .4s";
-  },300);
+    taskContainer.style.transition = `background-color ${timeItTakesToRemoveHighlight}`;
+  }, 300);
 };
 
 
@@ -482,6 +480,9 @@ const createEmptyStatePlanner = () => {
   const tasksTable = document.querySelector('#tasks-table');
   if (!tasksTable) {
     addEmptyStateToPlanner();
+    // Set delete existing sorting from sortBy array.
+    sortBy.length = 0;
+    localStorage.setItem('sortBy', JSON.stringify(tasks));
   }
 };
 
@@ -504,6 +505,8 @@ const ifNoTasksAddEmptyStateToPlanner = () => {
     deleteElementBySelector('#tasks-table');
     createEmptyStatePlanner();
     document.querySelector('#add-task').focus();
+    // sortBy.length = 0;
+    // localStorage.setItem('sortBy', JSON.stringify(tasks));
   }
 };
 
@@ -542,7 +545,6 @@ const addDeadlineToTask = (event) => {
   const deadlineArrowIcon = document.querySelector('#deadline i');
   if (deadlineArrowIcon.classList.contains('visible')) {
     sorting("Deadline");
-    // Add a highlighter to a task.
   }
 };
 
@@ -721,6 +723,7 @@ const generatePageLayout = () => {
 
   if (window.matchMedia("(min-width: 800px)").matches) {
     addButtonSmall.style.display = 'none';
+    addButton.style.display = 'flex';
     checkboxButton.style.display = 'none';
     addTasks.style.padding = '0';
     toPlannerButton.style.display = 'none';
@@ -728,7 +731,6 @@ const generatePageLayout = () => {
     doneContainer.style.display = 'flex';
     // mainContent.style.display = 'flex';
     checkboxClicked = false;
-    console.log("Min width 800 px is working");
   }
 
   if (window.matchMedia("(max-width: 799px)").matches) {
@@ -746,11 +748,11 @@ const generatePageLayout = () => {
     addButtonSmall.style.display = 'flex';
   }
 
-  if (window.matchMedia("(max-width: 799px)").matches && checkboxClicked === true) {
-    doneContainer.style.display = 'flex';
-    mainContent.style.display = 'none';
-    console.log("screen width < 799 && checkboxClicked === true")
-  }
+  // if (window.matchMedia("(max-width: 799px)").matches && checkboxClicked === true) {
+  //   doneContainer.style.display = 'flex';
+  //   mainContent.style.display = 'none';
+  //   console.log("screen width < 799 && checkboxClicked === true")
+  // }
 };
 
 // Function to view done tasks if screen is smaller then 720px;

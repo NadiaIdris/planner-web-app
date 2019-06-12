@@ -363,7 +363,7 @@ input:focus, textarea:focus {
   display: none;
 }
 
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 799px) {
   #done-container {
     display: none;
   }
