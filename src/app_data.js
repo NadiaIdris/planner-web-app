@@ -1,4 +1,5 @@
 import {Storage} from './storage';
+import {generateId} from "./util";
 
 /**
  * Model for the application. It contains the source of truth for the following:
@@ -12,13 +13,13 @@ import {Storage} from './storage';
  */
 class AppData {
   constructor() {
-    /** @type{Array<Type>} */
+    /** @type{Array<Task>} */
     this.tasks = [];
 
     /** @type{string} */
     this.sortBy_ = SortByValues.Priority;
 
-    /** @type{Array<Type>} */
+    /** @type{Array<Task>} */
     this.tasksDone = [];
 
     Storage.load(this);
@@ -58,6 +59,19 @@ class AppData {
     this.tasksDone.push(checkedTask[0]);
     Storage.save(this);
   }
+
+  /**
+   * @param {Task} task
+   */
+  addTask(task) {
+    this.tasks.push(task);
+    Storage.save(this);
+  }
+
+  getTaskIndex(task) {
+    return appData.tasks.findIndex((element) => element.id ===
+        task.id);
+  }
 }
 
 /** Enumeration of valid values for sortBy. */
@@ -68,7 +82,19 @@ const SortByValues = {
 
 // TODO create Task class
 class Task {
-
+  /**
+   * @param {string} text
+   * @param {boolean} done
+   * @param {string} priority
+   * @param {string} deadline
+   */
+  constructor(text, done, priority, deadline) {
+    this.text = text;
+    this.done = done;
+    this.priority = priority;
+    this.deadline = deadline;
+    this.id = generateId();
+  }
 }
 
 const appData = new AppData();

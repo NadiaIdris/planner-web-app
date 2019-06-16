@@ -1,5 +1,5 @@
 // import autosize from 'autosize';
-import {deleteElementBySelector} from './util';
+import {deleteElementBySelector, generateId} from './util';
 import autosize from 'autosize/src/autosize';
 import {appData, SortByValues, Task} from './app_data';
 
@@ -286,52 +286,15 @@ const addTask = (event) => {
     return;
   }
 
-  const task = {
-    text,
-    done: false,
-    priority: 'P2',
-    deadline: undefined,
-    id: (() => {
-      const now = new Date;
-      let timestamp = now.getFullYear()
-          .toString();
-      timestamp +=
-          now.getMonth()
-              .toString();
-      timestamp +=
-          now.getDate()
-              .toString();
-      timestamp +=
-          now.getDay()
-              .toString();
-      timestamp +=
-          now.getHours()
-              .toString();
-      timestamp +=
-          now.getMinutes()
-              .toString();
-      timestamp +=
-          now.getSeconds()
-              .toString();
-      timestamp +=
-          now.getMilliseconds()
-              .toString();
-      return timestamp;
-    })(),
-  };
-
-  appData.tasks.push(task);
-
+  const task = new Task(text, false, 'P2', undefined);
+  appData.addTask(task);
   formElement.reset();
-  localStorage.setItem('tasks', JSON.stringify(appData.tasks));
-
   generateListOfTasks(appData.tasks);
   highlightTask(task);
 };
 
-const highlightTask = (taskElementInArray) => {
-  const index = appData.tasks.findIndex((task) => task.id ===
-      taskElementInArray.id);
+const highlightTask = (task) => {
+  const index = appData.getTaskIndex(task);
 
   const gray = '#dddddd';
   const white = 'RGB(255, 255, 255)';
@@ -468,9 +431,10 @@ const generateListOfTasks = (tasksArray = []) => {
             data-index="${index}">
         </td>
         <td class="textarea-cell">
-          <textarea  rows="1" class="text-cell" data-index="${index}">
-            ${task.text}
-          </textarea>
+          <textarea 
+            rows="1" 
+            class="text-cell" 
+            data-index="${index}">${task.text}</textarea>
         </td>
         <td class="priority-cell">
           <select class="priority" data-index="${index}">
@@ -675,7 +639,7 @@ const keyboardShortcutToSaveTaskText = () => {
 
 // Function to add a current date on the website.
 const generateTodaysDateAndTime = () => {
-  setInterval(() => {
+  const displayTime = () => {
     const dateContainer = document.querySelector('#date');
     const today = new Date();
 
@@ -691,7 +655,9 @@ const generateTodaysDateAndTime = () => {
 
     dateContainer.innerHTML =
         `Today \u00A0\u00A0|\u00A0\u00A0 ${date} \u00A0\u00A0|\u00A0\u00A0 ${time}`;
-  }, 1000);
+  };
+  setInterval(displayTime, 1000);
+  displayTime();
 };
 
 
