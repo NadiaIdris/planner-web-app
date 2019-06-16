@@ -24,9 +24,6 @@ class AppData {
 
     Storage.load(this);
   }
-  // TODO
-  //  - create methods to mutate the properties
-  //  - when props change call `Storage.save(this)`
 
   // `sortBy` property getter.
   get sortBy() {
@@ -68,6 +65,9 @@ class AppData {
     Storage.save(this);
   }
 
+  // TODO add editTask (make sure to save)
+  // TODO add editTask (make sure to save)
+
   /**
    * @param {Task} task
    * @return {number} Index of task in tasks array.
@@ -84,7 +84,6 @@ const SortByValues = {
   Deadline: 'Deadline',
 };
 
-// TODO create Task class
 class Task {
   /**
    * @param {string} text
