@@ -68,6 +68,10 @@ class AppData {
     Storage.save(this);
   }
 
+  /**
+   * @param {Task} task
+   * @return {number} Index of task in tasks array.
+   */
   getTaskIndex(task) {
     return appData.tasks.findIndex((element) => element.id ===
         task.id);
@@ -86,13 +90,17 @@ class Task {
    * @param {string} text
    * @param {boolean} done
    * @param {string} priority
-   * @param {string} deadline
    */
-  constructor(text, done, priority, deadline) {
+  constructor(text, done, priority) {
+    /** @type{string} */
     this.text = text;
+    /** @type{boolean} */
     this.done = done;
+    /** @type{string} */
     this.priority = priority;
-    this.deadline = deadline;
+    /** @type{string} */
+    this.deadline = undefined;
+    /** @type{string} */
     this.id = generateId();
   }
 }

@@ -286,7 +286,7 @@ const addTask = (event) => {
     return;
   }
 
-  const task = new Task(text, false, 'P2', undefined);
+  const task = new Task(text, false, 'P2');
   appData.addTask(task);
   formElement.reset();
   generateListOfTasks(appData.tasks);
