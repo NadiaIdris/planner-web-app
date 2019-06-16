@@ -1,9 +1,7 @@
 // import autosize from 'autosize';
 import {deleteElementBySelector} from './util';
-import autosize                  from 'autosize/src/autosize';
-import {appData}                 from "./app_data";
-import {storage}                 from './storage';
-
+import autosize from 'autosize/src/autosize';
+import {appData} from './app_data';
 
 // Globals.
 
@@ -33,8 +31,10 @@ const main = () => {
 
   doneTasksContainer.addEventListener('click', markTaskUncompleted);
   doneTasksContainer.addEventListener('keyup', editTextInTaskCompleted);
-  doneTasksContainer.addEventListener('focusout',
-      deleteCompletedTaskIfTaskTextRemoved);
+  doneTasksContainer.addEventListener(
+      'focusout',
+      deleteCompletedTaskIfTaskTextRemoved
+  );
 
   window.addEventListener('load', sortTasksOnPageLoad);
   tasksContainer.addEventListener('click', sortTasksOnClick);
@@ -63,8 +63,12 @@ const sortTasksBy = (value) => {
 
     // Sorting array by deadline.
     deadlineTasks.sort((a, b) => {
-      if (a.deadline < b.deadline) return -1;
-      if (a.deadline > b.deadline) return 1;
+      if (a.deadline < b.deadline) {
+        return -1;
+      }
+      if (a.deadline > b.deadline) {
+        return 1;
+      }
       return 0;
     });
 
@@ -80,8 +84,12 @@ const sortTasksBy = (value) => {
     selected.selectedValue = value;
     // Sort the array by priority.
     storage.tasks.sort((a, b) => {
-      if (a.priority < b.priority) return -1;
-      if (a.priority > b.priority) return 1;
+      if (a.priority < b.priority) {
+        return -1;
+      }
+      if (a.priority > b.priority) {
+        return 1;
+      }
       return 0;
     });
 
@@ -93,7 +101,9 @@ const sortTasksBy = (value) => {
 
 // Function to sort tasks when page is loaded.
 const sortTasksOnPageLoad = () => {
-  if (storage.tasks.length === 0) return;
+  if (storage.tasks.length === 0) {
+    return;
+  }
   sortTasks();
 };
 
@@ -104,13 +114,15 @@ const sortTasksOnClick = (event) => {
 
   if (!element.matches('#priority') &&
       !element.matches('#deadline') &&
-      !element.matches('i.arrow-down')) return;
+      !element.matches('i.arrow-down')) {
+    return;
+  }
 
   const priorityArrowIcon = document.querySelector('#priority i');
   const deadlineArrowIcon = document.querySelector('#deadline i');
 
   if (element.textContent.includes('Priority') || element.matches('#priority' +
-      ' i.arrow-down')) {
+                                                                      ' i.arrow-down')) {
     elementValue = 'Priority';
 
     // Add arrow to priority.
@@ -138,7 +150,9 @@ const markTaskCompleted = (event) => {
 
   const element = event.target;
   const index = element.dataset.index;
-  if (!element.matches(`img[data-index="${index}"]`)) return;
+  if (!element.matches(`img[data-index="${index}"]`)) {
+    return;
+  }
 
   // Remove empty state from done section if present
   if (doneEmptyState) {
@@ -168,7 +182,9 @@ const setSortByPriority = () => {
 const markTaskUncompleted = (event) => {
   const element = event.target;
   const index = element.dataset.index;
-  if (!element.matches(`img[data-index="${index}"]`)) return;
+  if (!element.matches(`img[data-index="${index}"]`)) {
+    return;
+  }
   storage.tasksDone[index].done = !storage.tasksDone[index].done;
 
   let deadlineArrowIcon = document.querySelector('#deadline i');
@@ -275,7 +291,9 @@ const addTask = (event) => {
 
   const text = document.querySelector('#add-task').value;
   // If text field is empty, stop executing the rest of the function.
-  if (checkIfTaskIsEmpty(text)) return;
+  if (checkIfTaskIsEmpty(text)) {
+    return;
+  }
 
   const task = {
     text,
@@ -284,14 +302,29 @@ const addTask = (event) => {
     deadline: undefined,
     id: (() => {
       const now = new Date;
-      let timestamp = now.getFullYear().toString();
-      timestamp += now.getMonth().toString();
-      timestamp += now.getDate().toString();
-      timestamp += now.getDay().toString();
-      timestamp += now.getHours().toString();
-      timestamp += now.getMinutes().toString();
-      timestamp += now.getSeconds().toString();
-      timestamp += now.getMilliseconds().toString();
+      let timestamp = now.getFullYear()
+          .toString();
+      timestamp +=
+          now.getMonth()
+              .toString();
+      timestamp +=
+          now.getDate()
+              .toString();
+      timestamp +=
+          now.getDay()
+              .toString();
+      timestamp +=
+          now.getHours()
+              .toString();
+      timestamp +=
+          now.getMinutes()
+              .toString();
+      timestamp +=
+          now.getSeconds()
+              .toString();
+      timestamp +=
+          now.getMilliseconds()
+              .toString();
       return timestamp;
     })(),
   };
@@ -306,7 +339,8 @@ const addTask = (event) => {
 };
 
 const highlightTask = (taskElementInArray) => {
-  const index = storage.tasks.findIndex((task) => task.id === taskElementInArray.id);
+  const index = storage.tasks.findIndex((task) => task.id ===
+      taskElementInArray.id);
 
   const gray = '#dddddd';
   const white = 'RGB(255, 255, 255)';
@@ -317,7 +351,8 @@ const highlightTask = (taskElementInArray) => {
   // color as taskContainer.
   const textBox = document.querySelector(`.text-cell[data-index="${index}"]`);
   textBox.style.backgroundColor = gray;
-  textBox.style.transition = `background-color ${timeItTakesToAddHighlight}`;
+  textBox.style.transition =
+      `background-color ${timeItTakesToAddHighlight}`;
   const prioritySelector = document.querySelector(`.priority[data-index="${index}"]`);
   prioritySelector.style.backgroundColor = gray;
   prioritySelector.style.transition =
@@ -440,7 +475,8 @@ const generateListOfTasks = (tasksArray = []) => {
            </td>
        </tr>
        `;
-  }).join('');
+  })
+      .join('');
 
   autosize(tableBody.querySelectorAll('textarea'));
 };
@@ -449,7 +485,9 @@ const generateListOfTasks = (tasksArray = []) => {
 const selectPriority = (event) => {
   const element = event.target;
   const index = element.dataset.index;
-  if (!element.matches('.priority')) return;
+  if (!element.matches('.priority')) {
+    return;
+  }
   storage.tasks[index].priority = element.value;
   sortTasks();
   localStorage.setItem('tasks', JSON.stringify(storage.tasks));
@@ -460,7 +498,9 @@ const selectPriority = (event) => {
  * If item(s) in tasks, then generate table with the task(s).
  */
 const initializePlannerUI = () => {
-  if (storage.tasks.length === 0) return;
+  if (storage.tasks.length === 0) {
+    return;
+  }
   generateTableWithHeader();
   generateListOfTasks(storage.tasks);
 };
@@ -469,7 +509,9 @@ const initializePlannerUI = () => {
  * If no tasks created, then paint the empty state into on planner page.
  */
 const createEmptyStatePlanner = () => {
-  if (storage.tasks.length > 0) return;
+  if (storage.tasks.length > 0) {
+    return;
+  }
   const tasksTable = document.querySelector('#tasks-table');
   if (!tasksTable) {
     addEmptyStateToPlanner();
@@ -498,7 +540,8 @@ const ifNoTasksAddEmptyStateToPlanner = () => {
   if (storage.tasks.length === 0) {
     deleteElementBySelector('#tasks-table');
     createEmptyStatePlanner();
-    document.querySelector('#add-task').focus();
+    document.querySelector('#add-task')
+        .focus();
   }
 };
 
@@ -506,7 +549,8 @@ const ifNoCompletedTasksAddEmptyStateToDone = () => {
   if (storage.tasksDone.length === 0) {
     deleteElementBySelector('#tasks-done');
     createEmptyStateDone();
-    document.querySelector('#add-task').focus();
+    document.querySelector('#add-task')
+        .focus();
   }
 };
 
@@ -515,7 +559,9 @@ const deleteTask = (event) => {
   const element = event.target;
   const index = element.dataset.index;
   // Only register the click on delete icon.
-  if (!element.matches('.icon-cell i.material-icons')) return;
+  if (!element.matches('.icon-cell i.material-icons')) {
+    return;
+  }
   storage.tasks.splice(`${index}`, 1);
 
   localStorage.setItem('tasks', JSON.stringify(storage.tasks));
@@ -527,7 +573,9 @@ const addDeadlineToTask = (event) => {
   // event.preventDefault();
   const element = event.target;
   const index = element.dataset.index;
-  if (!element.matches('.deadline-cell input[type="date"]')) return;
+  if (!element.matches('.deadline-cell input[type="date"]')) {
+    return;
+  }
 
   const dateInShort = element.value;
   storage.tasks[index].deadline = dateInShort;
@@ -548,7 +596,9 @@ const editTaskText = (event) => {
   const element = event.target;
   const text = element.value;
   const index = element.dataset.index;
-  if (!element.matches('.text-cell')) return;
+  if (!element.matches('.text-cell')) {
+    return;
+  }
   storage.tasks[index].text = text;
   localStorage.setItem('tasks', JSON.stringify(storage.tasks));
 };
@@ -559,7 +609,9 @@ const editTextInTaskCompleted = (event) => {
   const element = event.target;
   const text = element.value;
   const index = element.dataset.index;
-  if (!element.matches('.done-text-cell')) return;
+  if (!element.matches('.done-text-cell')) {
+    return;
+  }
   storage.tasksDone[index].text = text;
 
   localStorage.setItem('tasksDone', JSON.stringify(storage.tasksDone));
@@ -570,14 +622,17 @@ const deleteTaskIfTaskTextRemoved = (event) => {
   const element = event.target;
   const text = element.value;
   const index = element.dataset.index;
-  if (!element.matches('.text-cell')) return;
+  if (!element.matches('.text-cell')) {
+    return;
+  }
   if (text.trim() === '') {
     storage.tasks.splice(index, 1);
     localStorage.setItem('tasks', JSON.stringify(storage.tasks));
     generateListOfTasks(storage.tasks);
     ifNoTasksAddEmptyStateToPlanner();
   }
-  document.querySelector('#add-task').focus();
+  document.querySelector('#add-task')
+      .focus();
 };
 
 const deleteCompletedTaskIfTaskTextRemoved = (event) => {
@@ -585,14 +640,17 @@ const deleteCompletedTaskIfTaskTextRemoved = (event) => {
   const element = event.target;
   const text = element.value;
   const index = element.dataset.index;
-  if (!element.matches('.done-text-cell')) return;
+  if (!element.matches('.done-text-cell')) {
+    return;
+  }
   if (text.trim() === '') {
     storage.tasksDone.splice(index, 1);
     localStorage.setItem('tasksDone', JSON.stringify(storage.tasksDone));
     generateListOfTasksDone(storage.tasksDone);
     ifNoCompletedTasksAddEmptyStateToDone();
   }
-  document.querySelector('#add-task').focus();
+  document.querySelector('#add-task')
+      .focus();
 };
 
 // Function
@@ -649,7 +707,8 @@ const generateListOfTasksDone = (tasksDoneArray = []) => {
           <td><textarea class="done-text-cell" rows="1" data-index="${index}">${task.text}</textarea></td>
         </tr>
     `;
-  }).join('');
+  })
+      .join('');
 
   autosize(tasksDoneTable.querySelectorAll('textarea'));
 };
@@ -658,7 +717,9 @@ const generateListOfTasksDone = (tasksDoneArray = []) => {
  * If no tasks completed, then paint the empty state into on done page.
  */
 const createEmptyStateDone = () => {
-  if (storage.tasksDone.length > 0) return;
+  if (storage.tasksDone.length > 0) {
+    return;
+  }
   const tasksDoneTable = document.querySelector('#tasks-done');
   if (!tasksDoneTable) {
     addEmptyStateToDone();
@@ -679,7 +740,9 @@ const addEmptyStateToDone = () => {
 };
 
 const initializeDoneUI = () => {
-  if (storage.tasksDone.length === 0) return;
+  if (storage.tasksDone.length === 0) {
+    return;
+  }
   generateListOfTasksDone(storage.tasksDone);
 };
 
@@ -741,11 +804,9 @@ const generatePageLayout = () => {
     addButtonSmall.style.display = 'flex';
   }
 
-  // if (window.matchMedia("(max-width: 799px)").matches && checkboxClicked === true) {
-  //   doneContainer.style.display = 'flex';
-  //   mainContent.style.display = 'none';
-  //   console.log("screen width < 799 && checkboxClicked === true")
-  // }
+  // if (window.matchMedia("(max-width: 799px)").matches && checkboxClicked ===
+  // true) { doneContainer.style.display = 'flex'; mainContent.style.display =
+  // 'none'; console.log("screen width < 799 && checkboxClicked === true") }
 };
 
 // Function to view done tasks if screen is smaller then 720px;
