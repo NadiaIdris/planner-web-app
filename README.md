@@ -11,4 +11,6 @@ Responsive web application to plan, organize and track tasks.
 
 <img src="designs/mobile-done.png" width="200">
 
+## References
 
+- https://coryrylan.com/blog/javascript-es6-class-syntax

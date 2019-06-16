@@ -1,7 +1,7 @@
 // import autosize from 'autosize';
 import {deleteElementBySelector} from './util';
 import autosize from 'autosize/src/autosize';
-import {appData} from './app_data';
+import {appData, SortByValues, Task} from './app_data';
 
 // Globals.
 
@@ -74,7 +74,7 @@ const sortTasksBy = (value) => {
 
     appData.tasks = [...deadlineTasks, ...noDeadlineTasks];
 
-    appData.saveSortBy(selected);
+    appData.saveSortBy(selected.selectedValue);
     generateTableWithHeader();
     generateListOfTasks(appData.tasks);
   }
@@ -93,7 +93,7 @@ const sortTasksBy = (value) => {
       return 0;
     });
 
-    appData.saveSortBy(selected);
+    appData.saveSortBy(selected.selectedValue);
     generateTableWithHeader();
     generateListOfTasks(appData.tasks);
   }
@@ -170,15 +170,6 @@ const markTaskCompleted = (event) => {
   }
 };
 
-const setSortByPriority = () => {
-  appData.sortBy.length = 0;
-  const priority = {
-    selectedValue: 'Priority',
-  };
-  appData.sortBy.push(priority);
-  localStorage.setItem('sortBy', JSON.stringify(appData.sortBy));
-};
-
 const markTaskUncompleted = (event) => {
   const element = event.target;
   const index = element.dataset.index;
@@ -191,7 +182,7 @@ const markTaskUncompleted = (event) => {
   // If table header doesn't exist, generate it.
   if (deadlineArrowIcon === null) {
     // Sort by
-    setSortByPriority();
+    appData.sortBy = SortByValues.Priority;
     generateTableWithHeader();
   }
 
@@ -276,8 +267,8 @@ const addTask = (event) => {
   // If no tasks present, set the default sorting to priority.
   const tasksTable = document.querySelector('#tasks-table');
   if (!tasksTable) {
-    // Sort tasks by default by priority .
-    setSortByPriority();
+    // Sort tasks by default by priority.
+    appData.sortBy = SortByValues.Priority;
     // Add table header.
     generateTableWithHeader();
     // Add arrow to priority and remove arrow from deadline.
@@ -411,25 +402,38 @@ const generateTableWithHeader = () => {
     tasksTable = document.createElement('table');
     tasksTable.setAttribute('id', 'tasks-table');
     tasksContainer.appendChild(tasksTable);
+
+    const priorityArrow =
+              appData.sortBy === SortByValues.Priority ? 'visible' : 'hidden';
+    const deadlineArrow =
+              appData.sortBy === SortByValues.Deadline ? 'visible' : 'hidden';
+    const prioritySelected =
+              appData.sortBy === SortByValues.Priority ? 'selected' : '';
+    const deadlineSelected =
+              appData.sortBy === SortByValues.Deadline ? 'selected' : '';
+
     tasksTable.innerHTML = `
-                <thead>
-                <tr id="task-headings">
-                    <th></th>
-                    <th id="task" class="heading-cell">Task</th>
-                    <th id="priority" class="heading-cell"><i class="material-icons arrow-down ${appData.sortBy[0].selectedValue ===
-    'Priority' ? 'visible' : 'hidden'}">arrow_drop_down</i>Priority</th>
-                    <th id="deadline" class="heading-cell"><i class="material-icons arrow-down ${appData.sortBy[0].selectedValue ===
-    'Deadline' ? 'visible' : 'hidden'}">arrow_drop_down</i>Deadline</th>
-                    <th class="sorting-cell">
-                       <select class="sort-by">
-                          <option value="Priority" ${appData.sortBy[0].selectedValue ===
-    'Priority' ? 'selected' : ''}>Priority</option>
-                          <option value="Deadline" ${appData.sortBy[0].selectedValue ===
-    'Deadline' ? 'selected' : ''}>Deadline</option>
-                       </select>
-                    </th>
-                </tr>
-                </thead>`;
+      <thead>
+      <tr id="task-headings">
+          <th></th>
+          <th id="task" class="heading-cell">Task</th>
+          <th id="priority" class="heading-cell">
+            <i class="material-icons arrow-down ${priorityArrow}">
+            arrow_drop_down</i>Priority
+          </th>
+          <th id="deadline" class="heading-cell">
+            <i class="material-icons arrow-down ${deadlineArrow}">
+            arrow_drop_down</i>Deadline
+          </th>
+          <th class="sorting-cell">
+             <select class="sort-by">
+                <option value="Priority" ${prioritySelected}>Priority</option>
+                <option value="Deadline" ${deadlineSelected}>Deadline</option>
+             </select>
+          </th>
+      </tr>
+      </thead>
+      `;
   }
 };
 
@@ -515,9 +519,7 @@ const createEmptyStatePlanner = () => {
   const tasksTable = document.querySelector('#tasks-table');
   if (!tasksTable) {
     addEmptyStateToPlanner();
-    // Set delete existing sorting from sortBy array.
-    appData.sortBy.length = 0;
-    localStorage.setItem('sortBy', JSON.stringify(appData.tasks));
+    appData.sortBy = SortByValues.Priority;
   }
 };
 

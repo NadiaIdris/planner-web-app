@@ -12,34 +12,51 @@ import {Storage} from './storage';
  */
 class AppData {
   constructor() {
+    /** @type{Array<Type>} */
     this.tasks = [];
-    this.sortBy = SortByValues.Priority;
+
+    /** @type{string} */
+    this.sortBy_ = SortByValues.Priority;
+
+    /** @type{Array<Type>} */
     this.tasksDone = [];
+
     Storage.load(this);
   }
   // TODO
   //  - create methods to mutate the properties
   //  - when props change call `Storage.save(this)`
 
-  /**
-   * @param {Object} value Expected to have selectedValue key.
-   */
-  saveSortBy(value) {
-    this.sortBy.length = 0;
-    this.sortBy.push(value);
-    localStorage.setItem('sortBy', JSON.stringify(this.sortBy));
+  // `sortBy` property getter.
+  get sortBy() {
+    return this.sortBy_;
   }
 
+  // `sortBy` property setter.
+  /**
+   * @param {string} value Set this value and save to storage.
+   */
+  set sortBy(value) {
+    this.sortBy_ = value;
+    Storage.save(this);
+  }
+
+  /**
+   * @param {string} value Expected to have a SortByValues.
+   */
+  saveSortBy(value) {
+    this.sortBy = value;
+    Storage.save(this);
+  }
+
+  /**
+   * @param {string} index Value of the data-index attribute.
+   */
   markTaskDone(index) {
     this.tasks[index].done = !this.tasks[index].done;
-
-    // Move the element at index from tasks array -> tasksDone array.
     const checkedTask = this.tasks.splice(index, 1);
     this.tasksDone.push(checkedTask[0]);
-
-    // Save the tasksDone and tasks arrays to local storage.
-    localStorage.setItem('tasksDone', JSON.stringify(this.tasksDone));
-    localStorage.setItem('tasks', JSON.stringify(this.tasks));
+    Storage.save(this);
   }
 }
 

@@ -359,30 +359,75 @@ if (typeof window === 'undefined' || typeof window.getComputedStyle !== 'functio
 /*!*************************!*\
   !*** ./src/app_data.js ***!
   \*************************/
-/*! exports provided: appData */
+/*! exports provided: appData, Task, SortByValues */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "appData", function() { return appData; });
-const SortByValues = {
-  Priority,
-  Deadline,
-};
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Task", function() { return Task; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SortByValues", function() { return SortByValues; });
+/* harmony import */ var _storage__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./storage */ "./src/storage.js");
 
-class App_data {
+
+/**
+ * Model for the application. It contains the source of truth for the following:
+ * - tasks.
+ * - tasksDone.
+ * - sortBy.
+ *
+ * The model uses Storage to:
+ * - Save its state to persistence when any of the data changes.
+ * - It also attempts to load its state from persistence when it is constructed.
+ */
+class AppData {
   constructor() {
+    /** @type{Array<Type>} */
     this.tasks = [];
+
+    /** @type{string} */
     this.sortBy = SortByValues.Priority;
+
+    /** @type{Array<Type>} */
     this.tasksDone = [];
+
+    _storage__WEBPACK_IMPORTED_MODULE_0__["Storage"].load(this);
+  }
+  // TODO
+  //  - create methods to mutate the properties
+  //  - when props change call `Storage.save(this)`
+
+  /**
+   * @param {string} value Expected to have a SortByValues.
+   */
+  saveSortBy(value) {
+    this.sortBy = value;
+    _storage__WEBPACK_IMPORTED_MODULE_0__["Storage"].save(this);
+  }
+
+  /**
+   * @param {string} index Value of the data-index attribute.
+   */
+  markTaskDone(index) {
+    this.tasks[index].done = !this.tasks[index].done;
+    const checkedTask = this.tasks.splice(index, 1);
+    this.tasksDone.push(checkedTask[0]);
+    _storage__WEBPACK_IMPORTED_MODULE_0__["Storage"].save(this);
   }
 }
 
+/** Enumeration of valid values for sortBy. */
+const SortByValues = {
+  Priority: 'Priority',
+  Deadline: 'Deadline',
+};
+
+// TODO create Task class
 class Task {
 
 }
 
-const appData = new App_data();
+const appData = new AppData();
 
 
 
@@ -401,10 +446,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util */ "./src/util.js");
 /* harmony import */ var autosize_src_autosize__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! autosize/src/autosize */ "./node_modules/autosize/src/autosize.js");
 /* harmony import */ var _app_data__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./app_data */ "./src/app_data.js");
-/* harmony import */ var _storage__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./storage */ "./src/storage.js");
 // import autosize from 'autosize';
-
-
 
 
 
@@ -437,8 +479,10 @@ const main = () => {
 
   doneTasksContainer.addEventListener('click', markTaskUncompleted);
   doneTasksContainer.addEventListener('keyup', editTextInTaskCompleted);
-  doneTasksContainer.addEventListener('focusout',
-      deleteCompletedTaskIfTaskTextRemoved);
+  doneTasksContainer.addEventListener(
+      'focusout',
+      deleteCompletedTaskIfTaskTextRemoved
+  );
 
   window.addEventListener('load', sortTasksOnPageLoad);
   tasksContainer.addEventListener('click', sortTasksOnClick);
@@ -457,7 +501,7 @@ const sortTasksBy = (value) => {
     // Separating tasks without deadline
     const noDeadlineTasks = [];
     const deadlineTasks = [];
-    _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks.forEach((task) => {
+    _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks.forEach((task) => {
       if (task.deadline === '' || 'deadline' in task === false) {
         noDeadlineTasks.push(task);
       } else {
@@ -467,37 +511,47 @@ const sortTasksBy = (value) => {
 
     // Sorting array by deadline.
     deadlineTasks.sort((a, b) => {
-      if (a.deadline < b.deadline) return -1;
-      if (a.deadline > b.deadline) return 1;
+      if (a.deadline < b.deadline) {
+        return -1;
+      }
+      if (a.deadline > b.deadline) {
+        return 1;
+      }
       return 0;
     });
 
-    _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks = [...deadlineTasks, ...noDeadlineTasks];
+    _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks = [...deadlineTasks, ...noDeadlineTasks];
 
-    _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].saveSortBy(selected);
+    _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].saveSortBy(selected.selectedValue);
     generateTableWithHeader();
-    generateListOfTasks(_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks);
+    generateListOfTasks(_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks);
   }
 
   // If change value is "Priority".
   if (value === 'Priority') {
     selected.selectedValue = value;
     // Sort the array by priority.
-    _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks.sort((a, b) => {
-      if (a.priority < b.priority) return -1;
-      if (a.priority > b.priority) return 1;
+    _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks.sort((a, b) => {
+      if (a.priority < b.priority) {
+        return -1;
+      }
+      if (a.priority > b.priority) {
+        return 1;
+      }
       return 0;
     });
 
-    _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].saveSortBy(selected);
+    _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].saveSortBy(selected.selectedValue);
     generateTableWithHeader();
-    generateListOfTasks(_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks);
+    generateListOfTasks(_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks);
   }
 };
 
 // Function to sort tasks when page is loaded.
 const sortTasksOnPageLoad = () => {
-  if (_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks.length === 0) return;
+  if (_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks.length === 0) {
+    return;
+  }
   sortTasks();
 };
 
@@ -508,13 +562,15 @@ const sortTasksOnClick = (event) => {
 
   if (!element.matches('#priority') &&
       !element.matches('#deadline') &&
-      !element.matches('i.arrow-down')) return;
+      !element.matches('i.arrow-down')) {
+    return;
+  }
 
   const priorityArrowIcon = document.querySelector('#priority i');
   const deadlineArrowIcon = document.querySelector('#deadline i');
 
   if (element.textContent.includes('Priority') || element.matches('#priority' +
-      ' i.arrow-down')) {
+                                                                      ' i.arrow-down')) {
     elementValue = 'Priority';
 
     // Add arrow to priority.
@@ -542,7 +598,9 @@ const markTaskCompleted = (event) => {
 
   const element = event.target;
   const index = element.dataset.index;
-  if (!element.matches(`img[data-index="${index}"]`)) return;
+  if (!element.matches(`img[data-index="${index}"]`)) {
+    return;
+  }
 
   // Remove empty state from done section if present
   if (doneEmptyState) {
@@ -550,30 +608,32 @@ const markTaskCompleted = (event) => {
   }
 
   // Repaint the tasks done UI
-  _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].markTaskDone(index);
-  generateListOfTasksDone(_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasksDone);
-  generateListOfTasks(_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks);
+  _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].markTaskDone(index);
+  generateListOfTasksDone(_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasksDone);
+  generateListOfTasks(_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks);
 
-  if (_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks.length === 0) {
+  if (_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks.length === 0) {
     Object(_util__WEBPACK_IMPORTED_MODULE_0__["deleteElementBySelector"])('#tasks-table');
     createEmptyStatePlanner();
   }
 };
 
 const setSortByPriority = () => {
-  _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].sortBy.length = 0;
+  _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].sortBy.length = 0;
   const priority = {
     selectedValue: 'Priority',
   };
-  _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].sortBy.push(priority);
-  localStorage.setItem('sortBy', JSON.stringify(_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].sortBy));
+  _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].sortBy.push(priority);
+  localStorage.setItem('sortBy', JSON.stringify(_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].sortBy));
 };
 
 const markTaskUncompleted = (event) => {
   const element = event.target;
   const index = element.dataset.index;
-  if (!element.matches(`img[data-index="${index}"]`)) return;
-  _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasksDone[index].done = !_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasksDone[index].done;
+  if (!element.matches(`img[data-index="${index}"]`)) {
+    return;
+  }
+  _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasksDone[index].done = !_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasksDone[index].done;
 
   let deadlineArrowIcon = document.querySelector('#deadline i');
   // If table header doesn't exist, generate it.
@@ -590,54 +650,54 @@ const markTaskUncompleted = (event) => {
   // Move the task in front of others that have the same priority or deadline.
   if (deadlineArrowIcon.classList.contains('visible')) {
     // Get the task deadline value from the tasksDone in localStorage.
-    const deadline = _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasksDone[index].deadline;
+    const deadline = _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasksDone[index].deadline;
     // Check tasks array to see is there at least one task with the same
     // deadline.
-    const found = _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks.find((task) => task.deadline === deadline);
+    const found = _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks.find((task) => task.deadline === deadline);
 
     if (found === undefined) {
       // Remove the element from tasksDone array.
-      uncheckedTask = _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasksDone.splice(index, 1);
+      uncheckedTask = _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasksDone.splice(index, 1);
       // Add the unchecked task to tasks array.
-      _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks.push(uncheckedTask[0]);
+      _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks.push(uncheckedTask[0]);
       // Find the task & highlight the background
     } else {
       // If another task has the same deadline, then get its index.
-      const indexOfDuplicate = _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks.indexOf(found);
+      const indexOfDuplicate = _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks.indexOf(found);
       // Remove the element from tasksDone array.
-      uncheckedTask = _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasksDone.splice(index, 1);
+      uncheckedTask = _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasksDone.splice(index, 1);
       // Add the task in front of the first task that has same date.
-      _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks.splice(indexOfDuplicate, 0, uncheckedTask[0]);
+      _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks.splice(indexOfDuplicate, 0, uncheckedTask[0]);
     }
   } else {
     // Get the task priority value from the tasksDone in localStorage.
-    const priority = _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasksDone[index].priority;
+    const priority = _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasksDone[index].priority;
     // Check tasks array to see is there at least one task with the same
     // priority.
-    const found = _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks.find((task) => task.priority === priority);
+    const found = _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks.find((task) => task.priority === priority);
 
     if (found === undefined) {
-      uncheckedTask = _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasksDone.splice(index, 1);
-      _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks.push(uncheckedTask[0]);
+      uncheckedTask = _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasksDone.splice(index, 1);
+      _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks.push(uncheckedTask[0]);
     } else {
-      const indexOfDuplicate = _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks.indexOf(found);
-      uncheckedTask = _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasksDone.splice(index, 1);
-      _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks.splice(indexOfDuplicate, 0, uncheckedTask[0]);
+      const indexOfDuplicate = _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks.indexOf(found);
+      uncheckedTask = _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasksDone.splice(index, 1);
+      _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks.splice(indexOfDuplicate, 0, uncheckedTask[0]);
     }
   }
 
-  // Set the tasksDone in local storage.
-  localStorage.setItem('tasksDone', JSON.stringify(_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasksDone));
+  // Set the tasksDone in local appData.
+  localStorage.setItem('tasksDone', JSON.stringify(_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasksDone));
   // Repaint the tasks done UI
-  generateListOfTasksDone(_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasksDone);
+  generateListOfTasksDone(_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasksDone);
 
   // Sort the tasks.
   sortTasks();
   // Set the local storage with the correct tasks order.
-  localStorage.setItem('tasks', JSON.stringify(_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks));
+  localStorage.setItem('tasks', JSON.stringify(_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks));
   highlightTask(uncheckedTask[0]);
 
-  if (_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasksDone.length === 0) {
+  if (_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasksDone.length === 0) {
     Object(_util__WEBPACK_IMPORTED_MODULE_0__["deleteElementBySelector"])('#tasks-done');
     createEmptyStateDone();
   }
@@ -679,7 +739,9 @@ const addTask = (event) => {
 
   const text = document.querySelector('#add-task').value;
   // If text field is empty, stop executing the rest of the function.
-  if (checkIfTaskIsEmpty(text)) return;
+  if (checkIfTaskIsEmpty(text)) {
+    return;
+  }
 
   const task = {
     text,
@@ -688,29 +750,45 @@ const addTask = (event) => {
     deadline: undefined,
     id: (() => {
       const now = new Date;
-      let timestamp = now.getFullYear().toString();
-      timestamp += now.getMonth().toString();
-      timestamp += now.getDate().toString();
-      timestamp += now.getDay().toString();
-      timestamp += now.getHours().toString();
-      timestamp += now.getMinutes().toString();
-      timestamp += now.getSeconds().toString();
-      timestamp += now.getMilliseconds().toString();
+      let timestamp = now.getFullYear()
+          .toString();
+      timestamp +=
+          now.getMonth()
+              .toString();
+      timestamp +=
+          now.getDate()
+              .toString();
+      timestamp +=
+          now.getDay()
+              .toString();
+      timestamp +=
+          now.getHours()
+              .toString();
+      timestamp +=
+          now.getMinutes()
+              .toString();
+      timestamp +=
+          now.getSeconds()
+              .toString();
+      timestamp +=
+          now.getMilliseconds()
+              .toString();
       return timestamp;
     })(),
   };
 
-  _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks.push(task);
+  _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks.push(task);
 
   formElement.reset();
-  localStorage.setItem('tasks', JSON.stringify(_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks));
+  localStorage.setItem('tasks', JSON.stringify(_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks));
 
-  generateListOfTasks(_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks);
+  generateListOfTasks(_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks);
   highlightTask(task);
 };
 
 const highlightTask = (taskElementInArray) => {
-  const index = _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks.findIndex((task) => task.id === taskElementInArray.id);
+  const index = _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks.findIndex((task) => task.id ===
+      taskElementInArray.id);
 
   const gray = '#dddddd';
   const white = 'RGB(255, 255, 255)';
@@ -721,7 +799,8 @@ const highlightTask = (taskElementInArray) => {
   // color as taskContainer.
   const textBox = document.querySelector(`.text-cell[data-index="${index}"]`);
   textBox.style.backgroundColor = gray;
-  textBox.style.transition = `background-color ${timeItTakesToAddHighlight}`;
+  textBox.style.transition =
+      `background-color ${timeItTakesToAddHighlight}`;
   const prioritySelector = document.querySelector(`.priority[data-index="${index}"]`);
   prioritySelector.style.backgroundColor = gray;
   prioritySelector.style.transition =
@@ -785,15 +864,15 @@ const generateTableWithHeader = () => {
                 <tr id="task-headings">
                     <th></th>
                     <th id="task" class="heading-cell">Task</th>
-                    <th id="priority" class="heading-cell"><i class="material-icons arrow-down ${_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].sortBy[0].selectedValue ===
+                    <th id="priority" class="heading-cell"><i class="material-icons arrow-down ${_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].sortBy[0].selectedValue ===
     'Priority' ? 'visible' : 'hidden'}">arrow_drop_down</i>Priority</th>
-                    <th id="deadline" class="heading-cell"><i class="material-icons arrow-down ${_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].sortBy[0].selectedValue ===
+                    <th id="deadline" class="heading-cell"><i class="material-icons arrow-down ${_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].sortBy[0].selectedValue ===
     'Deadline' ? 'visible' : 'hidden'}">arrow_drop_down</i>Deadline</th>
                     <th class="sorting-cell">
                        <select class="sort-by">
-                          <option value="Priority" ${_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].sortBy[0].selectedValue ===
+                          <option value="Priority" ${_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].sortBy[0].selectedValue ===
     'Priority' ? 'selected' : ''}>Priority</option>
-                          <option value="Deadline" ${_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].sortBy[0].selectedValue ===
+                          <option value="Deadline" ${_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].sortBy[0].selectedValue ===
     'Deadline' ? 'selected' : ''}>Deadline</option>
                        </select>
                     </th>
@@ -844,7 +923,8 @@ const generateListOfTasks = (tasksArray = []) => {
            </td>
        </tr>
        `;
-  }).join('');
+  })
+      .join('');
 
   Object(autosize_src_autosize__WEBPACK_IMPORTED_MODULE_1__["default"])(tableBody.querySelectorAll('textarea'));
 };
@@ -853,10 +933,12 @@ const generateListOfTasks = (tasksArray = []) => {
 const selectPriority = (event) => {
   const element = event.target;
   const index = element.dataset.index;
-  if (!element.matches('.priority')) return;
-  _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks[index].priority = element.value;
+  if (!element.matches('.priority')) {
+    return;
+  }
+  _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks[index].priority = element.value;
   sortTasks();
-  localStorage.setItem('tasks', JSON.stringify(_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks));
+  localStorage.setItem('tasks', JSON.stringify(_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks));
 };
 
 
@@ -864,22 +946,26 @@ const selectPriority = (event) => {
  * If item(s) in tasks, then generate table with the task(s).
  */
 const initializePlannerUI = () => {
-  if (_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks.length === 0) return;
+  if (_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks.length === 0) {
+    return;
+  }
   generateTableWithHeader();
-  generateListOfTasks(_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks);
+  generateListOfTasks(_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks);
 };
 
 /**
  * If no tasks created, then paint the empty state into on planner page.
  */
 const createEmptyStatePlanner = () => {
-  if (_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks.length > 0) return;
+  if (_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks.length > 0) {
+    return;
+  }
   const tasksTable = document.querySelector('#tasks-table');
   if (!tasksTable) {
     addEmptyStateToPlanner();
     // Set delete existing sorting from sortBy array.
-    _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].sortBy.length = 0;
-    localStorage.setItem('sortBy', JSON.stringify(_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks));
+    _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].sortBy.length = 0;
+    localStorage.setItem('sortBy', JSON.stringify(_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks));
   }
 };
 
@@ -899,18 +985,20 @@ const addEmptyStateToPlanner = () => {
 };
 
 const ifNoTasksAddEmptyStateToPlanner = () => {
-  if (_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks.length === 0) {
+  if (_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks.length === 0) {
     Object(_util__WEBPACK_IMPORTED_MODULE_0__["deleteElementBySelector"])('#tasks-table');
     createEmptyStatePlanner();
-    document.querySelector('#add-task').focus();
+    document.querySelector('#add-task')
+        .focus();
   }
 };
 
 const ifNoCompletedTasksAddEmptyStateToDone = () => {
-  if (_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasksDone.length === 0) {
+  if (_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasksDone.length === 0) {
     Object(_util__WEBPACK_IMPORTED_MODULE_0__["deleteElementBySelector"])('#tasks-done');
     createEmptyStateDone();
-    document.querySelector('#add-task').focus();
+    document.querySelector('#add-task')
+        .focus();
   }
 };
 
@@ -919,11 +1007,13 @@ const deleteTask = (event) => {
   const element = event.target;
   const index = element.dataset.index;
   // Only register the click on delete icon.
-  if (!element.matches('.icon-cell i.material-icons')) return;
-  _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks.splice(`${index}`, 1);
+  if (!element.matches('.icon-cell i.material-icons')) {
+    return;
+  }
+  _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks.splice(`${index}`, 1);
 
-  localStorage.setItem('tasks', JSON.stringify(_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks));
-  generateListOfTasks(_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks);
+  localStorage.setItem('tasks', JSON.stringify(_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks));
+  generateListOfTasks(_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks);
   ifNoTasksAddEmptyStateToPlanner();
 };
 
@@ -931,12 +1021,14 @@ const addDeadlineToTask = (event) => {
   // event.preventDefault();
   const element = event.target;
   const index = element.dataset.index;
-  if (!element.matches('.deadline-cell input[type="date"]')) return;
+  if (!element.matches('.deadline-cell input[type="date"]')) {
+    return;
+  }
 
   const dateInShort = element.value;
-  _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks[index].deadline = dateInShort;
+  _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks[index].deadline = dateInShort;
 
-  localStorage.setItem('tasks', JSON.stringify(_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks));
+  localStorage.setItem('tasks', JSON.stringify(_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks));
   // If (#deadline i) includes class visible, then run sort function
   const deadlineArrowIcon = document.querySelector('#deadline i');
   if (deadlineArrowIcon.classList.contains('visible')) {
@@ -952,9 +1044,11 @@ const editTaskText = (event) => {
   const element = event.target;
   const text = element.value;
   const index = element.dataset.index;
-  if (!element.matches('.text-cell')) return;
-  _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks[index].text = text;
-  localStorage.setItem('tasks', JSON.stringify(_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks));
+  if (!element.matches('.text-cell')) {
+    return;
+  }
+  _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks[index].text = text;
+  localStorage.setItem('tasks', JSON.stringify(_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks));
 };
 
 
@@ -963,10 +1057,12 @@ const editTextInTaskCompleted = (event) => {
   const element = event.target;
   const text = element.value;
   const index = element.dataset.index;
-  if (!element.matches('.done-text-cell')) return;
-  _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasksDone[index].text = text;
+  if (!element.matches('.done-text-cell')) {
+    return;
+  }
+  _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasksDone[index].text = text;
 
-  localStorage.setItem('tasksDone', JSON.stringify(_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasksDone));
+  localStorage.setItem('tasksDone', JSON.stringify(_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasksDone));
 };
 
 const deleteTaskIfTaskTextRemoved = (event) => {
@@ -974,14 +1070,17 @@ const deleteTaskIfTaskTextRemoved = (event) => {
   const element = event.target;
   const text = element.value;
   const index = element.dataset.index;
-  if (!element.matches('.text-cell')) return;
+  if (!element.matches('.text-cell')) {
+    return;
+  }
   if (text.trim() === '') {
-    _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks.splice(index, 1);
-    localStorage.setItem('tasks', JSON.stringify(_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks));
-    generateListOfTasks(_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasks);
+    _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks.splice(index, 1);
+    localStorage.setItem('tasks', JSON.stringify(_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks));
+    generateListOfTasks(_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks);
     ifNoTasksAddEmptyStateToPlanner();
   }
-  document.querySelector('#add-task').focus();
+  document.querySelector('#add-task')
+      .focus();
 };
 
 const deleteCompletedTaskIfTaskTextRemoved = (event) => {
@@ -989,14 +1088,17 @@ const deleteCompletedTaskIfTaskTextRemoved = (event) => {
   const element = event.target;
   const text = element.value;
   const index = element.dataset.index;
-  if (!element.matches('.done-text-cell')) return;
+  if (!element.matches('.done-text-cell')) {
+    return;
+  }
   if (text.trim() === '') {
-    _storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasksDone.splice(index, 1);
-    localStorage.setItem('tasksDone', JSON.stringify(_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasksDone));
-    generateListOfTasksDone(_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasksDone);
+    _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasksDone.splice(index, 1);
+    localStorage.setItem('tasksDone', JSON.stringify(_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasksDone));
+    generateListOfTasksDone(_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasksDone);
     ifNoCompletedTasksAddEmptyStateToDone();
   }
-  document.querySelector('#add-task').focus();
+  document.querySelector('#add-task')
+      .focus();
 };
 
 // Function
@@ -1053,7 +1155,8 @@ const generateListOfTasksDone = (tasksDoneArray = []) => {
           <td><textarea class="done-text-cell" rows="1" data-index="${index}">${task.text}</textarea></td>
         </tr>
     `;
-  }).join('');
+  })
+      .join('');
 
   Object(autosize_src_autosize__WEBPACK_IMPORTED_MODULE_1__["default"])(tasksDoneTable.querySelectorAll('textarea'));
 };
@@ -1062,7 +1165,9 @@ const generateListOfTasksDone = (tasksDoneArray = []) => {
  * If no tasks completed, then paint the empty state into on done page.
  */
 const createEmptyStateDone = () => {
-  if (_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasksDone.length > 0) return;
+  if (_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasksDone.length > 0) {
+    return;
+  }
   const tasksDoneTable = document.querySelector('#tasks-done');
   if (!tasksDoneTable) {
     addEmptyStateToDone();
@@ -1083,8 +1188,10 @@ const addEmptyStateToDone = () => {
 };
 
 const initializeDoneUI = () => {
-  if (_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasksDone.length === 0) return;
-  generateListOfTasksDone(_storage__WEBPACK_IMPORTED_MODULE_3__["storage"].tasksDone);
+  if (_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasksDone.length === 0) {
+    return;
+  }
+  generateListOfTasksDone(_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasksDone);
 };
 
 
@@ -1145,11 +1252,9 @@ const generatePageLayout = () => {
     addButtonSmall.style.display = 'flex';
   }
 
-  // if (window.matchMedia("(max-width: 799px)").matches && checkboxClicked === true) {
-  //   doneContainer.style.display = 'flex';
-  //   mainContent.style.display = 'none';
-  //   console.log("screen width < 799 && checkboxClicked === true")
-  // }
+  // if (window.matchMedia("(max-width: 799px)").matches && checkboxClicked ===
+  // true) { doneContainer.style.display = 'flex'; mainContent.style.display =
+  // 'none'; console.log("screen width < 799 && checkboxClicked === true") }
 };
 
 // Function to view done tasks if screen is smaller then 720px;
@@ -1181,42 +1286,37 @@ document.addEventListener('DOMContentLoaded', main);
 /*!************************!*\
   !*** ./src/storage.js ***!
   \************************/
-/*! exports provided: storage */
+/*! exports provided: Storage */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "storage", function() { return storage; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Storage", function() { return Storage; });
 /* harmony import */ var _app_data__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./app_data */ "./src/app_data.js");
 
 
+const Key = 'appData';
+
 class Storage {
-  constructor() {
-    this.tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-    this.sortBy = JSON.parse(localStorage.getItem('sortBy')) || [];
-    this.tasksDone = JSON.parse(localStorage.getItem('tasksDone')) || [];
+  /**
+   * If data is available in local storage, then copy it into appData.
+   * @param {AppData} appData
+   */
+  static load(appData) {
+    const dataFromStorage = JSON.parse(localStorage.getItem(Key));
+    if (!dataFromStorage) return;
+    appData.tasks = dataFromStorage.tasks;
+    appData.sortBy = dataFromStorage.sortBy;
+    appData.tasksDone = dataFromStorage.tasksDone;
   }
 
-  saveSortBy(value) {
-    this.sortBy.length = 0;
-    this.sortBy.push(value);
-    localStorage.setItem('sortBy', JSON.stringify(this.sortBy));
-  }
-
-  markTaskDone(index) {
-    this.tasks[index].done = !this.tasks[index].done;
-
-    // Move the element at index from tasks array -> tasksDone array.
-    const checkedTask = this.tasks.splice(index, 1);
-    this.tasksDone.push(checkedTask[0]);
-
-    // Save the tasksDone and tasks arrays to local storage.
-    localStorage.setItem('tasksDone', JSON.stringify(this.tasksDone));
-    localStorage.setItem('tasks', JSON.stringify(this.tasks));
+  /**
+   * @param {AppData} appData
+   */
+  static save(appData) {
+    localStorage.setItem(Key, JSON.stringify(appData));
   }
 }
-
-const storage = new Storage();
 
 
 
