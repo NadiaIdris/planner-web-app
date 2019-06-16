@@ -366,7 +366,9 @@ if (typeof window === 'undefined' || typeof window.getComputedStyle !== 'functio
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util */ "./src/util.js");
 /* harmony import */ var autosize_src_autosize__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! autosize/src/autosize */ "./node_modules/autosize/src/autosize.js");
+/* harmony import */ var _storage__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./storage */ "./src/storage.js");
 // import autosize from 'autosize';
+
 
 
 
@@ -379,9 +381,9 @@ const doneTasksContainer = document.querySelector('#done-tasks-container');
 
 const main = () => {
   generateTodaysDateAndTime();
-  loadTasksFromLocalStorage();
-  loadTasksDoneFromLocalStorage();
-  loadSortedByFromLocalStorage();
+  Object(_storage__WEBPACK_IMPORTED_MODULE_2__["loadTasksFromLocalStorage"])();
+  Object(_storage__WEBPACK_IMPORTED_MODULE_2__["loadTasksDoneFromLocalStorage"])();
+  Object(_storage__WEBPACK_IMPORTED_MODULE_2__["loadSortedByFromLocalStorage"])();
   createEmptyStatePlanner();
   createEmptyStateDone();
   initializePlannerUI();
@@ -409,21 +411,8 @@ const main = () => {
 };
 
 
-// Tasks.
-
-let tasks;
-const loadTasksFromLocalStorage = () => {
-  tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-  // tasksContainer.addEventListener('change', sortTasksOnChange);
-};
-
-let sortBy;
-const loadSortedByFromLocalStorage = () => {
-  sortBy = JSON.parse(localStorage.getItem('sortBy')) || [{selectedValue: "Priority"}];
-};
-
 // Function to sort an array. Takes a param which is dropdown selected value.
-const sorting = (value) => {
+const sortTasksBy = (value) => {
   const selected = {
     selectedValue: "Priority",
   };
@@ -434,7 +423,7 @@ const sorting = (value) => {
     // Separating tasks without deadline
     let noDeadlineTasks = [];
     let deadlineTasks = [];
-    tasks.forEach((task) => {
+    _storage__WEBPACK_IMPORTED_MODULE_2__["tasks"].forEach((task) => {
       if (task.deadline === '' || 'deadline' in task === false) {
         noDeadlineTasks.push(task);
       } else {
@@ -451,9 +440,9 @@ const sorting = (value) => {
 
     tasks = [...deadlineTasks, ...noDeadlineTasks];
 
-    sortBy.length = 0;
-    sortBy.push(selected);
-    localStorage.setItem('sortBy', JSON.stringify(sortBy));
+    _storage__WEBPACK_IMPORTED_MODULE_2__["sortBy"].length = 0;
+    _storage__WEBPACK_IMPORTED_MODULE_2__["sortBy"].push(selected);
+    localStorage.setItem('sortBy', JSON.stringify(_storage__WEBPACK_IMPORTED_MODULE_2__["sortBy"]));
     generateTableWithHeader();
     generateListOfTasks(tasks);
   }
@@ -461,6 +450,14 @@ const sorting = (value) => {
   // If change value is "Priority".
   if (value === "Priority") {
     selected.selectedValue = value;
+
+    // const element = event.target;
+    // const index = element.dataset.index;
+    // const selectedPriority = document.querySelector(`.task[data-index="${index}"]`);
+
+    // tasks.forEach(task => {
+    //   if (task.priority === )
+    // });
     // Sort the array by priority.
     tasks.sort((a, b) => {
       if (a.priority < b.priority) return -1;
@@ -469,9 +466,9 @@ const sorting = (value) => {
     });
 
     // Clear the array.
-    sortBy.length = 0;
-    sortBy.push(selected);
-    localStorage.setItem('sortBy', JSON.stringify(sortBy));
+    _storage__WEBPACK_IMPORTED_MODULE_2__["sortBy"].length = 0;
+    _storage__WEBPACK_IMPORTED_MODULE_2__["sortBy"].push(selected);
+    localStorage.setItem('sortBy', JSON.stringify(_storage__WEBPACK_IMPORTED_MODULE_2__["sortBy"]));
     generateTableWithHeader();
     generateListOfTasks(tasks);
   }
@@ -479,11 +476,10 @@ const sorting = (value) => {
 
 // Function to sort tasks when page is loaded.
 const sortTasksOnPageLoad = () => {
-  if (tasks.length === 0) return;
+  if (_storage__WEBPACK_IMPORTED_MODULE_2__["tasks"].length === 0) return;
   sortTasks();
 };
 
-//
 const sortTasksOnClick = (event) => {
   // event.preventDefault();
   let element = event.target;
@@ -513,14 +509,7 @@ const sortTasksOnClick = (event) => {
     priorityArrowIcon.classList.remove('visible');
     priorityArrowIcon.classList.add('hidden');
   }
-  sorting(elementValue);
-};
-
-
-// Tasks that are done, parsed from local storage.
-let tasksDone;
-const loadTasksDoneFromLocalStorage = () => {
-  tasksDone = JSON.parse(localStorage.getItem('tasksDone')) || [];
+  sortTasksBy(elementValue);
 };
 
 // Function to move task to done section once completed
@@ -536,102 +525,114 @@ const markTaskCompleted = (event) => {
     Object(_util__WEBPACK_IMPORTED_MODULE_0__["deleteElementBySelector"])('#empty-stage-done');
   }
 
-  tasks[index].done = !tasks[index].done;
+  _storage__WEBPACK_IMPORTED_MODULE_2__["tasks"][index].done = !_storage__WEBPACK_IMPORTED_MODULE_2__["tasks"][index].done;
   // Remove the element from the tasks array
-  const checkedTask = tasks.splice(index, 1);
+  const checkedTask = _storage__WEBPACK_IMPORTED_MODULE_2__["tasks"].splice(index, 1);
   // Push the element to tasksDone
-  tasksDone.push(checkedTask[0]);
+  _storage__WEBPACK_IMPORTED_MODULE_2__["tasksDone"].push(checkedTask[0]);
   // Set the tasksDone in local storage
-  localStorage.setItem('tasksDone', JSON.stringify(tasksDone));
+  localStorage.setItem('tasksDone', JSON.stringify(_storage__WEBPACK_IMPORTED_MODULE_2__["tasksDone"]));
   // Repaint the tasks done UI
-  generateListOfTasksDone(tasksDone);
-  localStorage.setItem('tasks', JSON.stringify(tasks));
-  generateListOfTasks(tasks);
+  generateListOfTasksDone(_storage__WEBPACK_IMPORTED_MODULE_2__["tasksDone"]);
+  localStorage.setItem('tasks', JSON.stringify(_storage__WEBPACK_IMPORTED_MODULE_2__["tasks"]));
+  generateListOfTasks(_storage__WEBPACK_IMPORTED_MODULE_2__["tasks"]);
 
-  if (tasks.length === 0) {
+  if (_storage__WEBPACK_IMPORTED_MODULE_2__["tasks"].length === 0) {
     Object(_util__WEBPACK_IMPORTED_MODULE_0__["deleteElementBySelector"])('#tasks-table');
     createEmptyStatePlanner();
   }
+};
+
+const setSortByPriority = () => {
+  _storage__WEBPACK_IMPORTED_MODULE_2__["sortBy"].length = 0;
+  const priority = {
+    selectedValue: "Priority"
+  };
+  _storage__WEBPACK_IMPORTED_MODULE_2__["sortBy"].push(priority);
+  localStorage.setItem('sortBy', JSON.stringify(_storage__WEBPACK_IMPORTED_MODULE_2__["sortBy"]));
 };
 
 const markTaskUncompleted = (event) => {
   const element = event.target;
   const index = element.dataset.index;
   if (!element.matches(`img[data-index="${index}"]`)) return;
-  tasksDone[index].done = !tasksDone[index].done;
+  _storage__WEBPACK_IMPORTED_MODULE_2__["tasksDone"][index].done = !_storage__WEBPACK_IMPORTED_MODULE_2__["tasksDone"][index].done;
 
-  const deadlineArrowIcon = document.querySelector('#deadline i');
+  let deadlineArrowIcon = document.querySelector('#deadline i');
+  // If table header doesn't exist, generate it.
   if (deadlineArrowIcon === null) {
+    // Sort by
+    setSortByPriority();
     generateTableWithHeader();
   }
 
   let uncheckedTask;
+  deadlineArrowIcon = document.querySelector('#deadline i');
+
 
   // Move the task in front of others that have the same priority or deadline.
   if (deadlineArrowIcon.classList.contains('visible')) {
     // Get the task deadline value from the tasksDone in localStorage.
-    const deadline = tasksDone[index].deadline;
+    const deadline = _storage__WEBPACK_IMPORTED_MODULE_2__["tasksDone"][index].deadline;
     // Check tasks array to see is there at least one task with the same
     // deadline.
-    const found = tasks.find(task => task.deadline === deadline);
+    const found = _storage__WEBPACK_IMPORTED_MODULE_2__["tasks"].find(task => task.deadline === deadline);
 
     if (found === undefined) {
       // Remove the element from tasksDone array.
-      uncheckedTask = tasksDone.splice(index, 1);
+      uncheckedTask = _storage__WEBPACK_IMPORTED_MODULE_2__["tasksDone"].splice(index, 1);
       // Add the unchecked task to tasks array.
-      tasks.push(uncheckedTask[0]);
+      _storage__WEBPACK_IMPORTED_MODULE_2__["tasks"].push(uncheckedTask[0]);
       // Find the task & highlight the background
     } else {
       // If another task has the same deadline, then get its index.
-      const indexOfDuplicate = tasks.indexOf(found);
+      const indexOfDuplicate = _storage__WEBPACK_IMPORTED_MODULE_2__["tasks"].indexOf(found);
       // Remove the element from tasksDone array.
-      uncheckedTask = tasksDone.splice(index, 1);
+      uncheckedTask = _storage__WEBPACK_IMPORTED_MODULE_2__["tasksDone"].splice(index, 1);
       // Add the task in front of the first task that has same date.
-      tasks.splice(indexOfDuplicate, 0, uncheckedTask[0]);
+      _storage__WEBPACK_IMPORTED_MODULE_2__["tasks"].splice(indexOfDuplicate, 0, uncheckedTask[0]);
     }
   } else {
     // Get the task priority value from the tasksDone in localStorage.
-    const priority = tasksDone[index].priority;
-
+    const priority = _storage__WEBPACK_IMPORTED_MODULE_2__["tasksDone"][index].priority;
     // Check tasks array to see is there at least one task with the same
     // priority.
-    const found = tasks.find(task => task.priority === priority);
+    const found = _storage__WEBPACK_IMPORTED_MODULE_2__["tasks"].find(task => task.priority === priority);
 
     if (found === undefined) {
-      uncheckedTask = tasksDone.splice(index, 1);
-      tasks.push(uncheckedTask[0]);
+      uncheckedTask = _storage__WEBPACK_IMPORTED_MODULE_2__["tasksDone"].splice(index, 1);
+      _storage__WEBPACK_IMPORTED_MODULE_2__["tasks"].push(uncheckedTask[0]);
     } else {
-      const indexOfDuplicate = tasks.indexOf(found);
-      uncheckedTask = tasksDone.splice(index, 1);
-      tasks.splice(indexOfDuplicate, 0, uncheckedTask[0]);
+      const indexOfDuplicate = _storage__WEBPACK_IMPORTED_MODULE_2__["tasks"].indexOf(found);
+      uncheckedTask = _storage__WEBPACK_IMPORTED_MODULE_2__["tasksDone"].splice(index, 1);
+      _storage__WEBPACK_IMPORTED_MODULE_2__["tasks"].splice(indexOfDuplicate, 0, uncheckedTask[0]);
     }
   }
 
   // Set the tasksDone in local storage.
-  localStorage.setItem('tasksDone', JSON.stringify(tasksDone));
+  localStorage.setItem('tasksDone', JSON.stringify(_storage__WEBPACK_IMPORTED_MODULE_2__["tasksDone"]));
   // Repaint the tasks done UI
-  generateListOfTasksDone(tasksDone);
+  generateListOfTasksDone(_storage__WEBPACK_IMPORTED_MODULE_2__["tasksDone"]);
 
   // Sort the tasks.
   sortTasks();
   // Set the local storage with the correct tasks order.
-  localStorage.setItem('tasks', JSON.stringify(tasks));
+  localStorage.setItem('tasks', JSON.stringify(_storage__WEBPACK_IMPORTED_MODULE_2__["tasks"]));
   highlightTask(uncheckedTask[0]);
 
-  if (tasksDone.length === 0) {
+  if (_storage__WEBPACK_IMPORTED_MODULE_2__["tasksDone"].length === 0) {
     Object(_util__WEBPACK_IMPORTED_MODULE_0__["deleteElementBySelector"])('#tasks-done');
     createEmptyStateDone();
   }
 };
 
-// Function to sort the undone tasks list based on what sorting option is
-// selected.
+// Function to sort the tasks list based on what sorting option is selected.
 const sortTasks = () => {
   const deadlineArrowIcon = document.querySelector('#deadline i');
   if (deadlineArrowIcon.classList.contains('visible')) {
-    sorting('Deadline');
+    sortTasksBy('Deadline');
   } else {
-    sorting('Priority');
+    sortTasksBy('Priority');
   }
 };
 
@@ -647,12 +648,7 @@ const addTask = (event) => {
   const tasksTable = document.querySelector('#tasks-table');
   if (!tasksTable) {
     // Sort tasks by default by priority .
-    sortBy.length = 0;
-    const priority = {
-      selectedValue: "Priority"
-    };
-    sortBy.push(priority);
-    localStorage.setItem('sortBy', JSON.stringify(sortBy));
+    setSortByPriority();
     // Add table header.
     generateTableWithHeader();
     // Add arrow to priority and remove arrow from deadline.
@@ -687,17 +683,17 @@ const addTask = (event) => {
     })()
   };
 
-  tasks.push(task);
+  _storage__WEBPACK_IMPORTED_MODULE_2__["tasks"].push(task);
 
   formElement.reset();
-  localStorage.setItem('tasks', JSON.stringify(tasks));
+  localStorage.setItem('tasks', JSON.stringify(_storage__WEBPACK_IMPORTED_MODULE_2__["tasks"]));
 
-  generateListOfTasks(tasks);
+  generateListOfTasks(_storage__WEBPACK_IMPORTED_MODULE_2__["tasks"]);
   highlightTask(task);
 };
 
 const highlightTask = (taskElementInArray) => {
-  const index = tasks.findIndex(task => task.id === taskElementInArray.id);
+  const index = _storage__WEBPACK_IMPORTED_MODULE_2__["tasks"].findIndex(task => task.id === taskElementInArray.id);
 
   const gray = "#dddddd";
   const white = "RGB(255, 255, 255)";
@@ -752,25 +748,25 @@ const checkIfTaskIsEmpty = (taskText) => {
  * the next function.
  */
 const generateTableWithHeader = () => {
-  const tasksTable = document.querySelector('#tasks-table');
+  let tasksTable = document.querySelector('#tasks-table');
   if (!tasksTable) {
     // clear the empty state
     Object(_util__WEBPACK_IMPORTED_MODULE_0__["deleteElementBySelector"])('#empty-stage-planner');
 
-    const tasksHeader = document.createElement('table');
-    tasksHeader.setAttribute('id', 'tasks-table');
-    tasksContainer.appendChild(tasksHeader);
-    tasksHeader.innerHTML = `
+    tasksTable = document.createElement('table');
+    tasksTable.setAttribute('id', 'tasks-table');
+    tasksContainer.appendChild(tasksTable);
+    tasksTable.innerHTML = `
                 <thead>
                 <tr id="task-headings">
                     <th></th>
                     <th id="task" class="heading-cell">Task</th>
-                    <th id="priority" class="heading-cell"><i class="material-icons arrow-down ${sortBy[0].selectedValue === "Priority" ? "visible'" : "hidden"}">arrow_drop_down</i>Priority</th>
-                    <th id="deadline" class="heading-cell"><i class="material-icons arrow-down ${sortBy[0].selectedValue === "Deadline" ? "visible" : "hidden"}">arrow_drop_down</i>Deadline</th>
+                    <th id="priority" class="heading-cell"><i class="material-icons arrow-down ${_storage__WEBPACK_IMPORTED_MODULE_2__["sortBy"][0].selectedValue === "Priority" ? "visible" : "hidden"}">arrow_drop_down</i>Priority</th>
+                    <th id="deadline" class="heading-cell"><i class="material-icons arrow-down ${_storage__WEBPACK_IMPORTED_MODULE_2__["sortBy"][0].selectedValue === "Deadline" ? "visible" : "hidden"}">arrow_drop_down</i>Deadline</th>
                     <th class="sorting-cell">
                        <select class="sort-by">
-                          <option value="Priority" ${sortBy[0].selectedValue === "Priority" ? "selected" : ""}>Priority</option>
-                          <option value="Deadline" ${sortBy[0].selectedValue === "Deadline" ? "selected" : ""}>Deadline</option>
+                          <option value="Priority" ${_storage__WEBPACK_IMPORTED_MODULE_2__["sortBy"][0].selectedValue === "Priority" ? "selected" : ""}>Priority</option>
+                          <option value="Deadline" ${_storage__WEBPACK_IMPORTED_MODULE_2__["sortBy"][0].selectedValue === "Deadline" ? "selected" : ""}>Deadline</option>
                        </select>
                     </th>
                 </tr>
@@ -825,9 +821,10 @@ const selectPriority = (event) => {
   const element = event.target;
   const index = element.dataset.index;
   if (!element.matches('.priority')) return;
-  tasks[index].priority = element.value;
-  localStorage.setItem('tasks', JSON.stringify(tasks));
+  _storage__WEBPACK_IMPORTED_MODULE_2__["tasks"][index].priority = element.value;
   sortTasks();
+  localStorage.setItem('tasks', JSON.stringify(_storage__WEBPACK_IMPORTED_MODULE_2__["tasks"]));
+  // highlightTask(task);
 };
 
 
@@ -835,22 +832,22 @@ const selectPriority = (event) => {
  * If item(s) in tasks, then generate table with the task(s).
  */
 const initializePlannerUI = () => {
-  if (tasks.length === 0) return;
+  if (_storage__WEBPACK_IMPORTED_MODULE_2__["tasks"].length === 0) return;
   generateTableWithHeader();
-  generateListOfTasks(tasks);
+  generateListOfTasks(_storage__WEBPACK_IMPORTED_MODULE_2__["tasks"]);
 };
 
 /**
  * If no tasks created, then paint the empty state into on planner page.
  */
 const createEmptyStatePlanner = () => {
-  if (tasks.length > 0) return;
+  if (_storage__WEBPACK_IMPORTED_MODULE_2__["tasks"].length > 0) return;
   const tasksTable = document.querySelector('#tasks-table');
   if (!tasksTable) {
     addEmptyStateToPlanner();
     // Set delete existing sorting from sortBy array.
-    sortBy.length = 0;
-    localStorage.setItem('sortBy', JSON.stringify(tasks));
+    _storage__WEBPACK_IMPORTED_MODULE_2__["sortBy"].length = 0;
+    localStorage.setItem('sortBy', JSON.stringify(_storage__WEBPACK_IMPORTED_MODULE_2__["tasks"]));
   }
 };
 
@@ -869,7 +866,7 @@ const addEmptyStateToPlanner = () => {
 };
 
 const ifNoTasksAddEmptyStateToPlanner = () => {
-  if (tasks.length === 0) {
+  if (_storage__WEBPACK_IMPORTED_MODULE_2__["tasks"].length === 0) {
     Object(_util__WEBPACK_IMPORTED_MODULE_0__["deleteElementBySelector"])('#tasks-table');
     createEmptyStatePlanner();
     document.querySelector('#add-task').focus();
@@ -879,7 +876,7 @@ const ifNoTasksAddEmptyStateToPlanner = () => {
 };
 
 const ifNoCompletedTasksAddEmptyStateToDone = () => {
-  if (tasksDone.length === 0) {
+  if (_storage__WEBPACK_IMPORTED_MODULE_2__["tasksDone"].length === 0) {
     Object(_util__WEBPACK_IMPORTED_MODULE_0__["deleteElementBySelector"])('#tasks-done');
     createEmptyStateDone();
     document.querySelector('#add-task').focus();
@@ -892,10 +889,10 @@ const deleteTask = (event) => {
   const index = element.dataset.index;
   // Only register the click on delete icon.
   if (!element.matches('.icon-cell i.material-icons')) return;
-  tasks.splice(`${index}`, 1);
+  _storage__WEBPACK_IMPORTED_MODULE_2__["tasks"].splice(`${index}`, 1);
 
-  localStorage.setItem('tasks', JSON.stringify(tasks));
-  generateListOfTasks(tasks);
+  localStorage.setItem('tasks', JSON.stringify(_storage__WEBPACK_IMPORTED_MODULE_2__["tasks"]));
+  generateListOfTasks(_storage__WEBPACK_IMPORTED_MODULE_2__["tasks"]);
   ifNoTasksAddEmptyStateToPlanner();
 }
 
@@ -906,13 +903,13 @@ const addDeadlineToTask = (event) => {
   if (!element.matches('.deadline-cell input[type="date"]')) return;
 
   const dateInShort = element.value;
-  tasks[index].deadline = dateInShort;
+  _storage__WEBPACK_IMPORTED_MODULE_2__["tasks"][index].deadline = dateInShort;
 
-  localStorage.setItem('tasks', JSON.stringify(tasks));
+  localStorage.setItem('tasks', JSON.stringify(_storage__WEBPACK_IMPORTED_MODULE_2__["tasks"]));
   // If (#deadline i) includes class visible, then run sort function
   const deadlineArrowIcon = document.querySelector('#deadline i');
   if (deadlineArrowIcon.classList.contains('visible')) {
-    sorting("Deadline");
+    sortTasksBy("Deadline");
   }
 };
 
@@ -927,8 +924,8 @@ const editTaskText = (event) => {
   const text = element.value;
   const index = element.dataset.index;
   if (!element.matches('.text-cell')) return;
-  tasks[index].text = text;
-  localStorage.setItem('tasks', JSON.stringify(tasks));
+  _storage__WEBPACK_IMPORTED_MODULE_2__["tasks"][index].text = text;
+  localStorage.setItem('tasks', JSON.stringify(_storage__WEBPACK_IMPORTED_MODULE_2__["tasks"]));
 };
 
 
@@ -938,9 +935,9 @@ const editTextInTaskCompleted = (event) => {
   const text = element.value;
   const index = element.dataset.index;
   if (!element.matches('.done-text-cell')) return;
-  tasksDone[index].text = text;
+  _storage__WEBPACK_IMPORTED_MODULE_2__["tasksDone"][index].text = text;
 
-  localStorage.setItem('tasksDone', JSON.stringify(tasksDone));
+  localStorage.setItem('tasksDone', JSON.stringify(_storage__WEBPACK_IMPORTED_MODULE_2__["tasksDone"]));
 };
 
 const deleteTaskIfTaskTextRemoved = (event) => {
@@ -950,9 +947,9 @@ const deleteTaskIfTaskTextRemoved = (event) => {
   const index = element.dataset.index;
   if (!element.matches('.text-cell')) return;
   if (text.trim() === '') {
-    tasks.splice(index, 1);
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-    generateListOfTasks(tasks);
+    _storage__WEBPACK_IMPORTED_MODULE_2__["tasks"].splice(index, 1);
+    localStorage.setItem('tasks', JSON.stringify(_storage__WEBPACK_IMPORTED_MODULE_2__["tasks"]));
+    generateListOfTasks(_storage__WEBPACK_IMPORTED_MODULE_2__["tasks"]);
     ifNoTasksAddEmptyStateToPlanner();
   }
   document.querySelector('#add-task').focus();
@@ -965,9 +962,9 @@ const deleteCompletedTaskIfTaskTextRemoved = (event) => {
   const index = element.dataset.index;
   if (!element.matches('.done-text-cell')) return;
   if (text.trim() === '') {
-    tasksDone.splice(index, 1);
-    localStorage.setItem('tasksDone', JSON.stringify(tasksDone));
-    generateListOfTasksDone(tasksDone);
+    _storage__WEBPACK_IMPORTED_MODULE_2__["tasksDone"].splice(index, 1);
+    localStorage.setItem('tasksDone', JSON.stringify(_storage__WEBPACK_IMPORTED_MODULE_2__["tasksDone"]));
+    generateListOfTasksDone(_storage__WEBPACK_IMPORTED_MODULE_2__["tasksDone"]);
     ifNoCompletedTasksAddEmptyStateToDone();
   }
   document.querySelector('#add-task').focus();
@@ -1034,7 +1031,7 @@ const generateListOfTasksDone = (tasksDoneArray = []) => {
  * If no tasks completed, then paint the empty state into on done page.
  */
 const createEmptyStateDone = () => {
-  if (tasksDone.length > 0) return;
+  if (_storage__WEBPACK_IMPORTED_MODULE_2__["tasksDone"].length > 0) return;
   const tasksDoneTable = document.querySelector('#tasks-done');
   if (!tasksDoneTable) {
     addEmptyStateToDone();
@@ -1054,8 +1051,8 @@ const addEmptyStateToDone = () => {
 };
 
 const initializeDoneUI = () => {
-  if (tasksDone.length === 0) return;
-  generateListOfTasksDone(tasksDone);
+  if (_storage__WEBPACK_IMPORTED_MODULE_2__["tasksDone"].length === 0) return;
+  generateListOfTasksDone(_storage__WEBPACK_IMPORTED_MODULE_2__["tasksDone"]);
 };
 
 
@@ -1144,6 +1141,41 @@ const viewCompletedTasks = () => {
 
 // Run on document loaded.
 document.addEventListener("DOMContentLoaded", main);
+
+/***/ }),
+
+/***/ "./src/storage.js":
+/*!************************!*\
+  !*** ./src/storage.js ***!
+  \************************/
+/*! exports provided: tasks, loadTasksFromLocalStorage, sortBy, loadSortedByFromLocalStorage, tasksDone, loadTasksDoneFromLocalStorage */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "tasks", function() { return tasks; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "loadTasksFromLocalStorage", function() { return loadTasksFromLocalStorage; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sortBy", function() { return sortBy; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "loadSortedByFromLocalStorage", function() { return loadSortedByFromLocalStorage; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "tasksDone", function() { return tasksDone; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "loadTasksDoneFromLocalStorage", function() { return loadTasksDoneFromLocalStorage; });
+let tasks;
+const loadTasksFromLocalStorage = () => {
+  tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+};
+
+let sortBy;
+const loadSortedByFromLocalStorage = () => {
+  sortBy = JSON.parse(localStorage.getItem('sortBy')) || [];
+};
+
+// Tasks that are done.
+let tasksDone;
+const loadTasksDoneFromLocalStorage = () => {
+  tasksDone = JSON.parse(localStorage.getItem('tasksDone')) || [];
+};
+
+
 
 /***/ }),
 

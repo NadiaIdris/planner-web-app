@@ -1,6 +1,8 @@
 // import autosize from 'autosize';
-import {deleteElementBySelector} from './util';
-import autosize from "autosize/src/autosize";
+import {deleteElementBySelector} from './Util';
+import autosize from 'autosize/src/autosize';
+import {appData} from "./AppData";
+import {storage} from './Storage';
 
 
 // Globals.
@@ -11,9 +13,6 @@ const doneTasksContainer = document.querySelector('#done-tasks-container');
 
 const main = () => {
   generateTodaysDateAndTime();
-  loadTasksFromLocalStorage();
-  loadTasksDoneFromLocalStorage();
-  loadSortedByFromLocalStorage();
   createEmptyStatePlanner();
   createEmptyStateDone();
   initializePlannerUI();
@@ -34,39 +33,27 @@ const main = () => {
 
   doneTasksContainer.addEventListener('click', markTaskUncompleted);
   doneTasksContainer.addEventListener('keyup', editTextInTaskCompleted);
-  doneTasksContainer.addEventListener('focusout', deleteCompletedTaskIfTaskTextRemoved);
+  doneTasksContainer.addEventListener('focusout',
+      deleteCompletedTaskIfTaskTextRemoved);
 
   window.addEventListener('load', sortTasksOnPageLoad);
   tasksContainer.addEventListener('click', sortTasksOnClick);
 };
 
 
-// Tasks.
-
-let tasks;
-const loadTasksFromLocalStorage = () => {
-  tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-  // tasksContainer.addEventListener('change', sortTasksOnChange);
-};
-
-let sortBy;
-const loadSortedByFromLocalStorage = () => {
-  sortBy = JSON.parse(localStorage.getItem('sortBy')) || [];
-};
-
 // Function to sort an array. Takes a param which is dropdown selected value.
-const sorting = (value) => {
+const sortTasksBy = (value) => {
   const selected = {
-    selectedValue: "Priority",
+    selectedValue: 'Priority',
   };
 
   // Check if change value is "Deadline".
-  if (value === "Deadline") {
+  if (value === 'Deadline') {
     selected.selectedValue = value;
     // Separating tasks without deadline
-    let noDeadlineTasks = [];
-    let deadlineTasks = [];
-    tasks.forEach((task) => {
+    const noDeadlineTasks = [];
+    const deadlineTasks = [];
+    storage.tasks.forEach((task) => {
       if (task.deadline === '' || 'deadline' in task === false) {
         noDeadlineTasks.push(task);
       } else {
@@ -81,62 +68,50 @@ const sorting = (value) => {
       return 0;
     });
 
-    tasks = [...deadlineTasks, ...noDeadlineTasks];
+    storage.tasks = [...deadlineTasks, ...noDeadlineTasks];
 
-    sortBy.length = 0;
-    sortBy.push(selected);
-    localStorage.setItem('sortBy', JSON.stringify(sortBy));
+    storage.saveSortBy(selected);
     generateTableWithHeader();
-    generateListOfTasks(tasks);
+    generateListOfTasks(storage.tasks);
   }
 
   // If change value is "Priority".
-  if (value === "Priority") {
+  if (value === 'Priority') {
     selected.selectedValue = value;
-
-    // const element = event.target;
-    // const index = element.dataset.index;
-    // const selectedPriority = document.querySelector(`.task[data-index="${index}"]`);
-
-    // tasks.forEach(task => {
-    //   if (task.priority === )
-    // });
     // Sort the array by priority.
-    tasks.sort((a, b) => {
+    storage.tasks.sort((a, b) => {
       if (a.priority < b.priority) return -1;
       if (a.priority > b.priority) return 1;
       return 0;
     });
 
-    // Clear the array.
-    sortBy.length = 0;
-    sortBy.push(selected);
-    localStorage.setItem('sortBy', JSON.stringify(sortBy));
+    storage.saveSortBy(selected);
     generateTableWithHeader();
-    generateListOfTasks(tasks);
+    generateListOfTasks(storage.tasks);
   }
 };
 
 // Function to sort tasks when page is loaded.
 const sortTasksOnPageLoad = () => {
-  if (tasks.length === 0) return;
+  if (storage.tasks.length === 0) return;
   sortTasks();
 };
 
-//
 const sortTasksOnClick = (event) => {
   // event.preventDefault();
-  let element = event.target;
+  const element = event.target;
   let elementValue;
 
-  if (!element.matches('#priority') && !element.matches('#deadline') && !element.matches('i.arrow-down')) return;
+  if (!element.matches('#priority') &&
+      !element.matches('#deadline') &&
+      !element.matches('i.arrow-down')) return;
 
   const priorityArrowIcon = document.querySelector('#priority i');
   const deadlineArrowIcon = document.querySelector('#deadline i');
 
   if (element.textContent.includes('Priority') || element.matches('#priority' +
       ' i.arrow-down')) {
-    elementValue = "Priority";
+    elementValue = 'Priority';
 
     // Add arrow to priority.
     priorityArrowIcon.classList.add('visible');
@@ -144,8 +119,9 @@ const sortTasksOnClick = (event) => {
     // If arrow exists in deadline, remove arrow.
     deadlineArrowIcon.classList.remove('visible');
     deadlineArrowIcon.classList.add('hidden');
-  } else if (element.textContent.includes('Deadline') || element.matches('#deadline i.arrow-down')) {
-    elementValue = "Deadline";
+  } else if (element.textContent.includes('Deadline') ||
+      element.matches('#deadline i.arrow-down')) {
+    elementValue = 'Deadline';
     // Add arrow to deadline.
     deadlineArrowIcon.classList.add('visible');
     deadlineArrowIcon.classList.remove('hidden');
@@ -153,14 +129,7 @@ const sortTasksOnClick = (event) => {
     priorityArrowIcon.classList.remove('visible');
     priorityArrowIcon.classList.add('hidden');
   }
-  sorting(elementValue);
-};
-
-
-// Tasks that are done, parsed from local storage.
-let tasksDone;
-const loadTasksDoneFromLocalStorage = () => {
-  tasksDone = JSON.parse(localStorage.getItem('tasksDone')) || [];
+  sortTasksBy(elementValue);
 };
 
 // Function to move task to done section once completed
@@ -176,38 +145,31 @@ const markTaskCompleted = (event) => {
     deleteElementBySelector('#empty-stage-done');
   }
 
-  tasks[index].done = !tasks[index].done;
-  // Remove the element from the tasks array
-  const checkedTask = tasks.splice(index, 1);
-  // Push the element to tasksDone
-  tasksDone.push(checkedTask[0]);
-  // Set the tasksDone in local storage
-  localStorage.setItem('tasksDone', JSON.stringify(tasksDone));
   // Repaint the tasks done UI
-  generateListOfTasksDone(tasksDone);
-  localStorage.setItem('tasks', JSON.stringify(tasks));
-  generateListOfTasks(tasks);
+  storage.markTaskDone(index);
+  generateListOfTasksDone(storage.tasksDone);
+  generateListOfTasks(storage.tasks);
 
-  if (tasks.length === 0) {
+  if (storage.tasks.length === 0) {
     deleteElementBySelector('#tasks-table');
     createEmptyStatePlanner();
   }
 };
 
 const setSortByPriority = () => {
-  sortBy.length = 0;
+  storage.sortBy.length = 0;
   const priority = {
-    selectedValue: "Priority"
+    selectedValue: 'Priority',
   };
-  sortBy.push(priority);
-  localStorage.setItem('sortBy', JSON.stringify(sortBy));
+  storage.sortBy.push(priority);
+  localStorage.setItem('sortBy', JSON.stringify(storage.sortBy));
 };
 
 const markTaskUncompleted = (event) => {
   const element = event.target;
   const index = element.dataset.index;
   if (!element.matches(`img[data-index="${index}"]`)) return;
-  tasksDone[index].done = !tasksDone[index].done;
+  storage.tasksDone[index].done = !storage.tasksDone[index].done;
 
   let deadlineArrowIcon = document.querySelector('#deadline i');
   // If table header doesn't exist, generate it.
@@ -224,67 +186,66 @@ const markTaskUncompleted = (event) => {
   // Move the task in front of others that have the same priority or deadline.
   if (deadlineArrowIcon.classList.contains('visible')) {
     // Get the task deadline value from the tasksDone in localStorage.
-    const deadline = tasksDone[index].deadline;
+    const deadline = storage.tasksDone[index].deadline;
     // Check tasks array to see is there at least one task with the same
     // deadline.
-    const found = tasks.find(task => task.deadline === deadline);
+    const found = storage.tasks.find((task) => task.deadline === deadline);
 
     if (found === undefined) {
       // Remove the element from tasksDone array.
-      uncheckedTask = tasksDone.splice(index, 1);
+      uncheckedTask = storage.tasksDone.splice(index, 1);
       // Add the unchecked task to tasks array.
-      tasks.push(uncheckedTask[0]);
+      storage.tasks.push(uncheckedTask[0]);
       // Find the task & highlight the background
     } else {
       // If another task has the same deadline, then get its index.
-      const indexOfDuplicate = tasks.indexOf(found);
+      const indexOfDuplicate = storage.tasks.indexOf(found);
       // Remove the element from tasksDone array.
-      uncheckedTask = tasksDone.splice(index, 1);
+      uncheckedTask = storage.tasksDone.splice(index, 1);
       // Add the task in front of the first task that has same date.
-      tasks.splice(indexOfDuplicate, 0, uncheckedTask[0]);
+      storage.tasks.splice(indexOfDuplicate, 0, uncheckedTask[0]);
     }
   } else {
     // Get the task priority value from the tasksDone in localStorage.
-    const priority = tasksDone[index].priority;
+    const priority = storage.tasksDone[index].priority;
     // Check tasks array to see is there at least one task with the same
     // priority.
-    const found = tasks.find(task => task.priority === priority);
+    const found = storage.tasks.find((task) => task.priority === priority);
 
     if (found === undefined) {
-      uncheckedTask = tasksDone.splice(index, 1);
-      tasks.push(uncheckedTask[0]);
+      uncheckedTask = storage.tasksDone.splice(index, 1);
+      storage.tasks.push(uncheckedTask[0]);
     } else {
-      const indexOfDuplicate = tasks.indexOf(found);
-      uncheckedTask = tasksDone.splice(index, 1);
-      tasks.splice(indexOfDuplicate, 0, uncheckedTask[0]);
+      const indexOfDuplicate = storage.tasks.indexOf(found);
+      uncheckedTask = storage.tasksDone.splice(index, 1);
+      storage.tasks.splice(indexOfDuplicate, 0, uncheckedTask[0]);
     }
   }
 
   // Set the tasksDone in local storage.
-  localStorage.setItem('tasksDone', JSON.stringify(tasksDone));
+  localStorage.setItem('tasksDone', JSON.stringify(storage.tasksDone));
   // Repaint the tasks done UI
-  generateListOfTasksDone(tasksDone);
+  generateListOfTasksDone(storage.tasksDone);
 
   // Sort the tasks.
   sortTasks();
   // Set the local storage with the correct tasks order.
-  localStorage.setItem('tasks', JSON.stringify(tasks));
+  localStorage.setItem('tasks', JSON.stringify(storage.tasks));
   highlightTask(uncheckedTask[0]);
 
-  if (tasksDone.length === 0) {
+  if (storage.tasksDone.length === 0) {
     deleteElementBySelector('#tasks-done');
     createEmptyStateDone();
   }
 };
 
-// Function to sort the undone tasks list based on what sorting option is
-// selected.
+// Function to sort the tasks list based on what sorting option is selected.
 const sortTasks = () => {
   const deadlineArrowIcon = document.querySelector('#deadline i');
   if (deadlineArrowIcon.classList.contains('visible')) {
-    sorting('Deadline');
+    sortTasksBy('Deadline');
   } else {
-    sorting('Priority');
+    sortTasksBy('Priority');
   }
 };
 
@@ -319,7 +280,7 @@ const addTask = (event) => {
   const task = {
     text,
     done: false,
-    priority: "P2",
+    priority: 'P2',
     deadline: undefined,
     id: (() => {
       const now = new Date;
@@ -332,25 +293,25 @@ const addTask = (event) => {
       timestamp += now.getSeconds().toString();
       timestamp += now.getMilliseconds().toString();
       return timestamp;
-    })()
+    })(),
   };
 
-  tasks.push(task);
+  storage.tasks.push(task);
 
   formElement.reset();
-  localStorage.setItem('tasks', JSON.stringify(tasks));
+  localStorage.setItem('tasks', JSON.stringify(storage.tasks));
 
-  generateListOfTasks(tasks);
+  generateListOfTasks(storage.tasks);
   highlightTask(task);
 };
 
 const highlightTask = (taskElementInArray) => {
-  const index = tasks.findIndex(task => task.id === taskElementInArray.id);
+  const index = storage.tasks.findIndex((task) => task.id === taskElementInArray.id);
 
-  const gray = "#dddddd";
-  const white = "RGB(255, 255, 255)";
-  const timeItTakesToAddHighlight = ".3s";
-  const timeItTakesToRemoveHighlight = "1.5s";
+  const gray = '#dddddd';
+  const white = 'RGB(255, 255, 255)';
+  const timeItTakesToAddHighlight = '.3s';
+  const timeItTakesToRemoveHighlight = '1.5s';
 
   // Paint the backgrounds of the elements inside the taskContainer same
   // color as taskContainer.
@@ -359,25 +320,32 @@ const highlightTask = (taskElementInArray) => {
   textBox.style.transition = `background-color ${timeItTakesToAddHighlight}`;
   const prioritySelector = document.querySelector(`.priority[data-index="${index}"]`);
   prioritySelector.style.backgroundColor = gray;
-  prioritySelector.style.transition = `background-color ${timeItTakesToAddHighlight}`;
+  prioritySelector.style.transition =
+      `background-color ${timeItTakesToAddHighlight}`;
   const deadlineSelector = document.querySelector(`.deadline[data-index="${index}"]`);
   deadlineSelector.style.backgroundColor = gray;
-  deadlineSelector.style.transition = `background-color ${timeItTakesToAddHighlight}`;
+  deadlineSelector.style.transition =
+      `background-color ${timeItTakesToAddHighlight}`;
   // Select task to paint background image
   const taskContainer = document.querySelector(`.task[data-index="${index}"]`);
   taskContainer.style.backgroundColor = gray;
-  taskContainer.style.transition = `background-color ${timeItTakesToAddHighlight}`;
+  taskContainer.style.transition =
+      `background-color ${timeItTakesToAddHighlight}`;
 
   // Clear all the styling
   setTimeout(() => {
     textBox.style.backgroundColor = white;
-    textBox.style.transition = `background-color ${timeItTakesToRemoveHighlight}`;
+    textBox.style.transition =
+        `background-color ${timeItTakesToRemoveHighlight}`;
     prioritySelector.style.backgroundColor = white;
-    prioritySelector.style.transition = `background-color ${timeItTakesToRemoveHighlight}`;
+    prioritySelector.style.transition =
+        `background-color ${timeItTakesToRemoveHighlight}`;
     deadlineSelector.style.backgroundColor = white;
-    deadlineSelector.style.transition = `background-color ${timeItTakesToRemoveHighlight}`;
+    deadlineSelector.style.transition =
+        `background-color ${timeItTakesToRemoveHighlight}`;
     taskContainer.style.backgroundColor = white;
-    taskContainer.style.transition = `background-color ${timeItTakesToRemoveHighlight}`;
+    taskContainer.style.transition =
+        `background-color ${timeItTakesToRemoveHighlight}`;
   }, 300);
 };
 
@@ -385,11 +353,11 @@ const highlightTask = (taskElementInArray) => {
 /**
  * Check if task entered is empty.
  * @param taskText
- * @returns {boolean} true
+ * @return {boolean} true
  */
 const checkIfTaskIsEmpty = (taskText) => {
   if (taskText.trim() === '') {
-    alert("Task is empty");
+    alert('Task is empty');
     formElement.reset();
     return true;
   }
@@ -413,12 +381,16 @@ const generateTableWithHeader = () => {
                 <tr id="task-headings">
                     <th></th>
                     <th id="task" class="heading-cell">Task</th>
-                    <th id="priority" class="heading-cell"><i class="material-icons arrow-down ${sortBy[0].selectedValue === "Priority" ? "visible" : "hidden"}">arrow_drop_down</i>Priority</th>
-                    <th id="deadline" class="heading-cell"><i class="material-icons arrow-down ${sortBy[0].selectedValue === "Deadline" ? "visible" : "hidden"}">arrow_drop_down</i>Deadline</th>
+                    <th id="priority" class="heading-cell"><i class="material-icons arrow-down ${storage.sortBy[0].selectedValue ===
+    'Priority' ? 'visible' : 'hidden'}">arrow_drop_down</i>Priority</th>
+                    <th id="deadline" class="heading-cell"><i class="material-icons arrow-down ${storage.sortBy[0].selectedValue ===
+    'Deadline' ? 'visible' : 'hidden'}">arrow_drop_down</i>Deadline</th>
                     <th class="sorting-cell">
                        <select class="sort-by">
-                          <option value="Priority" ${sortBy[0].selectedValue === "Priority" ? "selected" : ""}>Priority</option>
-                          <option value="Deadline" ${sortBy[0].selectedValue === "Deadline" ? "selected" : ""}>Deadline</option>
+                          <option value="Priority" ${storage.sortBy[0].selectedValue ===
+    'Priority' ? 'selected' : ''}>Priority</option>
+                          <option value="Deadline" ${storage.sortBy[0].selectedValue ===
+    'Deadline' ? 'selected' : ''}>Deadline</option>
                        </select>
                     </th>
                 </tr>
@@ -432,7 +404,7 @@ const generateTableWithHeader = () => {
 const generateListOfTasks = (tasksArray = []) => {
   const tasksTable = document.querySelector('#tasks-table');
 
-  deleteElementBySelector("#tasks-table > tbody");
+  deleteElementBySelector('#tasks-table > tbody');
 
   // Make a table body container to store all tasks.
   const tableBody = document.createElement('tbody');
@@ -440,20 +412,25 @@ const generateListOfTasks = (tasksArray = []) => {
 
   // Map over each array element and paint them on screen.
   tableBody.innerHTML = tasksArray.map((task, index) => {
-    const deadlineAttributeHTML = task.deadline ? `value="${task.deadline}"` : '';
+    const deadlineAttributeHTML = task.deadline ? `value="${task.deadline}"` :
+        '';
     return `
        <tr class="task" data-index="${index}">
            <td class="chkbx-cell">
              <img 
                class="chkbx-img-unchecked"
-               src="${task.done ? `../images/checkbox-checked.svg` : `../images/checkbox-unchecked.svg`}" 
+               src="${task.done ? `../images/checkbox-checked.svg` :
+        `../images/checkbox-unchecked.svg`}" 
                data-index="${index}"></td>
            <td class="textarea-cell"><textarea rows="1" class="text-cell" data-index="${index}">${task.text}</textarea></td>
            <td class="priority-cell">
               <select class="priority" data-index="${index}">
-                    <option value="P0" ${task.priority === "P0" ? "selected" : ""}>P0</option>
-                    <option value="P1" ${task.priority === "P1" ? "selected" : ""}>P1</option>
-                    <option value="P2" ${task.priority === "P2" ? "selected" : ""}>P2</option>
+                    <option value="P0" ${task.priority === 'P0' ? 'selected' :
+        ''}>P0</option>
+                    <option value="P1" ${task.priority === 'P1' ? 'selected' :
+        ''}>P1</option>
+                    <option value="P2" ${task.priority === 'P2' ? 'selected' :
+        ''}>P2</option>
               </select></td>
            <td class="deadline-cell">
              <input type="date" class="deadline" ${deadlineAttributeHTML} data-index="${index}">
@@ -473,10 +450,9 @@ const selectPriority = (event) => {
   const element = event.target;
   const index = element.dataset.index;
   if (!element.matches('.priority')) return;
-  tasks[index].priority = element.value;
+  storage.tasks[index].priority = element.value;
   sortTasks();
-  localStorage.setItem('tasks', JSON.stringify(tasks));
-  // highlightTask(task);
+  localStorage.setItem('tasks', JSON.stringify(storage.tasks));
 };
 
 
@@ -484,22 +460,22 @@ const selectPriority = (event) => {
  * If item(s) in tasks, then generate table with the task(s).
  */
 const initializePlannerUI = () => {
-  if (tasks.length === 0) return;
+  if (storage.tasks.length === 0) return;
   generateTableWithHeader();
-  generateListOfTasks(tasks);
+  generateListOfTasks(storage.tasks);
 };
 
 /**
  * If no tasks created, then paint the empty state into on planner page.
  */
 const createEmptyStatePlanner = () => {
-  if (tasks.length > 0) return;
+  if (storage.tasks.length > 0) return;
   const tasksTable = document.querySelector('#tasks-table');
   if (!tasksTable) {
     addEmptyStateToPlanner();
     // Set delete existing sorting from sortBy array.
-    sortBy.length = 0;
-    localStorage.setItem('sortBy', JSON.stringify(tasks));
+    storage.sortBy.length = 0;
+    localStorage.setItem('sortBy', JSON.stringify(storage.tasks));
   }
 };
 
@@ -514,21 +490,20 @@ const addEmptyStateToPlanner = () => {
   div.setAttribute('id', 'empty-stage-planner');
   div.setAttribute('class', 'empty-stage');
 
-  div.innerHTML = `<img class="sun" src="../images/sun.svg"><p class="empty-stage-text gray">You have no tasks.<br>Add a task below.</p>`;
+  div.innerHTML =
+      `<img class="sun" src="../images/sun.svg"><p class="empty-stage-text gray">You have no tasks.<br>Add a task below.</p>`;
 };
 
 const ifNoTasksAddEmptyStateToPlanner = () => {
-  if (tasks.length === 0) {
+  if (storage.tasks.length === 0) {
     deleteElementBySelector('#tasks-table');
     createEmptyStatePlanner();
     document.querySelector('#add-task').focus();
-    // sortBy.length = 0;
-    // localStorage.setItem('sortBy', JSON.stringify(tasks));
   }
 };
 
 const ifNoCompletedTasksAddEmptyStateToDone = () => {
-  if (tasksDone.length === 0) {
+  if (storage.tasksDone.length === 0) {
     deleteElementBySelector('#tasks-done');
     createEmptyStateDone();
     document.querySelector('#add-task').focus();
@@ -541,12 +516,12 @@ const deleteTask = (event) => {
   const index = element.dataset.index;
   // Only register the click on delete icon.
   if (!element.matches('.icon-cell i.material-icons')) return;
-  tasks.splice(`${index}`, 1);
+  storage.tasks.splice(`${index}`, 1);
 
-  localStorage.setItem('tasks', JSON.stringify(tasks));
-  generateListOfTasks(tasks);
+  localStorage.setItem('tasks', JSON.stringify(storage.tasks));
+  generateListOfTasks(storage.tasks);
   ifNoTasksAddEmptyStateToPlanner();
-}
+};
 
 const addDeadlineToTask = (event) => {
   // event.preventDefault();
@@ -555,17 +530,15 @@ const addDeadlineToTask = (event) => {
   if (!element.matches('.deadline-cell input[type="date"]')) return;
 
   const dateInShort = element.value;
-  tasks[index].deadline = dateInShort;
+  storage.tasks[index].deadline = dateInShort;
 
-  localStorage.setItem('tasks', JSON.stringify(tasks));
+  localStorage.setItem('tasks', JSON.stringify(storage.tasks));
   // If (#deadline i) includes class visible, then run sort function
   const deadlineArrowIcon = document.querySelector('#deadline i');
   if (deadlineArrowIcon.classList.contains('visible')) {
-    sorting("Deadline");
+    sortTasksBy('Deadline');
   }
 };
-
-// Function that adds highlighter
 
 
 // Function that records every key pressed inside task textarea and stores the
@@ -576,8 +549,8 @@ const editTaskText = (event) => {
   const text = element.value;
   const index = element.dataset.index;
   if (!element.matches('.text-cell')) return;
-  tasks[index].text = text;
-  localStorage.setItem('tasks', JSON.stringify(tasks));
+  storage.tasks[index].text = text;
+  localStorage.setItem('tasks', JSON.stringify(storage.tasks));
 };
 
 
@@ -587,9 +560,9 @@ const editTextInTaskCompleted = (event) => {
   const text = element.value;
   const index = element.dataset.index;
   if (!element.matches('.done-text-cell')) return;
-  tasksDone[index].text = text;
+  storage.tasksDone[index].text = text;
 
-  localStorage.setItem('tasksDone', JSON.stringify(tasksDone));
+  localStorage.setItem('tasksDone', JSON.stringify(storage.tasksDone));
 };
 
 const deleteTaskIfTaskTextRemoved = (event) => {
@@ -599,9 +572,9 @@ const deleteTaskIfTaskTextRemoved = (event) => {
   const index = element.dataset.index;
   if (!element.matches('.text-cell')) return;
   if (text.trim() === '') {
-    tasks.splice(index, 1);
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-    generateListOfTasks(tasks);
+    storage.tasks.splice(index, 1);
+    localStorage.setItem('tasks', JSON.stringify(storage.tasks));
+    generateListOfTasks(storage.tasks);
     ifNoTasksAddEmptyStateToPlanner();
   }
   document.querySelector('#add-task').focus();
@@ -614,9 +587,9 @@ const deleteCompletedTaskIfTaskTextRemoved = (event) => {
   const index = element.dataset.index;
   if (!element.matches('.done-text-cell')) return;
   if (text.trim() === '') {
-    tasksDone.splice(index, 1);
-    localStorage.setItem('tasksDone', JSON.stringify(tasksDone));
-    generateListOfTasksDone(tasksDone);
+    storage.tasksDone.splice(index, 1);
+    localStorage.setItem('tasksDone', JSON.stringify(storage.tasksDone));
+    generateListOfTasksDone(storage.tasksDone);
     ifNoCompletedTasksAddEmptyStateToDone();
   }
   document.querySelector('#add-task').focus();
@@ -636,15 +609,16 @@ const generateTodaysDateAndTime = () => {
 
     const date = today.toLocaleDateString('en-US', {
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     });
 
     const time = today.toLocaleTimeString('en-US', {
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
 
-    dateContainer.innerHTML = `Today \u00A0\u00A0|\u00A0\u00A0 ${date} \u00A0\u00A0|\u00A0\u00A0 ${time}`;
+    dateContainer.innerHTML =
+        `Today \u00A0\u00A0|\u00A0\u00A0 ${date} \u00A0\u00A0|\u00A0\u00A0 ${time}`;
   }, 1000);
 };
 
@@ -669,7 +643,8 @@ const generateListOfTasksDone = (tasksDoneArray = []) => {
         <tr class="task-done">
           <td class="chkbx-cell"><img
                class="chkbx-img-checked"
-               src="${task.done ? `../images/checkbox-checked.svg` : `../images/checkbox-unchecked-green.svg`}"
+               src="${task.done ? `../images/checkbox-checked.svg` :
+        `../images/checkbox-unchecked-green.svg`}"
                data-index="${index}"></td>
           <td><textarea class="done-text-cell" rows="1" data-index="${index}">${task.text}</textarea></td>
         </tr>
@@ -683,7 +658,7 @@ const generateListOfTasksDone = (tasksDoneArray = []) => {
  * If no tasks completed, then paint the empty state into on done page.
  */
 const createEmptyStateDone = () => {
-  if (tasksDone.length > 0) return;
+  if (storage.tasksDone.length > 0) return;
   const tasksDoneTable = document.querySelector('#tasks-done');
   if (!tasksDoneTable) {
     addEmptyStateToDone();
@@ -699,12 +674,13 @@ const addEmptyStateToDone = () => {
   div.setAttribute('class', 'empty-stage top-padding');
   container.appendChild(div);
 
-  div.innerHTML = `<img class="checkbox" src="../images/checkbox_icon.svg"><p class="empty-stage-text">Tasks you get done<br>will appear here.</p>`;
+  div.innerHTML =
+      `<img class="checkbox" src="../images/checkbox_icon.svg"><p class="empty-stage-text">Tasks you get done<br>will appear here.</p>`;
 };
 
 const initializeDoneUI = () => {
-  if (tasksDone.length === 0) return;
-  generateListOfTasksDone(tasksDone);
+  if (storage.tasksDone.length === 0) return;
+  generateListOfTasksDone(storage.tasksDone);
 };
 
 
@@ -716,7 +692,7 @@ const delay = 1;
 const handleWindowResize = () => {
   let resizeTaskId = null;
 
-  window.addEventListener('resize', evt => {
+  window.addEventListener('resize', (evt) => {
     if (resizeTaskId !== null) {
       clearTimeout(resizeTaskId);
     }
@@ -738,7 +714,7 @@ const generatePageLayout = () => {
   const doneContainer = document.querySelector('#done-container');
   const mainContent = document.querySelector('#main-content');
 
-  if (window.matchMedia("(min-width: 800px)").matches) {
+  if (window.matchMedia('(min-width: 800px)').matches) {
     addButtonSmall.style.display = 'none';
     addButton.style.display = 'flex';
     checkboxButton.style.display = 'none';
@@ -750,7 +726,7 @@ const generatePageLayout = () => {
     checkboxClicked = false;
   }
 
-  if (window.matchMedia("(max-width: 799px)").matches) {
+  if (window.matchMedia('(max-width: 799px)').matches) {
     addButtonSmall.style.display = 'none';
     addButton.style.display = 'flex';
     checkboxButton.style.display = 'flex';
@@ -760,7 +736,7 @@ const generatePageLayout = () => {
     mainContent.style.display = 'flex';
   }
 
-  if (window.matchMedia("(max-width: 499px)").matches) {
+  if (window.matchMedia('(max-width: 499px)').matches) {
     addButton.style.display = 'none';
     addButtonSmall.style.display = 'flex';
   }
@@ -792,4 +768,4 @@ const viewCompletedTasks = () => {
 
 
 // Run on document loaded.
-document.addEventListener("DOMContentLoaded", main);
+document.addEventListener('DOMContentLoaded', main);
