@@ -66,7 +66,7 @@ class AppData {
   }
 
   // TODO add editTask (make sure to save)
-  // TODO add editTask (make sure to save)
+  // TODO add removeTask (make sure to save)
 
   /**
    * @param {Task} task
