@@ -53,7 +53,7 @@ const sortTasksBy = (value) => {
     // Separating tasks without deadline
     const noDeadlineTasks = [];
     const deadlineTasks = [];
-    storage.tasks.forEach((task) => {
+    appData.tasks.forEach((task) => {
       if (task.deadline === '' || 'deadline' in task === false) {
         noDeadlineTasks.push(task);
       } else {
@@ -72,18 +72,18 @@ const sortTasksBy = (value) => {
       return 0;
     });
 
-    storage.tasks = [...deadlineTasks, ...noDeadlineTasks];
+    appData.tasks = [...deadlineTasks, ...noDeadlineTasks];
 
-    storage.saveSortBy(selected);
+    appData.saveSortBy(selected);
     generateTableWithHeader();
-    generateListOfTasks(storage.tasks);
+    generateListOfTasks(appData.tasks);
   }
 
   // If change value is "Priority".
   if (value === 'Priority') {
     selected.selectedValue = value;
     // Sort the array by priority.
-    storage.tasks.sort((a, b) => {
+    appData.tasks.sort((a, b) => {
       if (a.priority < b.priority) {
         return -1;
       }
@@ -93,15 +93,15 @@ const sortTasksBy = (value) => {
       return 0;
     });
 
-    storage.saveSortBy(selected);
+    appData.saveSortBy(selected);
     generateTableWithHeader();
-    generateListOfTasks(storage.tasks);
+    generateListOfTasks(appData.tasks);
   }
 };
 
 // Function to sort tasks when page is loaded.
 const sortTasksOnPageLoad = () => {
-  if (storage.tasks.length === 0) {
+  if (appData.tasks.length === 0) {
     return;
   }
   sortTasks();
@@ -160,23 +160,23 @@ const markTaskCompleted = (event) => {
   }
 
   // Repaint the tasks done UI
-  storage.markTaskDone(index);
-  generateListOfTasksDone(storage.tasksDone);
-  generateListOfTasks(storage.tasks);
+  appData.markTaskDone(index);
+  generateListOfTasksDone(appData.tasksDone);
+  generateListOfTasks(appData.tasks);
 
-  if (storage.tasks.length === 0) {
+  if (appData.tasks.length === 0) {
     deleteElementBySelector('#tasks-table');
     createEmptyStatePlanner();
   }
 };
 
 const setSortByPriority = () => {
-  storage.sortBy.length = 0;
+  appData.sortBy.length = 0;
   const priority = {
     selectedValue: 'Priority',
   };
-  storage.sortBy.push(priority);
-  localStorage.setItem('sortBy', JSON.stringify(storage.sortBy));
+  appData.sortBy.push(priority);
+  localStorage.setItem('sortBy', JSON.stringify(appData.sortBy));
 };
 
 const markTaskUncompleted = (event) => {
@@ -185,7 +185,7 @@ const markTaskUncompleted = (event) => {
   if (!element.matches(`img[data-index="${index}"]`)) {
     return;
   }
-  storage.tasksDone[index].done = !storage.tasksDone[index].done;
+  appData.tasksDone[index].done = !appData.tasksDone[index].done;
 
   let deadlineArrowIcon = document.querySelector('#deadline i');
   // If table header doesn't exist, generate it.
@@ -202,54 +202,54 @@ const markTaskUncompleted = (event) => {
   // Move the task in front of others that have the same priority or deadline.
   if (deadlineArrowIcon.classList.contains('visible')) {
     // Get the task deadline value from the tasksDone in localStorage.
-    const deadline = storage.tasksDone[index].deadline;
+    const deadline = appData.tasksDone[index].deadline;
     // Check tasks array to see is there at least one task with the same
     // deadline.
-    const found = storage.tasks.find((task) => task.deadline === deadline);
+    const found = appData.tasks.find((task) => task.deadline === deadline);
 
     if (found === undefined) {
       // Remove the element from tasksDone array.
-      uncheckedTask = storage.tasksDone.splice(index, 1);
+      uncheckedTask = appData.tasksDone.splice(index, 1);
       // Add the unchecked task to tasks array.
-      storage.tasks.push(uncheckedTask[0]);
+      appData.tasks.push(uncheckedTask[0]);
       // Find the task & highlight the background
     } else {
       // If another task has the same deadline, then get its index.
-      const indexOfDuplicate = storage.tasks.indexOf(found);
+      const indexOfDuplicate = appData.tasks.indexOf(found);
       // Remove the element from tasksDone array.
-      uncheckedTask = storage.tasksDone.splice(index, 1);
+      uncheckedTask = appData.tasksDone.splice(index, 1);
       // Add the task in front of the first task that has same date.
-      storage.tasks.splice(indexOfDuplicate, 0, uncheckedTask[0]);
+      appData.tasks.splice(indexOfDuplicate, 0, uncheckedTask[0]);
     }
   } else {
     // Get the task priority value from the tasksDone in localStorage.
-    const priority = storage.tasksDone[index].priority;
+    const priority = appData.tasksDone[index].priority;
     // Check tasks array to see is there at least one task with the same
     // priority.
-    const found = storage.tasks.find((task) => task.priority === priority);
+    const found = appData.tasks.find((task) => task.priority === priority);
 
     if (found === undefined) {
-      uncheckedTask = storage.tasksDone.splice(index, 1);
-      storage.tasks.push(uncheckedTask[0]);
+      uncheckedTask = appData.tasksDone.splice(index, 1);
+      appData.tasks.push(uncheckedTask[0]);
     } else {
-      const indexOfDuplicate = storage.tasks.indexOf(found);
-      uncheckedTask = storage.tasksDone.splice(index, 1);
-      storage.tasks.splice(indexOfDuplicate, 0, uncheckedTask[0]);
+      const indexOfDuplicate = appData.tasks.indexOf(found);
+      uncheckedTask = appData.tasksDone.splice(index, 1);
+      appData.tasks.splice(indexOfDuplicate, 0, uncheckedTask[0]);
     }
   }
 
-  // Set the tasksDone in local storage.
-  localStorage.setItem('tasksDone', JSON.stringify(storage.tasksDone));
+  // Set the tasksDone in local appData.
+  localStorage.setItem('tasksDone', JSON.stringify(appData.tasksDone));
   // Repaint the tasks done UI
-  generateListOfTasksDone(storage.tasksDone);
+  generateListOfTasksDone(appData.tasksDone);
 
   // Sort the tasks.
   sortTasks();
   // Set the local storage with the correct tasks order.
-  localStorage.setItem('tasks', JSON.stringify(storage.tasks));
+  localStorage.setItem('tasks', JSON.stringify(appData.tasks));
   highlightTask(uncheckedTask[0]);
 
-  if (storage.tasksDone.length === 0) {
+  if (appData.tasksDone.length === 0) {
     deleteElementBySelector('#tasks-done');
     createEmptyStateDone();
   }
@@ -329,17 +329,17 @@ const addTask = (event) => {
     })(),
   };
 
-  storage.tasks.push(task);
+  appData.tasks.push(task);
 
   formElement.reset();
-  localStorage.setItem('tasks', JSON.stringify(storage.tasks));
+  localStorage.setItem('tasks', JSON.stringify(appData.tasks));
 
-  generateListOfTasks(storage.tasks);
+  generateListOfTasks(appData.tasks);
   highlightTask(task);
 };
 
 const highlightTask = (taskElementInArray) => {
-  const index = storage.tasks.findIndex((task) => task.id ===
+  const index = appData.tasks.findIndex((task) => task.id ===
       taskElementInArray.id);
 
   const gray = '#dddddd';
@@ -416,15 +416,15 @@ const generateTableWithHeader = () => {
                 <tr id="task-headings">
                     <th></th>
                     <th id="task" class="heading-cell">Task</th>
-                    <th id="priority" class="heading-cell"><i class="material-icons arrow-down ${storage.sortBy[0].selectedValue ===
+                    <th id="priority" class="heading-cell"><i class="material-icons arrow-down ${appData.sortBy[0].selectedValue ===
     'Priority' ? 'visible' : 'hidden'}">arrow_drop_down</i>Priority</th>
-                    <th id="deadline" class="heading-cell"><i class="material-icons arrow-down ${storage.sortBy[0].selectedValue ===
+                    <th id="deadline" class="heading-cell"><i class="material-icons arrow-down ${appData.sortBy[0].selectedValue ===
     'Deadline' ? 'visible' : 'hidden'}">arrow_drop_down</i>Deadline</th>
                     <th class="sorting-cell">
                        <select class="sort-by">
-                          <option value="Priority" ${storage.sortBy[0].selectedValue ===
+                          <option value="Priority" ${appData.sortBy[0].selectedValue ===
     'Priority' ? 'selected' : ''}>Priority</option>
-                          <option value="Deadline" ${storage.sortBy[0].selectedValue ===
+                          <option value="Deadline" ${appData.sortBy[0].selectedValue ===
     'Deadline' ? 'selected' : ''}>Deadline</option>
                        </select>
                     </th>
@@ -488,9 +488,9 @@ const selectPriority = (event) => {
   if (!element.matches('.priority')) {
     return;
   }
-  storage.tasks[index].priority = element.value;
+  appData.tasks[index].priority = element.value;
   sortTasks();
-  localStorage.setItem('tasks', JSON.stringify(storage.tasks));
+  localStorage.setItem('tasks', JSON.stringify(appData.tasks));
 };
 
 
@@ -498,26 +498,26 @@ const selectPriority = (event) => {
  * If item(s) in tasks, then generate table with the task(s).
  */
 const initializePlannerUI = () => {
-  if (storage.tasks.length === 0) {
+  if (appData.tasks.length === 0) {
     return;
   }
   generateTableWithHeader();
-  generateListOfTasks(storage.tasks);
+  generateListOfTasks(appData.tasks);
 };
 
 /**
  * If no tasks created, then paint the empty state into on planner page.
  */
 const createEmptyStatePlanner = () => {
-  if (storage.tasks.length > 0) {
+  if (appData.tasks.length > 0) {
     return;
   }
   const tasksTable = document.querySelector('#tasks-table');
   if (!tasksTable) {
     addEmptyStateToPlanner();
     // Set delete existing sorting from sortBy array.
-    storage.sortBy.length = 0;
-    localStorage.setItem('sortBy', JSON.stringify(storage.tasks));
+    appData.sortBy.length = 0;
+    localStorage.setItem('sortBy', JSON.stringify(appData.tasks));
   }
 };
 
@@ -537,7 +537,7 @@ const addEmptyStateToPlanner = () => {
 };
 
 const ifNoTasksAddEmptyStateToPlanner = () => {
-  if (storage.tasks.length === 0) {
+  if (appData.tasks.length === 0) {
     deleteElementBySelector('#tasks-table');
     createEmptyStatePlanner();
     document.querySelector('#add-task')
@@ -546,7 +546,7 @@ const ifNoTasksAddEmptyStateToPlanner = () => {
 };
 
 const ifNoCompletedTasksAddEmptyStateToDone = () => {
-  if (storage.tasksDone.length === 0) {
+  if (appData.tasksDone.length === 0) {
     deleteElementBySelector('#tasks-done');
     createEmptyStateDone();
     document.querySelector('#add-task')
@@ -562,10 +562,10 @@ const deleteTask = (event) => {
   if (!element.matches('.icon-cell i.material-icons')) {
     return;
   }
-  storage.tasks.splice(`${index}`, 1);
+  appData.tasks.splice(`${index}`, 1);
 
-  localStorage.setItem('tasks', JSON.stringify(storage.tasks));
-  generateListOfTasks(storage.tasks);
+  localStorage.setItem('tasks', JSON.stringify(appData.tasks));
+  generateListOfTasks(appData.tasks);
   ifNoTasksAddEmptyStateToPlanner();
 };
 
@@ -578,9 +578,9 @@ const addDeadlineToTask = (event) => {
   }
 
   const dateInShort = element.value;
-  storage.tasks[index].deadline = dateInShort;
+  appData.tasks[index].deadline = dateInShort;
 
-  localStorage.setItem('tasks', JSON.stringify(storage.tasks));
+  localStorage.setItem('tasks', JSON.stringify(appData.tasks));
   // If (#deadline i) includes class visible, then run sort function
   const deadlineArrowIcon = document.querySelector('#deadline i');
   if (deadlineArrowIcon.classList.contains('visible')) {
@@ -599,8 +599,8 @@ const editTaskText = (event) => {
   if (!element.matches('.text-cell')) {
     return;
   }
-  storage.tasks[index].text = text;
-  localStorage.setItem('tasks', JSON.stringify(storage.tasks));
+  appData.tasks[index].text = text;
+  localStorage.setItem('tasks', JSON.stringify(appData.tasks));
 };
 
 
@@ -612,9 +612,9 @@ const editTextInTaskCompleted = (event) => {
   if (!element.matches('.done-text-cell')) {
     return;
   }
-  storage.tasksDone[index].text = text;
+  appData.tasksDone[index].text = text;
 
-  localStorage.setItem('tasksDone', JSON.stringify(storage.tasksDone));
+  localStorage.setItem('tasksDone', JSON.stringify(appData.tasksDone));
 };
 
 const deleteTaskIfTaskTextRemoved = (event) => {
@@ -626,9 +626,9 @@ const deleteTaskIfTaskTextRemoved = (event) => {
     return;
   }
   if (text.trim() === '') {
-    storage.tasks.splice(index, 1);
-    localStorage.setItem('tasks', JSON.stringify(storage.tasks));
-    generateListOfTasks(storage.tasks);
+    appData.tasks.splice(index, 1);
+    localStorage.setItem('tasks', JSON.stringify(appData.tasks));
+    generateListOfTasks(appData.tasks);
     ifNoTasksAddEmptyStateToPlanner();
   }
   document.querySelector('#add-task')
@@ -644,9 +644,9 @@ const deleteCompletedTaskIfTaskTextRemoved = (event) => {
     return;
   }
   if (text.trim() === '') {
-    storage.tasksDone.splice(index, 1);
-    localStorage.setItem('tasksDone', JSON.stringify(storage.tasksDone));
-    generateListOfTasksDone(storage.tasksDone);
+    appData.tasksDone.splice(index, 1);
+    localStorage.setItem('tasksDone', JSON.stringify(appData.tasksDone));
+    generateListOfTasksDone(appData.tasksDone);
     ifNoCompletedTasksAddEmptyStateToDone();
   }
   document.querySelector('#add-task')
@@ -717,7 +717,7 @@ const generateListOfTasksDone = (tasksDoneArray = []) => {
  * If no tasks completed, then paint the empty state into on done page.
  */
 const createEmptyStateDone = () => {
-  if (storage.tasksDone.length > 0) {
+  if (appData.tasksDone.length > 0) {
     return;
   }
   const tasksDoneTable = document.querySelector('#tasks-done');
@@ -740,10 +740,10 @@ const addEmptyStateToDone = () => {
 };
 
 const initializeDoneUI = () => {
-  if (storage.tasksDone.length === 0) {
+  if (appData.tasksDone.length === 0) {
     return;
   }
-  generateListOfTasksDone(storage.tasksDone);
+  generateListOfTasksDone(appData.tasksDone);
 };
 
 
