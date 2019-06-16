@@ -1,4 +1,4 @@
-import {appData} from "./AppData";
+import {appData} from "./app_data";
 
 class Storage {
   constructor() {

@@ -3,7 +3,7 @@ const SortByValues = {
   Deadline,
 };
 
-class AppData {
+class App_data {
   constructor() {
     this.tasks = [];
     this.sortBy = SortByValues.Priority;
@@ -15,6 +15,6 @@ class Task {
 
 }
 
-const appData = new AppData();
+const appData = new App_data();
 
 export {appData};

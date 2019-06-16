@@ -1,8 +1,8 @@
 // import autosize from 'autosize';
-import {deleteElementBySelector} from './Util';
-import autosize from 'autosize/src/autosize';
-import {appData} from "./AppData";
-import {storage} from './Storage';
+import {deleteElementBySelector} from './util';
+import autosize                  from 'autosize/src/autosize';
+import {appData}                 from "./app_data";
+import {storage}                 from './storage';
 
 
 // Globals.
