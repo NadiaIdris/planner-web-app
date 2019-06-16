@@ -450,37 +450,49 @@ const generateListOfTasks = (tasksArray = []) => {
   tasksTable.appendChild(tableBody);
 
   // Map over each array element and paint them on screen.
-  tableBody.innerHTML = tasksArray.map((task, index) => {
-    const deadlineAttributeHTML = task.deadline ? `value="${task.deadline}"` :
-        '';
+  const renderTask = (task, index) => {
+    const deadlineAttributeHTML = task.deadline ?
+        `value="${task.deadline}"` :'';
+    const doneIcon = task.done ?
+        `../images/checkbox-checked.svg` : `../images/checkbox-unchecked.svg`;
+    const p0Selected = task.priority === 'P0' ? 'selected' : '';
+    const p1Selected = task.priority === 'P1' ? 'selected' : '';
+    const p2Selected = task.priority === 'P2' ? 'selected' : '';
+
     return `
-       <tr class="task" data-index="${index}">
-           <td class="chkbx-cell">
-             <img 
-               class="chkbx-img-unchecked"
-               src="${task.done ? `../images/checkbox-checked.svg` :
-        `../images/checkbox-unchecked.svg`}" 
-               data-index="${index}"></td>
-           <td class="textarea-cell"><textarea rows="1" class="text-cell" data-index="${index}">${task.text}</textarea></td>
-           <td class="priority-cell">
-              <select class="priority" data-index="${index}">
-                    <option value="P0" ${task.priority === 'P0' ? 'selected' :
-        ''}>P0</option>
-                    <option value="P1" ${task.priority === 'P1' ? 'selected' :
-        ''}>P1</option>
-                    <option value="P2" ${task.priority === 'P2' ? 'selected' :
-        ''}>P2</option>
-              </select></td>
-           <td class="deadline-cell">
-             <input type="date" class="deadline" ${deadlineAttributeHTML} data-index="${index}">
-           </td>
-           <td class="icon-cell">
-             <i class="material-icons" data-index="${index}">delete</i>
-           </td>
-       </tr>
+      <tr class="task" data-index="${index}">
+        <td class="chkbx-cell">
+          <img
+            class="chkbx-img-unchecked"
+            src="${doneIcon}"
+            data-index="${index}">
+        </td>
+        <td class="textarea-cell">
+          <textarea  rows="1" class="text-cell" data-index="${index}">
+            ${task.text}
+          </textarea>
+        </td>
+        <td class="priority-cell">
+          <select class="priority" data-index="${index}">
+            <option value="P0" ${p0Selected}>P0</option>
+            <option value="P1" ${p1Selected}>P1</option>
+            <option value="P2" ${p2Selected}>P2</option>
+          </select>
+        </td>
+        <td class="deadline-cell">
+          <input
+            type="date"
+            class="deadline"
+            ${deadlineAttributeHTML}
+            data-index="${index}">
+        </td>
+        <td class="icon-cell">
+          <i class="material-icons" data-index="${index}">delete</i>
+        </td>
+      </tr>
        `;
-  })
-      .join('');
+  };
+  tableBody.innerHTML = tasksArray.map(renderTask).join('');
 
   autosize(tableBody.querySelectorAll('textarea'));
 };
