@@ -51,7 +51,7 @@ const loadTasksFromLocalStorage = () => {
 
 let sortBy;
 const loadSortedByFromLocalStorage = () => {
-  sortBy = JSON.parse(localStorage.getItem('sortBy')) || [{selectedValue: "Priority"}];
+  sortBy = JSON.parse(localStorage.getItem('sortBy')) || [];
 };
 
 // Function to sort an array. Takes a param which is dropdown selected value.
@@ -93,6 +93,14 @@ const sorting = (value) => {
   // If change value is "Priority".
   if (value === "Priority") {
     selected.selectedValue = value;
+
+    // const element = event.target;
+    // const index = element.dataset.index;
+    // const selectedPriority = document.querySelector(`.task[data-index="${index}"]`);
+
+    // tasks.forEach(task => {
+    //   if (task.priority === )
+    // });
     // Sort the array by priority.
     tasks.sort((a, b) => {
       if (a.priority < b.priority) return -1;
@@ -186,18 +194,32 @@ const markTaskCompleted = (event) => {
   }
 };
 
+const setSortByPriority = () => {
+  sortBy.length = 0;
+  const priority = {
+    selectedValue: "Priority"
+  };
+  sortBy.push(priority);
+  localStorage.setItem('sortBy', JSON.stringify(sortBy));
+};
+
 const markTaskUncompleted = (event) => {
   const element = event.target;
   const index = element.dataset.index;
   if (!element.matches(`img[data-index="${index}"]`)) return;
   tasksDone[index].done = !tasksDone[index].done;
 
-  const deadlineArrowIcon = document.querySelector('#deadline i');
+  let deadlineArrowIcon = document.querySelector('#deadline i');
+  // If table header doesn't exist, generate it.
   if (deadlineArrowIcon === null) {
+    // Sort by
+    setSortByPriority();
     generateTableWithHeader();
   }
 
   let uncheckedTask;
+  deadlineArrowIcon = document.querySelector('#deadline i');
+
 
   // Move the task in front of others that have the same priority or deadline.
   if (deadlineArrowIcon.classList.contains('visible')) {
@@ -224,7 +246,6 @@ const markTaskUncompleted = (event) => {
   } else {
     // Get the task priority value from the tasksDone in localStorage.
     const priority = tasksDone[index].priority;
-
     // Check tasks array to see is there at least one task with the same
     // priority.
     const found = tasks.find(task => task.priority === priority);
@@ -279,12 +300,7 @@ const addTask = (event) => {
   const tasksTable = document.querySelector('#tasks-table');
   if (!tasksTable) {
     // Sort tasks by default by priority .
-    sortBy.length = 0;
-    const priority = {
-      selectedValue: "Priority"
-    };
-    sortBy.push(priority);
-    localStorage.setItem('sortBy', JSON.stringify(sortBy));
+    setSortByPriority();
     // Add table header.
     generateTableWithHeader();
     // Add arrow to priority and remove arrow from deadline.
@@ -384,20 +400,20 @@ const checkIfTaskIsEmpty = (taskText) => {
  * the next function.
  */
 const generateTableWithHeader = () => {
-  const tasksTable = document.querySelector('#tasks-table');
+  let tasksTable = document.querySelector('#tasks-table');
   if (!tasksTable) {
     // clear the empty state
     deleteElementBySelector('#empty-stage-planner');
 
-    const tasksHeader = document.createElement('table');
-    tasksHeader.setAttribute('id', 'tasks-table');
-    tasksContainer.appendChild(tasksHeader);
-    tasksHeader.innerHTML = `
+    tasksTable = document.createElement('table');
+    tasksTable.setAttribute('id', 'tasks-table');
+    tasksContainer.appendChild(tasksTable);
+    tasksTable.innerHTML = `
                 <thead>
                 <tr id="task-headings">
                     <th></th>
                     <th id="task" class="heading-cell">Task</th>
-                    <th id="priority" class="heading-cell"><i class="material-icons arrow-down ${sortBy[0].selectedValue === "Priority" ? "visible'" : "hidden"}">arrow_drop_down</i>Priority</th>
+                    <th id="priority" class="heading-cell"><i class="material-icons arrow-down ${sortBy[0].selectedValue === "Priority" ? "visible" : "hidden"}">arrow_drop_down</i>Priority</th>
                     <th id="deadline" class="heading-cell"><i class="material-icons arrow-down ${sortBy[0].selectedValue === "Deadline" ? "visible" : "hidden"}">arrow_drop_down</i>Deadline</th>
                     <th class="sorting-cell">
                        <select class="sort-by">
@@ -458,8 +474,9 @@ const selectPriority = (event) => {
   const index = element.dataset.index;
   if (!element.matches('.priority')) return;
   tasks[index].priority = element.value;
-  localStorage.setItem('tasks', JSON.stringify(tasks));
   sortTasks();
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+  // highlightTask(task);
 };
 
 
