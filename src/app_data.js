@@ -1,5 +1,5 @@
 import {Storage} from './storage';
-import {generateId} from "./util";
+import {generateId} from './util';
 
 /**
  * Model for the application. It contains the source of truth for the following:
@@ -17,26 +17,12 @@ class AppData {
     this.tasks = [];
 
     /** @type{string} */
-    this.sortBy_ = SortByValues.Priority;
+    this.sortBy = SortByValues.Priority;
 
     /** @type{Array<Task>} */
     this.tasksDone = [];
 
     Storage.load(this);
-  }
-
-  // `sortBy` property getter.
-  get sortBy() {
-    return this.sortBy_;
-  }
-
-  // `sortBy` property setter.
-  /**
-   * @param {string} value Set this value and save to storage.
-   */
-  set sortBy(value) {
-    this.sortBy_ = value;
-    Storage.save(this);
   }
 
   /**

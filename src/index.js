@@ -182,14 +182,12 @@ const markTaskUncompleted = (event) => {
   // If table header doesn't exist, generate it.
   if (deadlineArrowIcon === null) {
     // Sort by
-    appData.sortBy = SortByValues.Priority;
+    appData.saveSortBy(SortByValues.Priority);
     generateTableWithHeader();
+    deadlineArrowIcon = document.querySelector('#deadline i');
   }
 
   let uncheckedTask;
-  debugger;
-  deadlineArrowIcon = document.querySelector('#deadline i');
-
 
   // Move the task in front of others that have the same priority or deadline.
   if (deadlineArrowIcon.classList.contains('visible')) {
@@ -269,7 +267,7 @@ const addTask = (event) => {
   const tasksTable = document.querySelector('#tasks-table');
   if (!tasksTable) {
     // Sort tasks by default by priority.
-    appData.sortBy = SortByValues.Priority;
+    appData.saveSortBy(SortByValues.Priority);
     // Add table header.
     generateTableWithHeader();
     // Add arrow to priority and remove arrow from deadline.
@@ -375,8 +373,6 @@ const generateTableWithHeader = () => {
               appData.sortBy === SortByValues.Priority ? 'selected' : '';
     const deadlineSelected =
               appData.sortBy === SortByValues.Deadline ? 'selected' : '';
-    const sortBy = appData.sortBy;
-    debugger;
     tasksTable.innerHTML = `
       <thead>
       <tr id="task-headings">
@@ -497,7 +493,7 @@ const createEmptyStatePlanner = () => {
   const tasksTable = document.querySelector('#tasks-table');
   if (!tasksTable) {
     addEmptyStateToPlanner();
-    appData.sortBy = SortByValues.Priority;
+    appData.saveSortBy(SortByValues.Priority);
   }
 };
 

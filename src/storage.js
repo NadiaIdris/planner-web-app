@@ -11,7 +11,7 @@ class Storage {
     const dataFromStorage = JSON.parse(localStorage.getItem(Key));
     if (!dataFromStorage) return;
     appData.tasks = dataFromStorage.tasks;
-    appData.sortBy_ = dataFromStorage.sortBy;
+    appData.sortBy = dataFromStorage.sortBy;
     appData.tasksDone = dataFromStorage.tasksDone;
   }
 
@@ -19,12 +19,7 @@ class Storage {
    * @param {AppData} appData
    */
   static save(appData) {
-    const data = {
-      tasks: appData.tasks,
-      sortBy: appData.sortBy,
-      tasksDone: appData.tasksDone,
-    };
-    localStorage.setItem(Key, JSON.stringify(data));
+    localStorage.setItem(Key, JSON.stringify(appData));
   }
 }
 
