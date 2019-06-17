@@ -193,13 +193,13 @@ const markTaskUndone = (event) => {
   const handleSortedByDeadline = () => {
     const deadline = appData.tasksDone[index].deadline;
     const firstTaskWithSameDeadline =
-              appData.tasks.find((task) => task.deadline === deadline);
+        appData.tasks.find((task) => task.deadline === deadline);
     if (firstTaskWithSameDeadline === undefined) {
       undoneTask = appData.tasksDone.splice(index, 1);
       appData.tasks.push(undoneTask[0]);
     } else {
       const indexOfDuplicate =
-                appData.tasks.indexOf(firstTaskWithSameDeadline);
+          appData.tasks.indexOf(firstTaskWithSameDeadline);
       undoneTask = appData.tasksDone.splice(index, 1);
       appData.tasks.splice(indexOfDuplicate, 0, undoneTask[0]);
     }
@@ -207,23 +207,21 @@ const markTaskUndone = (event) => {
 
   const handleSortedByPriority = () => {
     const priority = appData.tasksDone[index].priority;
-    const found = appData.tasks.find((task) => task.priority === priority);
-    if (found === undefined) {
+    const firstTaskWithSamePriority =
+        appData.tasks.find((task) => task.priority === priority);
+    if (firstTaskWithSamePriority === undefined) {
       undoneTask = appData.tasksDone.splice(index, 1);
       appData.tasks.push(undoneTask[0]);
     } else {
-      const indexOfDuplicate = appData.tasks.indexOf(found);
+      const indexOfDuplicate = appData.tasks.indexOf(firstTaskWithSamePriority);
       undoneTask = appData.tasksDone.splice(index, 1);
       appData.tasks.splice(indexOfDuplicate, 0, undoneTask[0]);
     }
   };
 
   sortedByDeadline ? handleSortedByDeadline() : handleSortedByPriority();
-
   generateListOfTasksDone(appData.tasksDone);
-
   sortTasks();
-
   highlightTask(undoneTask[0]);
 
   if (appData.tasksDone.length === 0) {
@@ -353,13 +351,13 @@ const generateTableWithHeader = () => {
     tasksContainer.appendChild(tasksTable);
 
     const priorityArrow =
-              appData.sortBy === SortByValues.Priority ? 'visible' : 'hidden';
+        appData.sortBy === SortByValues.Priority ? 'visible' : 'hidden';
     const deadlineArrow =
-              appData.sortBy === SortByValues.Deadline ? 'visible' : 'hidden';
+        appData.sortBy === SortByValues.Deadline ? 'visible' : 'hidden';
     const prioritySelected =
-              appData.sortBy === SortByValues.Priority ? 'selected' : '';
+        appData.sortBy === SortByValues.Priority ? 'selected' : '';
     const deadlineSelected =
-              appData.sortBy === SortByValues.Deadline ? 'selected' : '';
+        appData.sortBy === SortByValues.Deadline ? 'selected' : '';
     tasksTable.innerHTML = `
       <thead>
       <tr id="task-headings">
@@ -457,11 +455,36 @@ const generateListOfTasks = (tasksArray = []) => {
 const changeTaskPriority = (event) => {
   const element = event.target;
   const index = element.dataset.index;
-  if (!element.matches('.priority')) {
+  if (!element.matches(`.priority[data-index="${index}"`)) {
     return;
   }
   appData.tasks[index].priority = element.value;
-  sortTasks();
+  let taskToRearrange;
+  const deadlineArrowIcon = document.querySelector('#deadline i');
+  const sortedByPriority = !deadlineArrowIcon.classList.contains('visible');
+
+  const handleSortedByPriority = () => {
+    const taskChanged = appData.tasks[index];
+    const priorityOfTheTaskChanged = appData.tasks[index].priority;
+    const firstTaskWithSamePriority = appData.tasks.find((task) =>
+      task.priority === priorityOfTheTaskChanged &&
+        task.id !== taskChanged.id);
+
+    if (firstTaskWithSamePriority !== undefined) {
+      taskToRearrange = appData.tasks.splice(index, 1);
+      const indexOfDuplicate = appData.tasks.indexOf(firstTaskWithSamePriority);
+      appData.tasks.splice(indexOfDuplicate, 0, taskToRearrange[0]);
+      sortTasksBy('Priority');
+      highlightTask(taskToRearrange[0]);
+    } else {
+      sortTasksBy('Priority');
+      highlightTask(taskChanged);
+    }
+  };
+
+  if (sortedByPriority) {
+    handleSortedByPriority();
+  }
 };
 
 /**
@@ -546,15 +569,34 @@ const addDeadlineToTask = (event) => {
   if (!element.matches('.deadline-cell input[type="date"]')) {
     return;
   }
-
   const dateInShort = element.value;
   appData.tasks[index].deadline = dateInShort;
-
-  appData.save();
-  // If (#deadline i) includes class visible, then run sort function
+  let taskToRearrange;
+  // appData.save();
   const deadlineArrowIcon = document.querySelector('#deadline i');
-  if (deadlineArrowIcon.classList.contains('visible')) {
-    sortTasksBy('Deadline');
+  const sortedByDeadline = deadlineArrowIcon.classList.contains('visible');
+
+  const handleSortedByDeadline = () => {
+    const taskChanged = appData.tasks[index];
+    const deadlineOfTheTaskChanged = appData.tasks[index].deadline;
+    const firstTaskWithSameDeadline = appData.tasks.find((task) =>
+      task.deadline === deadlineOfTheTaskChanged &&
+        task.id !== taskChanged.id);
+
+    if (firstTaskWithSameDeadline !== undefined) {
+      taskToRearrange = appData.tasks.splice(index, 1)
+      const indexOfDuplicate = appData.tasks.indexOf(firstTaskWithSameDeadline);
+      appData.tasks.splice(indexOfDuplicate, 0, taskToRearrange[0]);
+      sortTasksBy('Deadline');
+      highlightTask(taskToRearrange[0]);
+    } else {
+      sortTasksBy('Deadline');
+      highlightTask(taskChanged);
+    }
+  };
+
+  if (sortedByDeadline) {
+    handleSortedByDeadline();
   }
 };
 
@@ -596,7 +638,7 @@ const deleteTaskIfTaskTextRemoved = (event) => {
   }
   if (text.trim() === '') {
     appData.tasks.splice(index, 1);
-    localStorage.setItem('tasks', JSON.stringify(appData.tasks));
+    appData.save();
     generateListOfTasks(appData.tasks);
     ifNoTasksAddEmptyStateToPlanner();
   }
