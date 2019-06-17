@@ -51,17 +51,19 @@ class AppData {
     Storage.save(this);
   }
 
-  // TODO add editTask (make sure to save)
-  // TODO add removeTask (make sure to save)
-
   /**
    * @param {Task} task
    * @return {number} Index of task in tasks array.
    */
   getTaskIndex(task) {
-    return appData.tasks.findIndex((element) => element.id ===
-        task.id);
+    return appData.tasks.findIndex((element) => element.id === task.id);
   }
+
+  save() {
+    Storage.save(this);
+  }
+  // TODO add editTask (make sure to save)
+  // TODO add removeTask (make sure to save)
 }
 
 /** Enumeration of valid values for sortBy. */

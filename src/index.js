@@ -1,5 +1,5 @@
 // import autosize from 'autosize';
-import {deleteElementBySelector, generateId} from './util';
+import {deleteElementBySelector} from './util';
 import autosize from 'autosize/src/autosize';
 import {appData, SortByValues, Task} from './app_data';
 
@@ -21,15 +21,15 @@ const main = () => {
   formElement.addEventListener('submit', addTask);
   checkboxButton.addEventListener('click', viewCompletedTasks);
 
-  tasksContainer.addEventListener('click', markTaskCompleted);
-  tasksContainer.addEventListener('change', selectPriority);
+  tasksContainer.addEventListener('click', markTaskDone);
+  tasksContainer.addEventListener('change', changeTaskPriority);
   tasksContainer.addEventListener('click', deleteTask);
   tasksContainer.addEventListener('change', addDeadlineToTask);
   tasksContainer.addEventListener('keyup', editTaskText);
   tasksContainer.addEventListener('keydown', keyboardShortcutToSaveTaskText);
   tasksContainer.addEventListener('focusout', deleteTaskIfTaskTextRemoved);
 
-  doneTasksContainer.addEventListener('click', markTaskUncompleted);
+  doneTasksContainer.addEventListener('click', markTaskUndone);
   doneTasksContainer.addEventListener('keyup', editTextInTaskCompleted);
   doneTasksContainer.addEventListener(
       'focusout',
@@ -40,16 +40,11 @@ const main = () => {
   tasksContainer.addEventListener('click', sortTasksOnClick);
 };
 
-
-// Function to sort an array. Takes a param which is dropdown selected value.
+/**
+ * @param {string} value Can be Deadline or Priority.
+ */
 const sortTasksBy = (value) => {
-  const selected = {
-    selectedValue: 'Priority',
-  };
-
-  // Check if change value is "Deadline".
-  if (value === 'Deadline') {
-    selected.selectedValue = value;
+  const sortByDeadline = () => {
     // Separating tasks without deadline
     const noDeadlineTasks = [];
     const deadlineTasks = [];
@@ -74,14 +69,12 @@ const sortTasksBy = (value) => {
 
     appData.tasks = [...deadlineTasks, ...noDeadlineTasks];
 
-    appData.saveSortBy(selected.selectedValue);
+    appData.saveSortBy(value);
     generateTableWithHeader();
     generateListOfTasks(appData.tasks);
-  }
+  };
 
-  // If change value is "Priority".
-  if (value === 'Priority') {
-    selected.selectedValue = value;
+  const sortByPriority = () => {
     // Sort the array by priority.
     appData.tasks.sort((a, b) => {
       if (a.priority < b.priority) {
@@ -93,10 +86,12 @@ const sortTasksBy = (value) => {
       return 0;
     });
 
-    appData.saveSortBy(selected.selectedValue);
+    appData.saveSortBy(value);
     generateTableWithHeader();
     generateListOfTasks(appData.tasks);
-  }
+  };
+
+  value === SortByValues.Deadline ? sortByDeadline() : sortByPriority();
 };
 
 // Function to sort tasks when page is loaded.
@@ -121,8 +116,8 @@ const sortTasksOnClick = (event) => {
   const priorityArrowIcon = document.querySelector('#priority i');
   const deadlineArrowIcon = document.querySelector('#deadline i');
 
-  if (element.textContent.includes('Priority') || element.matches('#priority' +
-                                                                      ' i.arrow-down')) {
+  if (element.textContent.includes('Priority') ||
+      element.matches('#priority i.arrow-down')) {
     elementValue = 'Priority';
 
     // Add arrow to priority.
@@ -145,7 +140,7 @@ const sortTasksOnClick = (event) => {
 };
 
 // Function to move task to done section once completed
-const markTaskCompleted = (event) => {
+const markTaskDone = (event) => {
   const doneEmptyState = document.querySelector('#empty-stage-done');
 
   const element = event.target;
@@ -170,14 +165,7 @@ const markTaskCompleted = (event) => {
   }
 };
 
-const markTaskUncompleted = (event) => {
-  const element = event.target;
-  const index = element.dataset.index;
-  if (!element.matches(`img[data-index="${index}"]`)) {
-    return;
-  }
-  appData.tasksDone[index].done = !appData.tasksDone[index].done;
-
+const generateTasksHeader = () => {
   let deadlineArrowIcon = document.querySelector('#deadline i');
   // If table header doesn't exist, generate it.
   if (deadlineArrowIcon === null) {
@@ -186,73 +174,72 @@ const markTaskUncompleted = (event) => {
     generateTableWithHeader();
     deadlineArrowIcon = document.querySelector('#deadline i');
   }
+  return deadlineArrowIcon;
+};
 
-  let uncheckedTask;
-
-  // Move the task in front of others that have the same priority or deadline.
-  if (deadlineArrowIcon.classList.contains('visible')) {
-    // Get the task deadline value from the tasksDone in localStorage.
-    const deadline = appData.tasksDone[index].deadline;
-    // Check tasks array to see is there at least one task with the same
-    // deadline.
-    const found = appData.tasks.find((task) => task.deadline === deadline);
-
-    if (found === undefined) {
-      // Remove the element from tasksDone array.
-      uncheckedTask = appData.tasksDone.splice(index, 1);
-      // Add the unchecked task to tasks array.
-      appData.tasks.push(uncheckedTask[0]);
-      // Find the task & highlight the background
-    } else {
-      // If another task has the same deadline, then get its index.
-      const indexOfDuplicate = appData.tasks.indexOf(found);
-      // Remove the element from tasksDone array.
-      uncheckedTask = appData.tasksDone.splice(index, 1);
-      // Add the task in front of the first task that has same date.
-      appData.tasks.splice(indexOfDuplicate, 0, uncheckedTask[0]);
-    }
-  } else {
-    // Get the task priority value from the tasksDone in localStorage.
-    const priority = appData.tasksDone[index].priority;
-    // Check tasks array to see is there at least one task with the same
-    // priority.
-    const found = appData.tasks.find((task) => task.priority === priority);
-
-    if (found === undefined) {
-      uncheckedTask = appData.tasksDone.splice(index, 1);
-      appData.tasks.push(uncheckedTask[0]);
-    } else {
-      const indexOfDuplicate = appData.tasks.indexOf(found);
-      uncheckedTask = appData.tasksDone.splice(index, 1);
-      appData.tasks.splice(indexOfDuplicate, 0, uncheckedTask[0]);
-    }
+const markTaskUndone = (event) => {
+  const element = event.target;
+  const index = element.dataset.index;
+  if (!element.matches(`img[data-index="${index}"]`)) {
+    return;
   }
 
-  // Set the tasksDone in local appData.
-  localStorage.setItem('tasksDone', JSON.stringify(appData.tasksDone));
-  // Repaint the tasks done UI
+  appData.tasksDone[index].done = !appData.tasksDone[index].done;
+  const deadlineArrowIcon = generateTasksHeader();
+
+  let undoneTask;
+  const sortedByDeadline = deadlineArrowIcon.classList.contains('visible');
+
+  const handleSortedByDeadline = () => {
+    const deadline = appData.tasksDone[index].deadline;
+    const firstTaskWithSameDeadline =
+              appData.tasks.find((task) => task.deadline === deadline);
+    if (firstTaskWithSameDeadline === undefined) {
+      undoneTask = appData.tasksDone.splice(index, 1);
+      appData.tasks.push(undoneTask[0]);
+    } else {
+      const indexOfDuplicate =
+                appData.tasks.indexOf(firstTaskWithSameDeadline);
+      undoneTask = appData.tasksDone.splice(index, 1);
+      appData.tasks.splice(indexOfDuplicate, 0, undoneTask[0]);
+    }
+  };
+
+  const handleSortedByPriority = () => {
+    const priority = appData.tasksDone[index].priority;
+    const found = appData.tasks.find((task) => task.priority === priority);
+    if (found === undefined) {
+      undoneTask = appData.tasksDone.splice(index, 1);
+      appData.tasks.push(undoneTask[0]);
+    } else {
+      const indexOfDuplicate = appData.tasks.indexOf(found);
+      undoneTask = appData.tasksDone.splice(index, 1);
+      appData.tasks.splice(indexOfDuplicate, 0, undoneTask[0]);
+    }
+  };
+
+  sortedByDeadline ? handleSortedByDeadline() : handleSortedByPriority();
+
   generateListOfTasksDone(appData.tasksDone);
 
-  // Sort the tasks.
   sortTasks();
-  // Set the local storage with the correct tasks order.
-  localStorage.setItem('tasks', JSON.stringify(appData.tasks));
-  highlightTask(uncheckedTask[0]);
+
+  highlightTask(undoneTask[0]);
 
   if (appData.tasksDone.length === 0) {
     deleteElementBySelector('#tasks-done');
     createEmptyStateDone();
   }
+
+  appData.save();
 };
 
 // Function to sort the tasks list based on what sorting option is selected.
 const sortTasks = () => {
   const deadlineArrowIcon = document.querySelector('#deadline i');
-  if (deadlineArrowIcon.classList.contains('visible')) {
-    sortTasksBy('Deadline');
-  } else {
-    sortTasksBy('Priority');
-  }
+  const sortedByDeadline = deadlineArrowIcon.classList.contains('visible');
+  sortedByDeadline ?
+      sortTasksBy(SortByValues.Deadline) : sortTasksBy(SortByValues.Priority);
 };
 
 
@@ -413,7 +400,7 @@ const generateListOfTasks = (tasksArray = []) => {
   // Map over each array element and paint them on screen.
   const renderTask = (task, index) => {
     const deadlineAttributeHTML = task.deadline ?
-        `value="${task.deadline}"` :'';
+        `value="${task.deadline}"` : '';
     const doneIcon = task.done ?
         `../images/checkbox-checked.svg` : `../images/checkbox-unchecked.svg`;
     const p0Selected = task.priority === 'P0' ? 'selected' : '';
@@ -454,13 +441,19 @@ const generateListOfTasks = (tasksArray = []) => {
       </tr>
        `;
   };
-  tableBody.innerHTML = tasksArray.map(renderTask).join('');
+  tableBody.innerHTML =
+      tasksArray.map(renderTask)
+          .join('');
 
   autosize(tableBody.querySelectorAll('textarea'));
 };
 
-
-const selectPriority = (event) => {
+/**
+ * When the user changes the value of the priority drop down for a given
+ * task this function is called.
+ * @param {MouseEvent} event
+ */
+const changeTaskPriority = (event) => {
   const element = event.target;
   const index = element.dataset.index;
   if (!element.matches('.priority')) {
@@ -468,9 +461,7 @@ const selectPriority = (event) => {
   }
   appData.tasks[index].priority = element.value;
   sortTasks();
-  localStorage.setItem('tasks', JSON.stringify(appData.tasks));
 };
-
 
 /**
  * If item(s) in tasks, then generate table with the task(s).
