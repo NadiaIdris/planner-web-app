@@ -187,6 +187,7 @@ const markTaskUncompleted = (event) => {
   }
 
   let uncheckedTask;
+  debugger;
   deadlineArrowIcon = document.querySelector('#deadline i');
 
 
@@ -374,19 +375,20 @@ const generateTableWithHeader = () => {
               appData.sortBy === SortByValues.Priority ? 'selected' : '';
     const deadlineSelected =
               appData.sortBy === SortByValues.Deadline ? 'selected' : '';
-
+    const sortBy = appData.sortBy;
+    debugger;
     tasksTable.innerHTML = `
       <thead>
       <tr id="task-headings">
           <th></th>
           <th id="task" class="heading-cell">Task</th>
           <th id="priority" class="heading-cell">
-            <i class="material-icons arrow-down ${priorityArrow}">
-            arrow_drop_down</i>Priority
+            <i class="material-icons arrow-down ${priorityArrow}"
+              >arrow_drop_down</i>Priority
           </th>
           <th id="deadline" class="heading-cell">
-            <i class="material-icons arrow-down ${deadlineArrow}">
-            arrow_drop_down</i>Deadline
+            <i class="material-icons arrow-down ${deadlineArrow}"
+            >arrow_drop_down</i>Deadline
           </th>
           <th class="sorting-cell">
              <select class="sort-by">
