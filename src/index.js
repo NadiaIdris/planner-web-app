@@ -441,6 +441,7 @@ const generateListOfTasks = (tasksArray = []) => {
       </tr>
        `;
   };
+
   tableBody.innerHTML =
       tasksArray.map(renderTask)
           .join('');
@@ -500,7 +501,9 @@ const addEmptyStateToPlanner = () => {
   div.setAttribute('class', 'empty-stage');
 
   div.innerHTML =
-      `<img class="sun" src="../images/sun.svg"><p class="empty-stage-text gray">You have no tasks.<br>Add a task below.</p>`;
+      '<img class="sun" src="../images/sun.svg">' +
+      '<p class="empty-stage-text gray">' +
+      'You have no tasks.<br>Add a task below.</p>';
 };
 
 const ifNoTasksAddEmptyStateToPlanner = () => {
@@ -531,7 +534,7 @@ const deleteTask = (event) => {
   }
   appData.tasks.splice(`${index}`, 1);
 
-  localStorage.setItem('tasks', JSON.stringify(appData.tasks));
+  appData.save();
   generateListOfTasks(appData.tasks);
   ifNoTasksAddEmptyStateToPlanner();
 };
@@ -547,7 +550,7 @@ const addDeadlineToTask = (event) => {
   const dateInShort = element.value;
   appData.tasks[index].deadline = dateInShort;
 
-  localStorage.setItem('tasks', JSON.stringify(appData.tasks));
+  appData.save();
   // If (#deadline i) includes class visible, then run sort function
   const deadlineArrowIcon = document.querySelector('#deadline i');
   if (deadlineArrowIcon.classList.contains('visible')) {
@@ -567,7 +570,7 @@ const editTaskText = (event) => {
     return;
   }
   appData.tasks[index].text = text;
-  localStorage.setItem('tasks', JSON.stringify(appData.tasks));
+  appData.save();
 };
 
 
@@ -580,8 +583,7 @@ const editTextInTaskCompleted = (event) => {
     return;
   }
   appData.tasksDone[index].text = text;
-
-  localStorage.setItem('tasksDone', JSON.stringify(appData.tasksDone));
+  appData.save();
 };
 
 const deleteTaskIfTaskTextRemoved = (event) => {
@@ -612,7 +614,7 @@ const deleteCompletedTaskIfTaskTextRemoved = (event) => {
   }
   if (text.trim() === '') {
     appData.tasksDone.splice(index, 1);
-    localStorage.setItem('tasksDone', JSON.stringify(appData.tasksDone));
+    appData.save();
     generateListOfTasksDone(appData.tasksDone);
     ifNoCompletedTasksAddEmptyStateToDone();
   }
@@ -622,7 +624,7 @@ const deleteCompletedTaskIfTaskTextRemoved = (event) => {
 
 // Function
 const keyboardShortcutToSaveTaskText = () => {
-
+  // TODO implement this
 };
 
 
@@ -642,15 +644,13 @@ const generateTodaysDateAndTime = () => {
       minute: '2-digit',
     });
 
-    dateContainer.innerHTML =
-        `Today \u00A0\u00A0|\u00A0\u00A0 ${date} \u00A0\u00A0|\u00A0\u00A0 ${time}`;
+    const spaces = '\u00A0\u00A0|\u00A0\u00A0';
+    dateContainer.innerHTML = `Today ${spaces} ${date} ${spaces} ${time}`;
   };
   setInterval(displayTime, 1000);
   displayTime();
 };
 
-
-// TODO Clean up code below.
 
 // Function to generate list of tasks that are done
 const generateListOfTasksDone = (tasksDoneArray = []) => {
@@ -665,19 +665,26 @@ const generateListOfTasksDone = (tasksDoneArray = []) => {
 
   const tasksDoneTable = document.querySelector('#tasks-done');
 
-  tasksDoneTable.innerHTML = tasksDoneArray.map((task, index) => {
+  const renderTask = (task, index) => {
+    const checkboxImage = task.done ? `../images/checkbox-checked.svg` :
+        `../images/checkbox-unchecked-green.svg`;
     return `
-        <tr class="task-done">
-          <td class="chkbx-cell"><img
-               class="chkbx-img-checked"
-               src="${task.done ? `../images/checkbox-checked.svg` :
-        `../images/checkbox-unchecked-green.svg`}"
-               data-index="${index}"></td>
-          <td><textarea class="done-text-cell" rows="1" data-index="${index}">${task.text}</textarea></td>
-        </tr>
+      <tr class="task-done">
+        <td class="chkbx-cell">
+          <img
+             class="chkbx-img-checked"
+             src="${checkboxImage}"
+             data-index="${index}">
+        </td>
+        <td>
+          <textarea class="done-text-cell" rows="1" data-index="${index}"
+          >${task.text}</textarea>
+        </td>
+      </tr>
     `;
-  })
-      .join('');
+  };
+
+  tasksDoneTable.innerHTML = tasksDoneArray.map(renderTask).join('');
 
   autosize(tasksDoneTable.querySelectorAll('textarea'));
 };
@@ -705,7 +712,9 @@ const addEmptyStateToDone = () => {
   container.appendChild(div);
 
   div.innerHTML =
-      `<img class="checkbox" src="../images/checkbox_icon.svg"><p class="empty-stage-text">Tasks you get done<br>will appear here.</p>`;
+      '<img class="checkbox" src="../images/checkbox_icon.svg">' +
+      '<p class="empty-stage-text">' +
+      'Tasks you get done<br>will appear here.</p>';
 };
 
 const initializeDoneUI = () => {
@@ -716,8 +725,7 @@ const initializeDoneUI = () => {
 };
 
 
-// Responsive design JS
-
+// Responsive design.
 
 const delay = 1;
 
@@ -735,7 +743,6 @@ const handleWindowResize = () => {
     }, delay);
   });
 };
-
 
 const generatePageLayout = () => {
   const checkboxButton = document.querySelector('#checkbox-button');
@@ -795,7 +802,6 @@ const viewCompletedTasks = () => {
   const mainContent = document.querySelector('#main-content');
   mainContent.style.display = 'none';
 };
-
 
 // Run on document loaded.
 document.addEventListener('DOMContentLoaded', main);
