@@ -65,8 +65,7 @@ header {
   grid-template-columns: 30px 1fr 80px 125px 50px;
   grid-template-rows: auto;
   border-bottom: 1px solid var(--lt_gray);
-  padding: 11px 0;
-  margin: 0 3px;
+  padding: 11px;
   align-items: center;
   min-height: 47px;
 }
@@ -381,8 +380,10 @@ input:focus, textarea:focus {
     display: grid;
     grid-template-columns: 32px 1fr 80px 125px 45px;
     grid-template-rows: auto;
-    margin: 0;
-    padding: 11px 12px;
+  }
+
+  .task > * {
+    align-items: center;
   }
 
   #task-headings {
@@ -437,8 +438,6 @@ input:focus, textarea:focus {
     display: grid;
     grid-template-columns: 32px 1fr 80px 125px 45px;
     grid-template-rows: auto;
-    margin: 0;
-    padding: 11px 15px;
   }
 
   #task-headings {
