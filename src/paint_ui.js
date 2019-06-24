@@ -228,72 +228,75 @@ const initializeDoneUI = () => {
 // Responsive design.
 
 const handleWindowResize = () => {
-  let resizeTaskId = null;
-
-  window.addEventListener('resize', (evt) => {
-    if (resizeTaskId !== null) clearTimeout(resizeTaskId);
-
-    resizeTaskId = setTimeout(() => {
-      resizeTaskId = null;
-      generatePageLayout();
-    }, 1);
-  });
+  // let resizeTaskId = null;
+  //
+  // window.addEventListener('resize', () => {
+  //   console.log('Window resize is working');
+  //   console.log(resizeTaskId);
+  //   if (resizeTaskId !== null) clearTimeout(resizeTaskId);
+  //
+  //   resizeTaskId = setTimeout(() => {
+  //     resizeTaskId = null;
+  //     generatePageLayout();
+  //   }, 10);
+  // });
 };
 
 const generatePageLayout = () => {
-  const checkboxButton = document.querySelector('#checkbox-button');
-  const addButtonSmall = document.querySelector('#add-button-small');
-  const addButton = document.querySelector('#add-button');
-  const addTasks = document.querySelector('#add-tasks');
-  const toPlannerButton = document.querySelector('#back-to-planner');
-  const doneContainer = document.querySelector('#done-container');
-  const mainContent = document.querySelector('#main-content');
+  // const checkboxButton = document.querySelector('#checkbox-button');
+  // const addButtonSmall = document.querySelector('#add-button-small');
+  // const addButton = document.querySelector('#add-button');
+  // const addTasks = document.querySelector('#add-tasks');
+  // const toPlannerButton = document.querySelector('#back-to-planner');
+  // const doneContainer = document.querySelector('#done-container');
+  // const mainContent = document.querySelector('#main-content');
 
   if (window.matchMedia('(min-width: 800px)').matches) {
-    addButtonSmall.style.display = 'none';
-    addButton.style.display = 'flex';
-    checkboxButton.style.display = 'none';
-    addTasks.style.padding = '0';
-    toPlannerButton.style.display = 'none';
-    doneContainer.style.width = '530px';
-    doneContainer.style.display = 'flex';
-    // mainContent.style.display = 'flex';
-    checkboxClicked = false;
+    // addButtonSmall.style.display = 'none';
+    // addButton.style.display = 'flex';
+    // checkboxButton.style.display = 'none';
+    // addTasks.style.padding = '0';
+    // toPlannerButton.style.display = 'none';
+    // doneContainer.style.width = '530px';
+    // doneContainer.style.display = 'flex';
+    // checkboxClicked = false;
   }
 
   if (window.matchMedia('(max-width: 799px)').matches) {
-    addButtonSmall.style.display = 'none';
-    addButton.style.display = 'flex';
-    checkboxButton.style.display = 'flex';
-    addTasks.style.padding = '0 15px';
-    toPlannerButton.style.display = 'flex';
-    doneContainer.style.display = 'none';
-    mainContent.style.display = 'flex';
+    // addButtonSmall.style.display = 'none';
+    // addButton.style.display = 'flex';
+    // checkboxButton.style.display = 'flex';
+    // addTasks.style.padding = '0 15px';
+    // toPlannerButton.style.display = 'flex';
+    // doneContainer.style.display = 'none';
+    // mainContent.style.display = 'flex';
   }
 
   if (window.matchMedia('(max-width: 499px)').matches) {
-    addButton.style.display = 'none';
-    addButtonSmall.style.display = 'flex';
+    // addButton.style.display = 'none';
+    // addButtonSmall.style.display = 'flex';
   }
 
-  // if (window.matchMedia("(max-width: 799px)").matches && checkboxClicked ===
+  // // Probably will have to remove this code below.
+  // if (window.matchMedia("(max-width: 799px)").matches &&
+  // checkboxClicked ===
   // true) { doneContainer.style.display = 'flex'; mainContent.style.display =
   // 'none'; console.log("screen width < 799 && checkboxClicked === true") }
 };
 
 // Function to view done tasks if screen is smaller then 720px;
-let checkboxClicked = false;
+const checkboxClicked = false;
 
 const viewCompletedTasks = () => {
-  checkboxClicked = true;
-  const doneContainer = document.querySelector('#done-container');
-  doneContainer.style.display = 'flex';
-  doneContainer.style.height = '100vh';
-  doneContainer.style.width = '100%';
-  doneContainer.style.minWidth = '320px';
-
-  const mainContent = document.querySelector('#main-content');
-  mainContent.style.display = 'none';
+  // checkboxClicked = true;
+  // const doneContainer = document.querySelector('#done-container');
+  // doneContainer.style.display = 'flex';
+  // doneContainer.style.height = '100vh';
+  // doneContainer.style.width = '100%';
+  // doneContainer.style.minWidth = '320px';
+  //
+  // const mainContent = document.querySelector('#main-content');
+  // mainContent.style.display = 'none';
 };
 
 export {
@@ -302,8 +305,6 @@ export {
   generateListOfTasks,
   createEmptyStatePlanner,
   createEmptyStateDone,
-  // addEmptyStateToDone,
-  // addEmptyStateToPlanner,
   ifNoTasksAddEmptyStateToPlanner,
   ifNoCompletedTasksAddEmptyStateToDone,
   initializePlannerUI,

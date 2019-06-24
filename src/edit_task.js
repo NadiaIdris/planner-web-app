@@ -69,6 +69,7 @@ const changeTaskPriority = (event) => {
   let taskToRearrange;
   const deadlineArrowIcon = document.querySelector('#deadline i');
   const sortedByPriority = !deadlineArrowIcon.classList.contains('visible');
+  const sortedByDeadline = deadlineArrowIcon.classList.contains('visible');
 
   const handleSortedByPriority = () => {
     const taskChanged = appData.tasks[index];
@@ -89,6 +90,7 @@ const changeTaskPriority = (event) => {
     }
   };
   if (sortedByPriority) handleSortedByPriority();
+  if (sortedByDeadline) appData.save();
 };
 
 const addDeadlineToTask = (event) => {
@@ -100,6 +102,7 @@ const addDeadlineToTask = (event) => {
   let taskToRearrange;
   const deadlineArrowIcon = document.querySelector('#deadline i');
   const sortedByDeadline = deadlineArrowIcon.classList.contains('visible');
+  const sortedByPriority = !deadlineArrowIcon.classList.contains('visible');
 
   const handleSortedByDeadline = () => {
     const taskChanged = appData.tasks[index];
@@ -121,6 +124,7 @@ const addDeadlineToTask = (event) => {
   };
 
   if (sortedByDeadline) handleSortedByDeadline();
+  if (sortedByPriority) appData.save();
 };
 
 // Function to delete a task.

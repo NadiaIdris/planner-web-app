@@ -21,7 +21,6 @@ html {
 }
 
 body {
-  /*max-width: 1024px;*/
   max-width: 1400px;
   margin: 0 auto;
   overflow-y: hidden;
@@ -362,14 +361,13 @@ input:focus, textarea:focus {
   display: none;
 }
 
-@media only screen and (max-width: 799px) {
+@media only screen and (max-width: 800px) {
   #done-container {
     display: none;
   }
 
   #main-content {
     padding: 19px 0 0 0;
-    /*display: flex;*/
   }
 
   header {
@@ -494,9 +492,9 @@ input:focus, textarea:focus {
 
   .icon-cell {
     grid-column: 5/6;
-    /*grid-row: 2/3;*/
-    /*width: 45px;*/
-    /*margin-top: 10px;*/
+    grid-row: 2/3;
+    width: 45px;
+    margin-top: 10px;
   }
 
   .sort-by {
@@ -504,7 +502,7 @@ input:focus, textarea:focus {
   }
 }
 
-@media only screen and (max-width: 359px) {
+@media only screen and (max-width: 360px) {
   #task-headings {
     display: grid;
     grid-template-columns: 1fr;
