@@ -80,9 +80,9 @@ header {
 .task-done {
   display: grid;
   grid-template-columns: 30px 1fr;
+  grid-template-rows: auto;
   border-bottom: 1px solid var(--mid_green);
-  padding: 11px 0;
-  margin: 0 3px;
+  padding: 11px;
   align-items: center;
   min-height: 47px;
 }
@@ -107,8 +107,18 @@ header {
   content: url(../images/checkbox-checked.svg);
 }
 
+.chkbx-img-checked {
+  position: relative;
+}
+
 .chkbx-img-checked:hover {
   content: url("../images/checkbox-unchecked-green.svg");
+  padding-right: 2px;
+  padding-top: 1px;
+}
+
+.chkbx-img-checked:hover:after {
+  position: absolute;
 }
 
 .text-cell {

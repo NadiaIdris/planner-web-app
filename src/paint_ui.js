@@ -60,14 +60,12 @@ const generateListOfTasksDone = (tasksDoneArray = []) => {
   tasksDoneContainer.appendChild(table);
 
   const renderTask = (task, index) => {
-    const checkboxImage = task.done ? `../images/checkbox-checked.svg` :
-        `../images/checkbox-unchecked-green.svg`;
     return `
       <tr class="task-done">
         <td class="chkbx-cell">
           <img
              class="chkbx-img-checked"
-             src="${checkboxImage}"
+             src="../images/checkbox-checked.svg"
              data-index="${index}">
         </td>
         <td>
