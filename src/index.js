@@ -22,6 +22,7 @@ import {
   handleWindowResize,
   generatePageLayout,
   viewCompletedTasks,
+  ifNoCompletedTasksAddEmptyStateToDone,
 } from './paint_ui';
 
 // Globals.
@@ -194,13 +195,13 @@ const addTask = (event) => {
 const highlightTask = (task) => {
   const index = appData.getTaskIndex(task);
 
+  // Paint the backgrounds of the elements inside the taskContainer same
+  // color as taskContainer.
   const gray = '#dddddd';
   const white = 'RGB(255, 255, 255)';
   const timeItTakesToAddHighlight = '.3s';
   const timeItTakesToRemoveHighlight = '1.5s';
 
-  // Paint the backgrounds of the elements inside the taskContainer same
-  // color as taskContainer.
   const textBox =
       document.querySelector(`.text-cell[data-index="${index}"]`);
   textBox.style.backgroundColor = gray;
@@ -223,7 +224,7 @@ const highlightTask = (task) => {
   taskContainer.style.transition =
       `background-color ${timeItTakesToAddHighlight}`;
 
-  // Clear all the styling
+  // Remove the highlight.
   setTimeout(() => {
     textBox.style.backgroundColor = white;
     textBox.style.transition =
@@ -233,6 +234,39 @@ const highlightTask = (task) => {
         `background-color ${timeItTakesToRemoveHighlight}`;
     deadlineSelector.style.backgroundColor = white;
     deadlineSelector.style.transition =
+        `background-color ${timeItTakesToRemoveHighlight}`;
+    taskContainer.style.backgroundColor = white;
+    taskContainer.style.transition =
+        `background-color ${timeItTakesToRemoveHighlight}`;
+  }, 300);
+};
+
+const highlightTaskDone = () => {
+  const index = appData
+      .tasksDone.indexOf(appData.tasksDone[appData.tasksDone.length - 1]);
+
+  // Highlight the task done.
+  const gray = 'RGB(151, 191, 56)';
+  const white = 'RGB(185, 216, 112)';
+  const timeItTakesToAddHighlight = '.3s';
+  const timeItTakesToRemoveHighlight = '1.5s';
+
+  const textBox =
+      document.querySelector(`.done-text-cell[data-index="${index}"]`);
+  console.log(textBox);
+  textBox.style.backgroundColor = gray;
+  textBox.style.transition =
+      `background-color ${timeItTakesToAddHighlight}`;
+  const taskContainer =
+      document.querySelector(`.task-done[data-index="${index}"]`);
+  taskContainer.style.backgroundColor = gray;
+  taskContainer.style.transition =
+      `background-color ${timeItTakesToAddHighlight}`;
+
+  // Remove the highlight.
+  setTimeout(() => {
+    textBox.style.backgroundColor = white;
+    textBox.style.transition =
         `background-color ${timeItTakesToRemoveHighlight}`;
     taskContainer.style.backgroundColor = white;
     taskContainer.style.transition =
@@ -374,4 +408,5 @@ export {
   tasksContainer,
   sortTasksBy,
   highlightTask,
+  highlightTaskDone,
 };

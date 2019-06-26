@@ -61,7 +61,7 @@ const generateListOfTasksDone = (tasksDoneArray = []) => {
 
   const renderTask = (task, index) => {
     return `
-      <tr class="task-done">
+      <tr class="task-done" data-index="${index}">
         <td class="chkbx-cell">
           <img
              class="chkbx-img-checked"
@@ -97,8 +97,6 @@ const generateListOfTasks = (tasksArray = []) => {
   const renderTask = (task, index) => {
     const deadlineAttributeHTML = task.deadline ?
         `value="${task.deadline}"` : '';
-    const doneIcon = task.done ?
-        `../images/checkbox-checked.svg` : `../images/checkbox-unchecked.svg`;
     const p0Selected = task.priority === 'P0' ? 'selected' : '';
     const p1Selected = task.priority === 'P1' ? 'selected' : '';
     const p2Selected = task.priority === 'P2' ? 'selected' : '';
@@ -108,7 +106,7 @@ const generateListOfTasks = (tasksArray = []) => {
         <td class="chkbx-cell">
           <img
             class="chkbx-img-unchecked"
-            src="${doneIcon}"
+            src="../images/checkbox-unchecked.svg"
             data-index="${index}">
         </td>
         <td class="textarea-cell">

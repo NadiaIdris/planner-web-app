@@ -69,9 +69,9 @@ header {
   min-height: 47px;
 }
 
-.last_task {
-  border-bottom: none;
-}
+/*.last_task {*/
+/*  border-bottom: none;*/
+/*}*/
 
 #tasks-done {
   width: 100%;
@@ -107,18 +107,10 @@ header {
   content: url(../images/checkbox-checked.svg);
 }
 
-.chkbx-img-checked {
-  position: relative;
-}
-
 .chkbx-img-checked:hover {
   content: url("../images/checkbox-unchecked-green.svg");
   padding-right: 2px;
   padding-top: 1px;
-}
-
-.chkbx-img-checked:hover:after {
-  position: absolute;
 }
 
 .text-cell {

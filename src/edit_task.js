@@ -9,6 +9,7 @@ import {appData} from './app_data';
 import {
   sortTasksBy,
   highlightTask,
+  highlightTaskDone,
 } from './index';
 
 /**
@@ -27,6 +28,7 @@ const markTaskDone = (event) => {
   // Repaint the tasks done UI
   appData.markTaskDone(index);
   generateListOfTasksDone(appData.tasksDone);
+  highlightTaskDone();
   generateListOfTasks(appData.tasks);
 
   if (appData.tasks.length === 0) {
