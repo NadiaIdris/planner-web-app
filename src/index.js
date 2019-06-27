@@ -83,7 +83,7 @@ const sortTasksBy = (value) => {
     const noDeadlineTasks = [];
     const deadlineTasks = [];
     appData.tasks.forEach((task) => {
-      if (task.deadline === '' || 'deadline' in task === false) {
+      if (!task.deadline || task.deadline === '') {
         noDeadlineTasks.push(task);
       } else {
         deadlineTasks.push(task);
