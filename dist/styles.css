@@ -123,6 +123,7 @@ select.priority {
   border: none;
   font-size: 13px;
   height: 20px;
+  background-color: var(--white);
 }
 
 select.priority > option {
@@ -192,7 +193,7 @@ i.hidden {
   border-top: 2px solid var(--black);
   height: 60px;
   background-color: var(--white);
-  padding: 0 15px;
+  padding: 0 0 0 15px;
   min-width: 320px;
 }
 
@@ -305,6 +306,7 @@ p {
 input {
   border: none;
   font-size: 13px;
+  background-color: var(--white);
 }
 
 textarea {
@@ -356,7 +358,7 @@ input:focus, textarea:focus {
   display: none;
 }
 
-.sort-by {
+#sort-by {
   display: none;
 }
 
@@ -400,9 +402,8 @@ input:focus, textarea:focus {
 
   #checkbox-button {
     display: flex;
-    padding-left: 17px;
-    padding-bottom: 4px;
-    border-left: 1px solid black;
+    padding: 0 20px 1px 22px;
+    border-left: 2px solid black;
     border-top: none;
     border-right: none;
     border-bottom: none;
@@ -420,7 +421,7 @@ input:focus, textarea:focus {
     display: none;
   }
 
-  .sort-by {
+  #sort-by {
     display: none;
   }
 }
@@ -447,7 +448,7 @@ input:focus, textarea:focus {
     width: 85%;
   }
 
-  .sort-by {
+  #sort-by {
     display: none;
   }
 }
@@ -496,7 +497,7 @@ input:focus, textarea:focus {
     margin-top: 10px;
   }
 
-  .sort-by {
+  #sort-by {
     display: none;
   }
 }
@@ -519,15 +520,16 @@ input:focus, textarea:focus {
     padding: 8px 0;
   }
 
-  .sort-by {
+  #sort-by {
     display: flex;
     padding: 3px 5px;
     border: none;
     font-size: 11px;
     font-weight: 800;
+    background-color: var(--white);
   }
 
-  .sort-by * {
+  #sort-by * {
     font-size: 11px;
     font-weight: 800;
   }

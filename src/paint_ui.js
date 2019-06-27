@@ -39,7 +39,7 @@ const generateTableWithHeader = () => {
             >arrow_drop_down</i>Deadline
           </th>
           <th class="sorting-cell">
-             <select class="sort-by">
+             <select id="sort-by">
                 <option value="Priority" ${prioritySelected}>Priority</option>
                 <option value="Deadline" ${deadlineSelected}>Deadline</option>
              </select>
@@ -224,21 +224,22 @@ const initializeDoneUI = () => {
 // Responsive design.
 
 const handleWindowResize = () => {
-  // let resizeTaskId = null;
-  //
-  // window.addEventListener('resize', () => {
-  //   console.log('Window resize is working');
-  //   console.log(resizeTaskId);
-  //   if (resizeTaskId !== null) clearTimeout(resizeTaskId);
-  //
-  //   resizeTaskId = setTimeout(() => {
-  //     resizeTaskId = null;
-  //     generatePageLayout();
-  //   }, 10);
-  // });
+  let resizeTaskId = null;
+
+  window.addEventListener('resize', () => {
+    if (resizeTaskId !== null) clearTimeout(resizeTaskId);
+
+    resizeTaskId = setTimeout(() => {
+      resizeTaskId = null;
+      generatePageLayout();
+    }, 10);
+  });
 };
 
 const generatePageLayout = () => {
+  if (window.matchMedia('(max-width: 360px)').matches) {
+    console.log('Window is smaller than 360px');
+  }
   // const checkboxButton = document.querySelector('#checkbox-button');
   // const addButtonSmall = document.querySelector('#add-button-small');
   // const addButton = document.querySelector('#add-button');
@@ -294,6 +295,8 @@ const viewCompletedTasks = () => {
   // const mainContent = document.querySelector('#main-content');
   // mainContent.style.display = 'none';
 };
+
+
 
 export {
   generateTableWithHeader,

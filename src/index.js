@@ -31,6 +31,7 @@ const formElement = document.querySelector('#form');
 const tasksContainer = document.querySelector('#tasks-container');
 const doneTasksContainer = document.querySelector('#done-tasks-container');
 const checkboxButton = document.querySelector('#checkbox-button');
+const sortByDropdown = document.querySelector('#sort-by');
 
 const main = () => {
   generateTodaysDateAndTime();
@@ -60,6 +61,7 @@ const main = () => {
 
   window.addEventListener('load', sortTasksOnPageLoad);
   tasksContainer.addEventListener('click', sortTasksOnClick);
+  // sortByDropdown.addEventListener('change', )
 };
 
 // Sorting tasks.
