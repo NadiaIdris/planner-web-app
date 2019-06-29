@@ -31,7 +31,6 @@ const formElement = document.querySelector('#form');
 const tasksContainer = document.querySelector('#tasks-container');
 const doneTasksContainer = document.querySelector('#done-tasks-container');
 const checkboxButton = document.querySelector('#checkbox-button');
-const sortByDropdown = document.querySelector('#sort-by');
 
 const main = () => {
   generateTodaysDateAndTime();
@@ -61,10 +60,19 @@ const main = () => {
 
   window.addEventListener('load', sortTasksOnPageLoad);
   tasksContainer.addEventListener('click', sortTasksOnClick);
-  // sortByDropdown.addEventListener('change', )
+  tasksContainer.addEventListener('change', sortTasksOnChange);
 };
 
 // Sorting tasks.
+
+const sortTasksOnChange = (event) => {
+  const element = event.target;
+  if (!element.matches('#sort-by')) return;
+  const selected = document.querySelector('#sort-by').value;
+
+  selected === 'Priority' ?
+      sortTasksBy(SortByValues.Priority) : sortTasksBy(SortByValues.Deadline);
+};
 
 /**
  * Function to sort the tasks by priority or deadline.
@@ -255,7 +263,6 @@ const highlightTaskDone = () => {
 
   const textBox =
       document.querySelector(`.done-text-cell[data-index="${index}"]`);
-  console.log(textBox);
   textBox.style.backgroundColor = gray;
   textBox.style.transition =
       `background-color ${timeItTakesToAddHighlight}`;
@@ -411,4 +418,5 @@ export {
   sortTasksBy,
   highlightTask,
   highlightTaskDone,
+  sortTasksOnChange,
 };

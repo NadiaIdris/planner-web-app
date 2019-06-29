@@ -1,4 +1,4 @@
-import {appData} from './app_data';
+// import {appData} from './app_data';
 
 const Key = 'appData';
 

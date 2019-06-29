@@ -1,7 +1,7 @@
 import {deleteElementBySelector} from './util';
 import autosize from 'autosize/src/autosize';
 import {appData, SortByValues} from './app_data';
-import {tasksContainer} from './index';
+import {tasksContainer, sortTasksOnChange} from './index';
 
 /**
  * If some tasks present, return and add a task to the existing table with
@@ -238,8 +238,33 @@ const handleWindowResize = () => {
 
 const generatePageLayout = () => {
   if (window.matchMedia('(max-width: 360px)').matches) {
-    console.log('Window is smaller than 360px');
+    // debugger;
+    console.log('Window is SMALLER or equal to 360px');
+    // If no tasks, generate empty
+    if (appData.tasks.length === 0) {
+      deleteElementBySelector('#empty-stage-planner');
+      createEmptyStatePlanner();
+    } else {
+      // If tasks present, delete table and paint it again
+      deleteElementBySelector('#tasks-table');
+      generateTableWithHeader();
+      generateListOfTasks(appData.tasks);
+    }
   }
+
+  if (window.matchMedia('(min-width: 361px)').matches) {
+    console.log('Window is LARGER than 360px');
+    if (appData.tasks.length === 0) {
+      deleteElementBySelector('#empty-stage-planner');
+      createEmptyStatePlanner();
+    } else {
+      // If tasks present, delete table and paint it again
+      deleteElementBySelector('#tasks-table');
+      generateTableWithHeader();
+      generateListOfTasks(appData.tasks);
+    }
+  }
+
   // const checkboxButton = document.querySelector('#checkbox-button');
   // const addButtonSmall = document.querySelector('#add-button-small');
   // const addButton = document.querySelector('#add-button');
@@ -295,7 +320,6 @@ const viewCompletedTasks = () => {
   // const mainContent = document.querySelector('#main-content');
   // mainContent.style.display = 'none';
 };
-
 
 
 export {

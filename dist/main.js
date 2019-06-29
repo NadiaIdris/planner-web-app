@@ -511,6 +511,7 @@ const markTaskDone = (event) => {
   // Repaint the tasks done UI
   _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].markTaskDone(index);
   Object(_paint_ui__WEBPACK_IMPORTED_MODULE_1__["generateListOfTasksDone"])(_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasksDone);
+  Object(_index__WEBPACK_IMPORTED_MODULE_3__["highlightTaskDone"])();
   Object(_paint_ui__WEBPACK_IMPORTED_MODULE_1__["generateListOfTasks"])(_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks);
 
   if (_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks.length === 0) {
@@ -553,6 +554,7 @@ const changeTaskPriority = (event) => {
   let taskToRearrange;
   const deadlineArrowIcon = document.querySelector('#deadline i');
   const sortedByPriority = !deadlineArrowIcon.classList.contains('visible');
+  const sortedByDeadline = deadlineArrowIcon.classList.contains('visible');
 
   const handleSortedByPriority = () => {
     const taskChanged = _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks[index];
@@ -573,6 +575,7 @@ const changeTaskPriority = (event) => {
     }
   };
   if (sortedByPriority) handleSortedByPriority();
+  if (sortedByDeadline) _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].save();
 };
 
 const addDeadlineToTask = (event) => {
@@ -584,6 +587,7 @@ const addDeadlineToTask = (event) => {
   let taskToRearrange;
   const deadlineArrowIcon = document.querySelector('#deadline i');
   const sortedByDeadline = deadlineArrowIcon.classList.contains('visible');
+  const sortedByPriority = !deadlineArrowIcon.classList.contains('visible');
 
   const handleSortedByDeadline = () => {
     const taskChanged = _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks[index];
@@ -605,6 +609,7 @@ const addDeadlineToTask = (event) => {
   };
 
   if (sortedByDeadline) handleSortedByDeadline();
+  if (sortedByPriority) _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].save();
 };
 
 // Function to delete a task.
@@ -644,7 +649,7 @@ const deleteTaskIfTaskTextRemoved = (event) => {
 /*!**********************!*\
   !*** ./src/index.js ***!
   \**********************/
-/*! exports provided: tasksContainer, sortTasksBy, highlightTask */
+/*! exports provided: tasksContainer, sortTasksBy, highlightTask, highlightTaskDone, sortTasksOnChange */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -652,6 +657,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "tasksContainer", function() { return tasksContainer; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sortTasksBy", function() { return sortTasksBy; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "highlightTask", function() { return highlightTask; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "highlightTaskDone", function() { return highlightTaskDone; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sortTasksOnChange", function() { return sortTasksOnChange; });
 /* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util */ "./src/util.js");
 /* harmony import */ var _app_data__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./app_data */ "./src/app_data.js");
 /* harmony import */ var _edit_task__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./edit_task */ "./src/edit_task.js");
@@ -698,9 +705,27 @@ const main = () => {
 
   window.addEventListener('load', sortTasksOnPageLoad);
   tasksContainer.addEventListener('click', sortTasksOnClick);
+  tasksContainer.addEventListener('change', sortTasksOnChange);
 };
 
 // Sorting tasks.
+
+/**
+ * Function to sort tasks on sorting dropdown change.
+ * @param {change} event
+ */
+
+const sortTasksOnChange = (event) => {
+  const element = event.target;
+  if (!element.matches('#sort-by')) return;
+  console.log(element);
+
+  const selected = document.querySelector('#sort-by').value;
+  console.log(selected);
+
+  selected === 'Priority' ?
+      sortTasksBy(_app_data__WEBPACK_IMPORTED_MODULE_1__["SortByValues"].Priority) : sortTasksBy(_app_data__WEBPACK_IMPORTED_MODULE_1__["SortByValues"].Deadline);
+};
 
 /**
  * Function to sort the tasks by priority or deadline.
@@ -721,7 +746,7 @@ const sortTasksBy = (value) => {
     const noDeadlineTasks = [];
     const deadlineTasks = [];
     _app_data__WEBPACK_IMPORTED_MODULE_1__["appData"].tasks.forEach((task) => {
-      if (task.deadline === '' || 'deadline' in task === false) {
+      if (!task.deadline || task.deadline === '') {
         noDeadlineTasks.push(task);
       } else {
         deadlineTasks.push(task);
@@ -833,13 +858,13 @@ const addTask = (event) => {
 const highlightTask = (task) => {
   const index = _app_data__WEBPACK_IMPORTED_MODULE_1__["appData"].getTaskIndex(task);
 
+  // Paint the backgrounds of the elements inside the taskContainer same
+  // color as taskContainer.
   const gray = '#dddddd';
   const white = 'RGB(255, 255, 255)';
   const timeItTakesToAddHighlight = '.3s';
   const timeItTakesToRemoveHighlight = '1.5s';
 
-  // Paint the backgrounds of the elements inside the taskContainer same
-  // color as taskContainer.
   const textBox =
       document.querySelector(`.text-cell[data-index="${index}"]`);
   textBox.style.backgroundColor = gray;
@@ -862,7 +887,7 @@ const highlightTask = (task) => {
   taskContainer.style.transition =
       `background-color ${timeItTakesToAddHighlight}`;
 
-  // Clear all the styling
+  // Remove the highlight.
   setTimeout(() => {
     textBox.style.backgroundColor = white;
     textBox.style.transition =
@@ -872,6 +897,38 @@ const highlightTask = (task) => {
         `background-color ${timeItTakesToRemoveHighlight}`;
     deadlineSelector.style.backgroundColor = white;
     deadlineSelector.style.transition =
+        `background-color ${timeItTakesToRemoveHighlight}`;
+    taskContainer.style.backgroundColor = white;
+    taskContainer.style.transition =
+        `background-color ${timeItTakesToRemoveHighlight}`;
+  }, 300);
+};
+
+const highlightTaskDone = () => {
+  const index = _app_data__WEBPACK_IMPORTED_MODULE_1__["appData"]
+      .tasksDone.indexOf(_app_data__WEBPACK_IMPORTED_MODULE_1__["appData"].tasksDone[_app_data__WEBPACK_IMPORTED_MODULE_1__["appData"].tasksDone.length - 1]);
+
+  // Highlight the task done.
+  const gray = 'RGB(151, 191, 56)';
+  const white = 'RGB(185, 216, 112)';
+  const timeItTakesToAddHighlight = '.3s';
+  const timeItTakesToRemoveHighlight = '1.5s';
+
+  const textBox =
+      document.querySelector(`.done-text-cell[data-index="${index}"]`);
+  textBox.style.backgroundColor = gray;
+  textBox.style.transition =
+      `background-color ${timeItTakesToAddHighlight}`;
+  const taskContainer =
+      document.querySelector(`.task-done[data-index="${index}"]`);
+  taskContainer.style.backgroundColor = gray;
+  taskContainer.style.transition =
+      `background-color ${timeItTakesToAddHighlight}`;
+
+  // Remove the highlight.
+  setTimeout(() => {
+    textBox.style.backgroundColor = white;
+    textBox.style.transition =
         `background-color ${timeItTakesToRemoveHighlight}`;
     taskContainer.style.backgroundColor = white;
     taskContainer.style.transition =
@@ -976,7 +1033,7 @@ const deleteDoneTaskIfTaskTextRemoved = (event) => {
     _app_data__WEBPACK_IMPORTED_MODULE_1__["appData"].tasksDone.splice(index, 1);
     _app_data__WEBPACK_IMPORTED_MODULE_1__["appData"].save();
     Object(_paint_ui__WEBPACK_IMPORTED_MODULE_3__["generateListOfTasksDone"])(_app_data__WEBPACK_IMPORTED_MODULE_1__["appData"].tasksDone);
-    ifNoCompletedTasksAddEmptyStateToDone();
+    Object(_paint_ui__WEBPACK_IMPORTED_MODULE_3__["ifNoCompletedTasksAddEmptyStateToDone"])();
   }
   document.querySelector('#add-task').focus();
 };
@@ -1080,7 +1137,7 @@ const generateTableWithHeader = () => {
             >arrow_drop_down</i>Deadline
           </th>
           <th class="sorting-cell">
-             <select class="sort-by">
+             <select id="sort-by">
                 <option value="Priority" ${prioritySelected}>Priority</option>
                 <option value="Deadline" ${deadlineSelected}>Deadline</option>
              </select>
@@ -1101,14 +1158,12 @@ const generateListOfTasksDone = (tasksDoneArray = []) => {
   tasksDoneContainer.appendChild(table);
 
   const renderTask = (task, index) => {
-    const checkboxImage = task.done ? `../images/checkbox-checked.svg` :
-        `../images/checkbox-unchecked-green.svg`;
     return `
-      <tr class="task-done">
+      <tr class="task-done" data-index="${index}">
         <td class="chkbx-cell">
           <img
              class="chkbx-img-checked"
-             src="${checkboxImage}"
+             src="../images/checkbox-checked.svg"
              data-index="${index}">
         </td>
         <td>
@@ -1140,8 +1195,6 @@ const generateListOfTasks = (tasksArray = []) => {
   const renderTask = (task, index) => {
     const deadlineAttributeHTML = task.deadline ?
         `value="${task.deadline}"` : '';
-    const doneIcon = task.done ?
-        `../images/checkbox-checked.svg` : `../images/checkbox-unchecked.svg`;
     const p0Selected = task.priority === 'P0' ? 'selected' : '';
     const p1Selected = task.priority === 'P1' ? 'selected' : '';
     const p2Selected = task.priority === 'P2' ? 'selected' : '';
@@ -1151,7 +1204,7 @@ const generateListOfTasks = (tasksArray = []) => {
         <td class="chkbx-cell">
           <img
             class="chkbx-img-unchecked"
-            src="${doneIcon}"
+            src="../images/checkbox-unchecked.svg"
             data-index="${index}">
         </td>
         <td class="textarea-cell">
@@ -1271,50 +1324,64 @@ const initializeDoneUI = () => {
 const handleWindowResize = () => {
   let resizeTaskId = null;
 
-  window.addEventListener('resize', (evt) => {
+  window.addEventListener('resize', () => {
     if (resizeTaskId !== null) clearTimeout(resizeTaskId);
 
     resizeTaskId = setTimeout(() => {
       resizeTaskId = null;
       generatePageLayout();
-    }, 1);
+    }, 10);
   });
 };
 
 const generatePageLayout = () => {
-  const checkboxButton = document.querySelector('#checkbox-button');
-  const addButtonSmall = document.querySelector('#add-button-small');
-  const addButton = document.querySelector('#add-button');
-  const addTasks = document.querySelector('#add-tasks');
-  const toPlannerButton = document.querySelector('#back-to-planner');
-  const doneContainer = document.querySelector('#done-container');
-  const mainContent = document.querySelector('#main-content');
+  if (window.matchMedia('(max-width: 360px)').matches) {
+    console.log('Window is SMALLER or equal to 360px');
+    Object(_util__WEBPACK_IMPORTED_MODULE_0__["deleteElementBySelector"])('#tasks-table');
+    generateTableWithHeader();
+    generateListOfTasks(_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks);
+
+    // sortTasksOnChange();
+  }
+
+  if (window.matchMedia('(min-width: 361px)').matches) {
+    console.log('Window is LARGER than 360px');
+    generateTableWithHeader();
+    // sortTasksOnChange();
+  }
+
+  // const checkboxButton = document.querySelector('#checkbox-button');
+  // const addButtonSmall = document.querySelector('#add-button-small');
+  // const addButton = document.querySelector('#add-button');
+  // const addTasks = document.querySelector('#add-tasks');
+  // const toPlannerButton = document.querySelector('#back-to-planner');
+  // const doneContainer = document.querySelector('#done-container');
+  // const mainContent = document.querySelector('#main-content');
 
   if (window.matchMedia('(min-width: 800px)').matches) {
-    addButtonSmall.style.display = 'none';
-    addButton.style.display = 'flex';
-    checkboxButton.style.display = 'none';
-    addTasks.style.padding = '0';
-    toPlannerButton.style.display = 'none';
-    doneContainer.style.width = '530px';
-    doneContainer.style.display = 'flex';
-    // mainContent.style.display = 'flex';
-    checkboxClicked = false;
+    // addButtonSmall.style.display = 'none';
+    // addButton.style.display = 'flex';
+    // checkboxButton.style.display = 'none';
+    // addTasks.style.padding = '0';
+    // toPlannerButton.style.display = 'none';
+    // doneContainer.style.width = '530px';
+    // doneContainer.style.display = 'flex';
+    // checkboxClicked = false;
   }
 
   if (window.matchMedia('(max-width: 799px)').matches) {
-    addButtonSmall.style.display = 'none';
-    addButton.style.display = 'flex';
-    checkboxButton.style.display = 'flex';
-    addTasks.style.padding = '0 15px';
-    toPlannerButton.style.display = 'flex';
-    doneContainer.style.display = 'none';
-    mainContent.style.display = 'flex';
+    // addButtonSmall.style.display = 'none';
+    // addButton.style.display = 'flex';
+    // checkboxButton.style.display = 'flex';
+    // addTasks.style.padding = '0 15px';
+    // toPlannerButton.style.display = 'flex';
+    // doneContainer.style.display = 'none';
+    // mainContent.style.display = 'flex';
   }
 
   if (window.matchMedia('(max-width: 499px)').matches) {
-    addButton.style.display = 'none';
-    addButtonSmall.style.display = 'flex';
+    // addButton.style.display = 'none';
+    // addButtonSmall.style.display = 'flex';
   }
 
   // // Probably will have to remove this code below.
@@ -1325,19 +1392,21 @@ const generatePageLayout = () => {
 };
 
 // Function to view done tasks if screen is smaller then 720px;
-let checkboxClicked = false;
+const checkboxClicked = false;
 
 const viewCompletedTasks = () => {
-  checkboxClicked = true;
-  const doneContainer = document.querySelector('#done-container');
-  doneContainer.style.display = 'flex';
-  doneContainer.style.height = '100vh';
-  doneContainer.style.width = '100%';
-  doneContainer.style.minWidth = '320px';
-
-  const mainContent = document.querySelector('#main-content');
-  mainContent.style.display = 'none';
+  // checkboxClicked = true;
+  // const doneContainer = document.querySelector('#done-container');
+  // doneContainer.style.display = 'flex';
+  // doneContainer.style.height = '100vh';
+  // doneContainer.style.width = '100%';
+  // doneContainer.style.minWidth = '320px';
+  //
+  // const mainContent = document.querySelector('#main-content');
+  // mainContent.style.display = 'none';
 };
+
+
 
 
 
