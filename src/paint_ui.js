@@ -226,13 +226,24 @@ const initializeDoneUI = () => {
 const handleWindowResize = () => {
   let resizeTaskId = null;
 
-  window.addEventListener('resize', () => {
+  /* https://css-tricks.com/the-trick-to-viewport-units-on-mobile/ */
+  const setViewportHeight = ()=>{
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+  };
+
+  const generateAppLayout = () => {
     if (resizeTaskId !== null) clearTimeout(resizeTaskId);
 
     resizeTaskId = setTimeout(() => {
       resizeTaskId = null;
       generatePageLayout();
     }, 10);
+  };
+
+  window.addEventListener('resize', () => {
+    setViewportHeight();
+    generateAppLayout();
   });
 };
 

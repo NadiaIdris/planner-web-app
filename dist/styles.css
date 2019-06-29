@@ -159,7 +159,8 @@ i.hidden {
   width: 870px;
   padding: 47px 30px 0 30px;
   background-color: var(--white);
-  height: 100vh;
+  /* https://css-tricks.com/the-trick-to-viewport-units-on-mobile/ */
+  height: calc(var(--vh, 1vh) * 100);
 }
 
 #tasks-container {
@@ -180,7 +181,8 @@ i.hidden {
   overflow-y: auto;
   background-color: #B9D870;
   padding: 47px 30px 0 30px;
-  height: 100vh;
+  /* https://css-tricks.com/the-trick-to-viewport-units-on-mobile/ */
+  height: calc(var(--vh, 1vh) * 100);
 }
 
 #add-tasks {
