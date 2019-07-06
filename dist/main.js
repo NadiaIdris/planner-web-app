@@ -1369,19 +1369,16 @@ const showTasks = () => {
 };
 
 const showDoneTasks = () => {
-  // Set to true.
-  // This info does not persist in local storage!!!!!!!!!!!!!!!!!!!!!!!!
   _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].showDonePanel = true;
-  // console.log(appData.showDonePanel);
-
-  // Paint the UI.
+  // Hide the main content.
+  const mainContent = document.querySelector('#main-content');
+  mainContent.style.display = 'none';
+  // Paint the done tasks UI.
   const doneContainer = document.querySelector('#done-container');
   doneContainer.style.display = 'flex';
   doneContainer.style.height = '100vh';
   doneContainer.style.width = '100%';
   doneContainer.style.minWidth = '320px';
-  const mainContent = document.querySelector('#main-content');
-  mainContent.style.display = 'none';
 };
 
 const generatePageLayout = () => {
@@ -1391,22 +1388,66 @@ const generatePageLayout = () => {
   // checkboxButton.addEventListener('click', showDoneTasks);
 
   if (window.matchMedia('(min-width: 801px)').matches) {
-    console.log('Min-width: 801px is working');
     mainContent.style.display = 'flex';
     doneContainer.style.display = 'flex';
   }
 
   if (window.matchMedia('(max-width: 800px)').matches) {
-    console.log('Max-width: 800px is working');
-
-    // console.log(appData.showDonePanel);
-    // Always false. Why??????????????????????????????????????????
     if (_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].showDonePanel) {
       showDoneTasks();
     } else {
-      mainContent.style.display = 'flex';
       doneContainer.style.display = 'none';
+      mainContent.style.display = 'flex';
     }
+  }
+
+  if (window.matchMedia('(min-width: 361px)').matches) {
+    const tableHeader = document.querySelector('#tasks-table');
+
+    const priorityArrow =
+        _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].sortBy === _app_data__WEBPACK_IMPORTED_MODULE_2__["SortByValues"].Priority ? 'visible' : 'hidden';
+    const deadlineArrow =
+        _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].sortBy === _app_data__WEBPACK_IMPORTED_MODULE_2__["SortByValues"].Deadline ? 'visible' : 'hidden';
+    const prioritySelected =
+        _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].sortBy === _app_data__WEBPACK_IMPORTED_MODULE_2__["SortByValues"].Priority ? 'selected' : '';
+    const deadlineSelected =
+        _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].sortBy === _app_data__WEBPACK_IMPORTED_MODULE_2__["SortByValues"].Deadline ? 'selected' : '';
+
+    tableHeader.innerHTML = `
+      <thead>
+      <tr id="task-headings">
+          <th></th>
+          <th id="task" class="heading-cell">Task</th>
+          <th id="priority" class="heading-cell">
+            <i class="material-icons arrow-down ${priorityArrow}"
+              >arrow_drop_down</i>Priority
+          </th>
+          <th id="deadline" class="heading-cell">
+            <i class="material-icons arrow-down ${deadlineArrow}"
+            >arrow_drop_down</i>Deadline
+          </th>
+          <th class="sorting-cell">
+             <select id="sort-by">
+                <option value="Priority" ${prioritySelected}>Priority</option>
+                <option value="Deadline" ${deadlineSelected}>Deadline</option>
+             </select>
+          </th>
+      </tr>
+      </thead>
+      `;
+    generateListOfTasks(_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks);
+  }
+
+  if (window.matchMedia('(max-width: 360px)').matches) {
+    const dropdown = document.querySelector('#sort-by');
+    const prioritySelected =
+        _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].sortBy === _app_data__WEBPACK_IMPORTED_MODULE_2__["SortByValues"].Priority ? 'selected' : '';
+    const deadlineSelected =
+        _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].sortBy === _app_data__WEBPACK_IMPORTED_MODULE_2__["SortByValues"].Deadline ? 'selected' : '';
+    dropdown.innerHTML = `
+                <option value="Priority" ${prioritySelected}>Priority</option>
+                <option value="Deadline" ${deadlineSelected}>Deadline</option>
+             `;
   }
 };
 
