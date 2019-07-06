@@ -1,7 +1,7 @@
 import {deleteElementBySelector} from './util';
 import autosize from 'autosize/src/autosize';
 import {appData, SortByValues} from './app_data';
-import {tasksContainer, sortTasksOnChange} from './index';
+import {tasksContainer} from './index';
 
 /**
  * If some tasks present, return and add a task to the existing table with
@@ -232,7 +232,7 @@ const handleWindowResize = () => {
     document.documentElement.style.setProperty('--vh', `${vh}px`);
   };
 
-  const generateAppLayout = () => {
+  const generateAppLayoutAfterResizingWindow = () => {
     if (resizeTaskId !== null) clearTimeout(resizeTaskId);
 
     resizeTaskId = setTimeout(() => {
@@ -243,93 +243,103 @@ const handleWindowResize = () => {
 
   window.addEventListener('resize', () => {
     setViewportHeight();
-    generateAppLayout();
+    generateAppLayoutAfterResizingWindow();
   });
 };
 
+const showTasks = () => {
+  console.log('showTasks eventListener is working');
+  appData.showDonePanel = false;
+  const doneContainer = document.querySelector('#done-container');
+  doneContainer.style.display = 'none';
+  const mainContent = document.querySelector('#main-content');
+  mainContent.style.display = 'flex';
+  mainContent.style.height = '100vh';
+  mainContent.style.width = '100%';
+  mainContent.style.minWidth = '320px';
+};
+
+const showDoneTasks = () => {
+  appData.showDonePanel = true;
+  // Hide the main content.
+  const mainContent = document.querySelector('#main-content');
+  mainContent.style.display = 'none';
+  // Paint the done tasks UI.
+  const doneContainer = document.querySelector('#done-container');
+  doneContainer.style.display = 'flex';
+  doneContainer.style.height = '100vh';
+  doneContainer.style.width = '100%';
+  doneContainer.style.minWidth = '320px';
+};
+
 const generatePageLayout = () => {
-  if (window.matchMedia('(max-width: 360px)').matches) {
-    // debugger;
-    console.log('Window is SMALLER or equal to 360px');
-    // If no tasks, generate empty
-    if (appData.tasks.length === 0) {
-      deleteElementBySelector('#empty-stage-planner');
-      createEmptyStatePlanner();
+  const mainContent = document.querySelector('#main-content');
+  const doneContainer = document.querySelector('#done-container');
+  // const checkboxButton = document.querySelector('#checkbox-button');
+  // checkboxButton.addEventListener('click', showDoneTasks);
+
+  if (window.matchMedia('(min-width: 801px)').matches) {
+    mainContent.style.display = 'flex';
+    doneContainer.style.display = 'flex';
+  }
+
+  if (window.matchMedia('(max-width: 800px)').matches) {
+    if (appData.showDonePanel) {
+      showDoneTasks();
     } else {
-      // If tasks present, delete table and paint it again
-      deleteElementBySelector('#tasks-table');
-      generateTableWithHeader();
-      generateListOfTasks(appData.tasks);
+      doneContainer.style.display = 'none';
+      mainContent.style.display = 'flex';
     }
   }
 
   if (window.matchMedia('(min-width: 361px)').matches) {
-    console.log('Window is LARGER than 360px');
-    if (appData.tasks.length === 0) {
-      deleteElementBySelector('#empty-stage-planner');
-      createEmptyStatePlanner();
-    } else {
-      // If tasks present, delete table and paint it again
-      deleteElementBySelector('#tasks-table');
-      generateTableWithHeader();
-      generateListOfTasks(appData.tasks);
-    }
+    const tableHeader = document.querySelector('#tasks-table');
+
+    const priorityArrow =
+        appData.sortBy === SortByValues.Priority ? 'visible' : 'hidden';
+    const deadlineArrow =
+        appData.sortBy === SortByValues.Deadline ? 'visible' : 'hidden';
+    const prioritySelected =
+        appData.sortBy === SortByValues.Priority ? 'selected' : '';
+    const deadlineSelected =
+        appData.sortBy === SortByValues.Deadline ? 'selected' : '';
+
+    tableHeader.innerHTML = `
+      <thead>
+      <tr id="task-headings">
+          <th></th>
+          <th id="task" class="heading-cell">Task</th>
+          <th id="priority" class="heading-cell">
+            <i class="material-icons arrow-down ${priorityArrow}"
+              >arrow_drop_down</i>Priority
+          </th>
+          <th id="deadline" class="heading-cell">
+            <i class="material-icons arrow-down ${deadlineArrow}"
+            >arrow_drop_down</i>Deadline
+          </th>
+          <th class="sorting-cell">
+             <select id="sort-by">
+                <option value="Priority" ${prioritySelected}>Priority</option>
+                <option value="Deadline" ${deadlineSelected}>Deadline</option>
+             </select>
+          </th>
+      </tr>
+      </thead>
+      `;
+    generateListOfTasks(appData.tasks);
   }
 
-  // const checkboxButton = document.querySelector('#checkbox-button');
-  // const addButtonSmall = document.querySelector('#add-button-small');
-  // const addButton = document.querySelector('#add-button');
-  // const addTasks = document.querySelector('#add-tasks');
-  // const toPlannerButton = document.querySelector('#back-to-planner');
-  // const doneContainer = document.querySelector('#done-container');
-  // const mainContent = document.querySelector('#main-content');
-
-  if (window.matchMedia('(min-width: 800px)').matches) {
-    // addButtonSmall.style.display = 'none';
-    // addButton.style.display = 'flex';
-    // checkboxButton.style.display = 'none';
-    // addTasks.style.padding = '0';
-    // toPlannerButton.style.display = 'none';
-    // doneContainer.style.width = '530px';
-    // doneContainer.style.display = 'flex';
-    // checkboxClicked = false;
+  if (window.matchMedia('(max-width: 360px)').matches) {
+    const dropdown = document.querySelector('#sort-by');
+    const prioritySelected =
+        appData.sortBy === SortByValues.Priority ? 'selected' : '';
+    const deadlineSelected =
+        appData.sortBy === SortByValues.Deadline ? 'selected' : '';
+    dropdown.innerHTML = `
+                <option value="Priority" ${prioritySelected}>Priority</option>
+                <option value="Deadline" ${deadlineSelected}>Deadline</option>
+             `;
   }
-
-  if (window.matchMedia('(max-width: 799px)').matches) {
-    // addButtonSmall.style.display = 'none';
-    // addButton.style.display = 'flex';
-    // checkboxButton.style.display = 'flex';
-    // addTasks.style.padding = '0 15px';
-    // toPlannerButton.style.display = 'flex';
-    // doneContainer.style.display = 'none';
-    // mainContent.style.display = 'flex';
-  }
-
-  if (window.matchMedia('(max-width: 499px)').matches) {
-    // addButton.style.display = 'none';
-    // addButtonSmall.style.display = 'flex';
-  }
-
-  // // Probably will have to remove this code below.
-  // if (window.matchMedia("(max-width: 799px)").matches &&
-  // checkboxClicked ===
-  // true) { doneContainer.style.display = 'flex'; mainContent.style.display =
-  // 'none'; console.log("screen width < 799 && checkboxClicked === true") }
-};
-
-// Function to view done tasks if screen is smaller then 720px;
-const checkboxClicked = false;
-
-const viewCompletedTasks = () => {
-  // checkboxClicked = true;
-  // const doneContainer = document.querySelector('#done-container');
-  // doneContainer.style.display = 'flex';
-  // doneContainer.style.height = '100vh';
-  // doneContainer.style.width = '100%';
-  // doneContainer.style.minWidth = '320px';
-  //
-  // const mainContent = document.querySelector('#main-content');
-  // mainContent.style.display = 'none';
 };
 
 
@@ -345,5 +355,6 @@ export {
   initializeDoneUI,
   handleWindowResize,
   generatePageLayout,
-  viewCompletedTasks,
+  showDoneTasks,
+  showTasks,
 };

@@ -21,8 +21,9 @@ import {
   initializeDoneUI,
   handleWindowResize,
   generatePageLayout,
-  viewCompletedTasks,
   ifNoCompletedTasksAddEmptyStateToDone,
+  showDoneTasks,
+  showTasks,
 } from './paint_ui';
 
 // Globals.
@@ -31,6 +32,7 @@ const formElement = document.querySelector('#form');
 const tasksContainer = document.querySelector('#tasks-container');
 const doneTasksContainer = document.querySelector('#done-tasks-container');
 const checkboxButton = document.querySelector('#checkbox-button');
+const backToPlannerButton = document.querySelector('#back-to-planner');
 
 const main = () => {
   generateTodaysDateAndTime();
@@ -42,7 +44,8 @@ const main = () => {
 
   window.addEventListener('load', generatePageLayout);
   formElement.addEventListener('submit', addTask);
-  checkboxButton.addEventListener('click', viewCompletedTasks);
+  checkboxButton.addEventListener('click', showDoneTasks);
+  backToPlannerButton.addEventListener('click', showTasks);
 
   tasksContainer.addEventListener('click', markTaskDone);
   tasksContainer.addEventListener('keyup', editTaskText);

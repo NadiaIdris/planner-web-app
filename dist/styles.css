@@ -352,6 +352,7 @@ input:focus, textarea:focus {
 .checkbox {
   width: 60px;
   margin-left: 10px;
+
   margin-bottom: 15px;
 
 }
@@ -364,9 +365,19 @@ input:focus, textarea:focus {
   display: none;
 }
 
+@media only screen and (min-width: 801px){
+  #back-to-planner {
+    display: none;
+  }
+}
+
 @media only screen and (max-width: 800px) {
   #done-container {
     display: none;
+  }
+
+  #back-to-planner {
+    display: flex;
   }
 
   #main-content {
@@ -516,7 +527,6 @@ input:focus, textarea:focus {
 
   .sorting-cell {
     display: flex;
-    /*direction: rtl !important;*/
     justify-content: flex-end;
     align-items: center;
     padding: 8px 0;
@@ -535,7 +545,6 @@ input:focus, textarea:focus {
     font-size: 11px;
     font-weight: 800;
   }
-
 }
 
 

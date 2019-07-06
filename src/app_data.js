@@ -22,7 +22,22 @@ class AppData {
     /** @type{Array<Task>} */
     this.tasksDone = [];
 
+    /**
+     * @type {boolean}
+     * @private
+     */
+    this._showDonePanel = false;
+
     Storage.load(this);
+  }
+
+  get showDonePanel() {
+    return this._showDonePanel;
+  }
+
+  set showDonePanel(value) {
+    this._showDonePanel = value;
+    Storage.save(this);
   }
 
   /**
@@ -62,6 +77,7 @@ class AppData {
   save() {
     Storage.save(this);
   }
+
   // TODO add editTask (make sure to save)
   // TODO add removeTask (make sure to save)
 }

@@ -393,7 +393,22 @@ class AppData {
     /** @type{Array<Task>} */
     this.tasksDone = [];
 
+    /**
+     * @type {boolean}
+     * @private
+     */
+    this._showDonePanel = false;
+
     _storage__WEBPACK_IMPORTED_MODULE_0__["Storage"].load(this);
+  }
+
+  get showDonePanel() {
+    return this._showDonePanel;
+  }
+
+  set showDonePanel(value) {
+    this._showDonePanel = value;
+    _storage__WEBPACK_IMPORTED_MODULE_0__["Storage"].save(this);
   }
 
   /**
@@ -433,6 +448,7 @@ class AppData {
   save() {
     _storage__WEBPACK_IMPORTED_MODULE_0__["Storage"].save(this);
   }
+
   // TODO add editTask (make sure to save)
   // TODO add removeTask (make sure to save)
 }
@@ -676,6 +692,7 @@ const formElement = document.querySelector('#form');
 const tasksContainer = document.querySelector('#tasks-container');
 const doneTasksContainer = document.querySelector('#done-tasks-container');
 const checkboxButton = document.querySelector('#checkbox-button');
+const backToPlannerButton = document.querySelector('#back-to-planner');
 
 const main = () => {
   generateTodaysDateAndTime();
@@ -687,7 +704,8 @@ const main = () => {
 
   window.addEventListener('load', _paint_ui__WEBPACK_IMPORTED_MODULE_3__["generatePageLayout"]);
   formElement.addEventListener('submit', addTask);
-  checkboxButton.addEventListener('click', _paint_ui__WEBPACK_IMPORTED_MODULE_3__["viewCompletedTasks"]);
+  checkboxButton.addEventListener('click', _paint_ui__WEBPACK_IMPORTED_MODULE_3__["showDoneTasks"]);
+  backToPlannerButton.addEventListener('click', _paint_ui__WEBPACK_IMPORTED_MODULE_3__["showTasks"]);
 
   tasksContainer.addEventListener('click', _edit_task__WEBPACK_IMPORTED_MODULE_2__["markTaskDone"]);
   tasksContainer.addEventListener('keyup', _edit_task__WEBPACK_IMPORTED_MODULE_2__["editTaskText"]);
@@ -710,18 +728,10 @@ const main = () => {
 
 // Sorting tasks.
 
-/**
- * Function to sort tasks on sorting dropdown change.
- * @param {change} event
- */
-
 const sortTasksOnChange = (event) => {
   const element = event.target;
   if (!element.matches('#sort-by')) return;
-  console.log(element);
-
   const selected = document.querySelector('#sort-by').value;
-  console.log(selected);
 
   selected === 'Priority' ?
       sortTasksBy(_app_data__WEBPACK_IMPORTED_MODULE_1__["SortByValues"].Priority) : sortTasksBy(_app_data__WEBPACK_IMPORTED_MODULE_1__["SortByValues"].Deadline);
@@ -1075,7 +1085,7 @@ document.addEventListener('DOMContentLoaded', main);
 /*!*************************!*\
   !*** ./src/paint_ui.js ***!
   \*************************/
-/*! exports provided: generateTableWithHeader, generateListOfTasksDone, generateListOfTasks, createEmptyStatePlanner, createEmptyStateDone, ifNoTasksAddEmptyStateToPlanner, ifNoCompletedTasksAddEmptyStateToDone, initializePlannerUI, initializeDoneUI, handleWindowResize, generatePageLayout, viewCompletedTasks */
+/*! exports provided: generateTableWithHeader, generateListOfTasksDone, generateListOfTasks, createEmptyStatePlanner, createEmptyStateDone, ifNoTasksAddEmptyStateToPlanner, ifNoCompletedTasksAddEmptyStateToDone, initializePlannerUI, initializeDoneUI, handleWindowResize, generatePageLayout, showDoneTasks, showTasks */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1091,7 +1101,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "initializeDoneUI", function() { return initializeDoneUI; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "handleWindowResize", function() { return handleWindowResize; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "generatePageLayout", function() { return generatePageLayout; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "viewCompletedTasks", function() { return viewCompletedTasks; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "showDoneTasks", function() { return showDoneTasks; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "showTasks", function() { return showTasks; });
 /* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util */ "./src/util.js");
 /* harmony import */ var autosize_src_autosize__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! autosize/src/autosize */ "./node_modules/autosize/src/autosize.js");
 /* harmony import */ var _app_data__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./app_data */ "./src/app_data.js");
@@ -1324,88 +1335,80 @@ const initializeDoneUI = () => {
 const handleWindowResize = () => {
   let resizeTaskId = null;
 
-  window.addEventListener('resize', () => {
+  /* https://css-tricks.com/the-trick-to-viewport-units-on-mobile/ */
+  const setViewportHeight = ()=>{
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+  };
+
+  const generateAppLayoutAfterResizingWindow = () => {
     if (resizeTaskId !== null) clearTimeout(resizeTaskId);
 
     resizeTaskId = setTimeout(() => {
       resizeTaskId = null;
       generatePageLayout();
     }, 10);
+  };
+
+  window.addEventListener('resize', () => {
+    setViewportHeight();
+    generateAppLayoutAfterResizingWindow();
   });
 };
 
+const showTasks = () => {
+  console.log('showTasks eventListener is working');
+  _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].showDonePanel = false;
+  const doneContainer = document.querySelector('#done-container');
+  doneContainer.style.display = 'none';
+  const mainContent = document.querySelector('#main-content');
+  mainContent.style.display = 'flex';
+  mainContent.style.height = '100vh';
+  mainContent.style.width = '100%';
+  mainContent.style.minWidth = '320px';
+};
+
+const showDoneTasks = () => {
+  // Set to true.
+  // This info does not persist in local storage!!!!!!!!!!!!!!!!!!!!!!!!
+  _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].showDonePanel = true;
+  // console.log(appData.showDonePanel);
+
+  // Paint the UI.
+  const doneContainer = document.querySelector('#done-container');
+  doneContainer.style.display = 'flex';
+  doneContainer.style.height = '100vh';
+  doneContainer.style.width = '100%';
+  doneContainer.style.minWidth = '320px';
+  const mainContent = document.querySelector('#main-content');
+  mainContent.style.display = 'none';
+};
+
 const generatePageLayout = () => {
-  if (window.matchMedia('(max-width: 360px)').matches) {
-    console.log('Window is SMALLER or equal to 360px');
-    Object(_util__WEBPACK_IMPORTED_MODULE_0__["deleteElementBySelector"])('#tasks-table');
-    generateTableWithHeader();
-    generateListOfTasks(_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks);
-
-    // sortTasksOnChange();
-  }
-
-  if (window.matchMedia('(min-width: 361px)').matches) {
-    console.log('Window is LARGER than 360px');
-    generateTableWithHeader();
-    // sortTasksOnChange();
-  }
-
+  const mainContent = document.querySelector('#main-content');
+  const doneContainer = document.querySelector('#done-container');
   // const checkboxButton = document.querySelector('#checkbox-button');
-  // const addButtonSmall = document.querySelector('#add-button-small');
-  // const addButton = document.querySelector('#add-button');
-  // const addTasks = document.querySelector('#add-tasks');
-  // const toPlannerButton = document.querySelector('#back-to-planner');
-  // const doneContainer = document.querySelector('#done-container');
-  // const mainContent = document.querySelector('#main-content');
+  // checkboxButton.addEventListener('click', showDoneTasks);
 
-  if (window.matchMedia('(min-width: 800px)').matches) {
-    // addButtonSmall.style.display = 'none';
-    // addButton.style.display = 'flex';
-    // checkboxButton.style.display = 'none';
-    // addTasks.style.padding = '0';
-    // toPlannerButton.style.display = 'none';
-    // doneContainer.style.width = '530px';
-    // doneContainer.style.display = 'flex';
-    // checkboxClicked = false;
+  if (window.matchMedia('(min-width: 801px)').matches) {
+    console.log('Min-width: 801px is working');
+    mainContent.style.display = 'flex';
+    doneContainer.style.display = 'flex';
   }
 
-  if (window.matchMedia('(max-width: 799px)').matches) {
-    // addButtonSmall.style.display = 'none';
-    // addButton.style.display = 'flex';
-    // checkboxButton.style.display = 'flex';
-    // addTasks.style.padding = '0 15px';
-    // toPlannerButton.style.display = 'flex';
-    // doneContainer.style.display = 'none';
-    // mainContent.style.display = 'flex';
-  }
+  if (window.matchMedia('(max-width: 800px)').matches) {
+    console.log('Max-width: 800px is working');
 
-  if (window.matchMedia('(max-width: 499px)').matches) {
-    // addButton.style.display = 'none';
-    // addButtonSmall.style.display = 'flex';
+    // console.log(appData.showDonePanel);
+    // Always false. Why??????????????????????????????????????????
+    if (_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].showDonePanel) {
+      showDoneTasks();
+    } else {
+      mainContent.style.display = 'flex';
+      doneContainer.style.display = 'none';
+    }
   }
-
-  // // Probably will have to remove this code below.
-  // if (window.matchMedia("(max-width: 799px)").matches &&
-  // checkboxClicked ===
-  // true) { doneContainer.style.display = 'flex'; mainContent.style.display =
-  // 'none'; console.log("screen width < 799 && checkboxClicked === true") }
 };
-
-// Function to view done tasks if screen is smaller then 720px;
-const checkboxClicked = false;
-
-const viewCompletedTasks = () => {
-  // checkboxClicked = true;
-  // const doneContainer = document.querySelector('#done-container');
-  // doneContainer.style.display = 'flex';
-  // doneContainer.style.height = '100vh';
-  // doneContainer.style.width = '100%';
-  // doneContainer.style.minWidth = '320px';
-  //
-  // const mainContent = document.querySelector('#main-content');
-  // mainContent.style.display = 'none';
-};
-
 
 
 
@@ -1423,8 +1426,7 @@ const viewCompletedTasks = () => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Storage", function() { return Storage; });
-/* harmony import */ var _app_data__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./app_data */ "./src/app_data.js");
-
+// import {appData} from './app_data';
 
 const Key = 'appData';
 
@@ -1436,9 +1438,7 @@ class Storage {
   static load(appData) {
     const dataFromStorage = JSON.parse(localStorage.getItem(Key));
     if (!dataFromStorage) return;
-    appData.tasks = dataFromStorage.tasks;
-    appData.sortBy = dataFromStorage.sortBy;
-    appData.tasksDone = dataFromStorage.tasksDone;
+    Object.assign(appData, dataFromStorage);
   }
 
   /**

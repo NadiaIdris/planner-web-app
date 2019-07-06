@@ -10,9 +10,7 @@ class Storage {
   static load(appData) {
     const dataFromStorage = JSON.parse(localStorage.getItem(Key));
     if (!dataFromStorage) return;
-    appData.tasks = dataFromStorage.tasks;
-    appData.sortBy = dataFromStorage.sortBy;
-    appData.tasksDone = dataFromStorage.tasksDone;
+    Object.assign(appData, dataFromStorage);
   }
 
   /**
