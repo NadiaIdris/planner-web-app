@@ -100,6 +100,11 @@ header {
   cursor: pointer;
 }
 
+.chkbx-cell-done {
+  display: flex;
+  cursor: pointer;
+}
+
 .chkbx-img-unchecked:hover {
   content: url(../images/checkbox-checked.svg);
 }
@@ -202,6 +207,7 @@ i.hidden {
 #done-tasks-container {
   flex-grow: 1;
   width: 100%;
+  padding: 0 15px 0 15px;
 }
 
 #back-to-planner {
@@ -374,10 +380,12 @@ input:focus, textarea:focus {
 @media only screen and (max-width: 800px) {
   #done-container {
     display: none;
+    padding: 19px 0 0 0;
   }
 
   #back-to-planner {
     display: flex;
+    padding: 0 15px 0 5px;
   }
 
   #main-content {
@@ -477,6 +485,11 @@ input:focus, textarea:focus {
     grid-column: 1/2;
     grid-row: 1/2;
     margin-bottom: 10px;
+  }
+
+  .chkbx-cell-done {
+    grid-column: 1/2;
+    grid-row: 1/2;
   }
 
   .textarea-cell {

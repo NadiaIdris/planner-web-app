@@ -62,7 +62,7 @@ const generateListOfTasksDone = (tasksDoneArray = []) => {
   const renderTask = (task, index) => {
     return `
       <tr class="task-done" data-index="${index}">
-        <td class="chkbx-cell">
+        <td class="chkbx-cell-done">
           <img
              class="chkbx-img-checked"
              src="../images/checkbox-checked.svg"
