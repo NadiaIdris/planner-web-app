@@ -245,6 +245,8 @@ const handleWindowResize = () => {
     setViewportHeight();
     generateAppLayoutAfterResizingWindow();
   });
+
+  setViewportHeight();
 };
 
 const showTasks = () => {
@@ -254,7 +256,6 @@ const showTasks = () => {
   doneContainer.style.display = 'none';
   const mainContent = document.querySelector('#main-content');
   mainContent.style.display = 'flex';
-  mainContent.style.height = '100vh';
   mainContent.style.width = '100%';
   mainContent.style.minWidth = '320px';
 };
@@ -267,7 +268,6 @@ const showDoneTasks = () => {
   // Paint the done tasks UI.
   const doneContainer = document.querySelector('#done-container');
   doneContainer.style.display = 'flex';
-  doneContainer.style.height = '100vh';
   doneContainer.style.width = '100%';
   doneContainer.style.minWidth = '320px';
 };
@@ -294,6 +294,7 @@ const generatePageLayout = () => {
 
   if (window.matchMedia('(min-width: 361px)').matches) {
     const tableHeader = document.querySelector('#tasks-table');
+    if (!tableHeader) return;
 
     const priorityArrow =
         appData.sortBy === SortByValues.Priority ? 'visible' : 'hidden';
