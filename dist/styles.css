@@ -207,7 +207,6 @@ i.hidden {
 #done-tasks-container {
   flex-grow: 1;
   width: 100%;
-  padding: 0 15px 0 15px;
 }
 
 #back-to-planner {
@@ -290,6 +289,7 @@ h1 {
   font-family: 'Poppins', sans-serif;
   font-size: 34px;
   font-weight: 700;
+  /*padding: 0 15px 17px 15px;*/
 }
 
 h2 {
@@ -310,6 +310,10 @@ th {
 p {
   font-family: 'Nunito Sans', sans-serif;
 }
+
+/*#date {*/
+/*  padding: 0 15px 17px 15px;*/
+/*}*/
 
 input {
   border: none;
@@ -392,8 +396,20 @@ input:focus, textarea:focus {
     padding: 19px 0 0 0;
   }
 
-  header {
+  #date {
     padding: 0 15px 17px 15px;
+  }
+
+  .heading {
+    padding: 0 15px 17px 15px;
+  }
+
+  header {
+    padding-bottom: 0;
+  }
+
+  .heading-cell {
+    padding: 17px 0;
   }
 
   .task {
