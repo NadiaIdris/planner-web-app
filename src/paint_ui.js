@@ -314,12 +314,12 @@ const generatePageLayout = () => {
           <th></th>
           <th id="task" class="heading-cell">Task</th>
           <th id="priority" class="heading-cell">
-            <i class="material-icons arrow-down ${priorityArrow}"
-              >arrow_drop_down</i>Priority
+            Priority<i class="material-icons arrow-down ${priorityArrow}"
+              >keyboard_arrow_down</i>
           </th>
           <th id="deadline" class="heading-cell">
-            <i class="material-icons arrow-down ${deadlineArrow}"
-            >arrow_drop_down</i>Deadline
+            Deadline<i class="material-icons arrow-down ${deadlineArrow}"
+            >keyboard_arrow_down</i>
           </th>
           <th class="sorting-cell">
              <select id="sort-by">
