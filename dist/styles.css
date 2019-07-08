@@ -401,7 +401,7 @@ input:focus, textarea:focus {
   }
 
   .heading {
-    padding: 0 15px 17px 15px;
+    padding: 0 5px 17px 15px;
   }
 
   header {
@@ -558,7 +558,7 @@ input:focus, textarea:focus {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    padding: 8px 0;
+    padding: 17px 0;
   }
 
   #sort-by {
