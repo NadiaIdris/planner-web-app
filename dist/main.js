@@ -1171,7 +1171,7 @@ const generateListOfTasksDone = (tasksDoneArray = []) => {
   const renderTask = (task, index) => {
     return `
       <tr class="task-done" data-index="${index}">
-        <td class="chkbx-cell">
+        <td class="chkbx-cell-done">
           <img
              class="chkbx-img-checked"
              src="../images/checkbox-checked.svg"
@@ -1389,7 +1389,10 @@ const generatePageLayout = () => {
 
   if (window.matchMedia('(min-width: 801px)').matches) {
     mainContent.style.display = 'flex';
+    mainContent.style.width = '870px';
     doneContainer.style.display = 'flex';
+    doneContainer.style.width = '530px';
+
   }
 
   if (window.matchMedia('(max-width: 800px)').matches) {
@@ -1420,12 +1423,12 @@ const generatePageLayout = () => {
           <th></th>
           <th id="task" class="heading-cell">Task</th>
           <th id="priority" class="heading-cell">
-            <i class="material-icons arrow-down ${priorityArrow}"
-              >arrow_drop_down</i>Priority
+            Priority<i class="material-icons arrow-down ${priorityArrow}"
+              >keyboard_arrow_down</i>
           </th>
           <th id="deadline" class="heading-cell">
-            <i class="material-icons arrow-down ${deadlineArrow}"
-            >arrow_drop_down</i>Deadline
+            Deadline<i class="material-icons arrow-down ${deadlineArrow}"
+            >keyboard_arrow_down</i>
           </th>
           <th class="sorting-cell">
              <select id="sort-by">

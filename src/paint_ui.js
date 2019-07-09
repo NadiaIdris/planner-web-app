@@ -275,15 +275,12 @@ const showDoneTasks = () => {
 const generatePageLayout = () => {
   const mainContent = document.querySelector('#main-content');
   const doneContainer = document.querySelector('#done-container');
-  // const checkboxButton = document.querySelector('#checkbox-button');
-  // checkboxButton.addEventListener('click', showDoneTasks);
 
   if (window.matchMedia('(min-width: 801px)').matches) {
     mainContent.style.display = 'flex';
     mainContent.style.width = '870px';
     doneContainer.style.display = 'flex';
     doneContainer.style.width = '530px';
-
   }
 
   if (window.matchMedia('(max-width: 800px)').matches) {

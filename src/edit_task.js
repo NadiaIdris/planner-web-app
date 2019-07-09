@@ -52,11 +52,6 @@ const editTaskText = (event) => {
   appData.save();
 };
 
-// Function
-const keyboardShortcutToSaveTaskText = () => {
-  // TODO implement this
-};
-
 /**
  * When the user changes the value of the priority drop down for a given
  * task this function is called.
@@ -160,7 +155,6 @@ const deleteTaskIfTaskTextRemoved = (event) => {
 export {
   markTaskDone,
   editTaskText,
-  keyboardShortcutToSaveTaskText,
   changeTaskPriority,
   addDeadlineToTask,
   deleteTask,

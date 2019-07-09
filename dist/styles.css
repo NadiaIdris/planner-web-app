@@ -311,10 +311,6 @@ p {
   font-family: 'Nunito Sans', sans-serif;
 }
 
-/*#date {*/
-/*  padding: 0 15px 17px 15px;*/
-/*}*/
-
 input {
   border: none;
   font-size: 13px;
@@ -325,7 +321,6 @@ textarea {
   border: none;
   display: flex;
   resize: none;
-  /*height: max-content;*/
 }
 
 input:focus, textarea:focus {
@@ -467,18 +462,6 @@ input:focus, textarea:focus {
 @media only screen and (max-width: 550px) {
   .heading {
     font-size: 26px;
-  }
-
-  .task {
-    display: grid;
-    grid-template-columns: 32px 1fr 80px 125px 45px;
-    grid-template-rows: auto;
-  }
-
-  #task-headings {
-    display: grid;
-    grid-template-columns: 32px 1fr 80px 125px 45px;
-    grid-template-rows: auto;
   }
 
   .text-cell {
