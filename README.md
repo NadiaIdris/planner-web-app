@@ -39,7 +39,12 @@ Responsive web application to plan, organize and track tasks.
 
 ## References
 
-- https://coryrylan.com/blog/javascript-es6-class-syntax
+- [Material design icons](https://google.github.io/material-design-icons/)
+- [Google fonts](https://fonts.google.com/)
+- [How to stop done task checkbox icon from flickering](https://dev.to/linxea/css-flicker-on-hover-5gj5)
+- [A beginners guide to Webpack](https://www.sitepoint.com/webpack-beginner-guide/)
+- [Using Media Queries For Responsive Design In 2018](https://www.smashingmagazine.com/2018/02/media-queries-responsive-design-2018/)
+- [JS ES6 Class Syntax](https://coryrylan.com/blog/javascript-es6-class-syntax)
 
 ## Tools and languages
 
@@ -56,6 +61,7 @@ Responsive web application to plan, organize and track tasks.
   events).
 - DOM manipulation.
 - `sort()` function with compare function.
+- [Autosize](https://github.com/jackmoore/autosize) stand-alone script to automatically adjust textarea to fit text.
 
 ## App features
 
@@ -155,6 +161,11 @@ the web app. Maximum design width is set to 1400px.
     sorted by dropdown with that value selected.
 
 #### Notes on responsive design
+
+**Make web application responsive**
+
+- Add this link to make application responsive:
+  `<meta name="viewport" content="width=device-width, initial-scale=1.0">`
 
 **Design mobile first**
 
