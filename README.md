@@ -1,7 +1,6 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
 - [Planner](#planner)
   - [Description](#description)
   - [Design for desktop](#design-for-desktop)
@@ -22,6 +21,13 @@
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # Planner
+
+## How to run
+
+1. Clone this repo to your computer.
+2. Open a terminal and go the folder in which you cloned this repo.
+3. Run `npm install`.
+4. Run `npm run start`.
 
 ## Description
 
