@@ -5,7 +5,6 @@ import {appData, SortByValues, Task} from './app_data';
 import {
   markTaskDone,
   editTaskText,
-  keyboardShortcutToSaveTaskText,
   changeTaskPriority,
   addDeadlineToTask,
   deleteTask,
@@ -13,12 +12,12 @@ import {
 } from './edit_task';
 import {
   generateTableWithHeader,
-  generateListOfTasks,
   generateListOfTasksDone,
-  createEmptyStatePlanner,
+  generateListOfTasks,
   createEmptyStateDone,
-  initializePlannerUI,
+  createEmptyStatePlanner,
   initializeDoneUI,
+  initializePlannerUI,
   handleWindowResize,
   generatePageLayout,
   ifNoCompletedTasksAddEmptyStateToDone,
@@ -49,7 +48,6 @@ const main = () => {
 
   tasksContainer.addEventListener('click', markTaskDone);
   tasksContainer.addEventListener('keyup', editTaskText);
-  tasksContainer.addEventListener('keydown', keyboardShortcutToSaveTaskText);
   tasksContainer.addEventListener('change', changeTaskPriority);
   tasksContainer.addEventListener('change', addDeadlineToTask);
   tasksContainer.addEventListener('click', deleteTask);
@@ -256,7 +254,7 @@ const highlightTask = (task) => {
 
 const highlightTaskDone = () => {
   const index = appData
-      .tasksDone.indexOf(appData.tasksDone[appData.tasksDone.length - 1]);
+      .tasksDone.indexOf(appData.tasksDone[0]);
 
   // Highlight the task done.
   const gray = 'RGB(151, 191, 56)';

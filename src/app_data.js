@@ -54,7 +54,7 @@ class AppData {
   markTaskDone(index) {
     this.tasks[index].done = !this.tasks[index].done;
     const checkedTask = this.tasks.splice(index, 1);
-    this.tasksDone.push(checkedTask[0]);
+    this.tasksDone.unshift(checkedTask[0]);
     Storage.save(this);
   }
 

@@ -31,12 +31,12 @@ const generateTableWithHeader = () => {
           <th></th>
           <th id="task" class="heading-cell">Task</th>
           <th id="priority" class="heading-cell">
-            <i class="material-icons arrow-down ${priorityArrow}"
-              >arrow_drop_down</i>Priority
+            Priority<i class="material-icons arrow-down ${priorityArrow}"
+              >keyboard_arrow_down</i>
           </th>
           <th id="deadline" class="heading-cell">
-            <i class="material-icons arrow-down ${deadlineArrow}"
-            >arrow_drop_down</i>Deadline
+            Deadline<i class="material-icons arrow-down ${deadlineArrow}"
+            >keyboard_arrow_down</i>
           </th>
           <th class="sorting-cell">
              <select id="sort-by">
@@ -59,7 +59,7 @@ const generateListOfTasksDone = (tasksDoneArray = []) => {
   table.setAttribute('id', 'tasks-done');
   tasksDoneContainer.appendChild(table);
 
-  const renderTask = (task, index) => {
+  const renderDoneTask = (task, index) => {
     return `
       <tr class="task-done" data-index="${index}">
         <td class="chkbx-cell-done">
@@ -77,7 +77,8 @@ const generateListOfTasksDone = (tasksDoneArray = []) => {
   };
 
   const tasksDoneTable = document.querySelector('#tasks-done');
-  tasksDoneTable.innerHTML = tasksDoneArray.map(renderTask).join('');
+  // Push the new task in front of tasks that exist.
+  tasksDoneTable.innerHTML = tasksDoneArray.map(renderDoneTask).join('');
   autosize(tasksDoneTable.querySelectorAll('textarea'));
 };
 
@@ -250,7 +251,6 @@ const handleWindowResize = () => {
 };
 
 const showTasks = () => {
-  console.log('showTasks eventListener is working');
   appData.showDonePanel = false;
   const doneContainer = document.querySelector('#done-container');
   doneContainer.style.display = 'none';
@@ -262,10 +262,8 @@ const showTasks = () => {
 
 const showDoneTasks = () => {
   appData.showDonePanel = true;
-  // Hide the main content.
   const mainContent = document.querySelector('#main-content');
   mainContent.style.display = 'none';
-  // Paint the done tasks UI.
   const doneContainer = document.querySelector('#done-container');
   doneContainer.style.display = 'flex';
   doneContainer.style.width = '100%';
@@ -287,8 +285,7 @@ const generatePageLayout = () => {
     if (appData.showDonePanel) {
       showDoneTasks();
     } else {
-      doneContainer.style.display = 'none';
-      mainContent.style.display = 'flex';
+      showTasks();
     }
   }
 

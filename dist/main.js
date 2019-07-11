@@ -490,14 +490,13 @@ const appData = new AppData();
 /*!**************************!*\
   !*** ./src/edit_task.js ***!
   \**************************/
-/*! exports provided: markTaskDone, editTaskText, keyboardShortcutToSaveTaskText, changeTaskPriority, addDeadlineToTask, deleteTask, deleteTaskIfTaskTextRemoved */
+/*! exports provided: markTaskDone, editTaskText, changeTaskPriority, addDeadlineToTask, deleteTask, deleteTaskIfTaskTextRemoved */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "markTaskDone", function() { return markTaskDone; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "editTaskText", function() { return editTaskText; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "keyboardShortcutToSaveTaskText", function() { return keyboardShortcutToSaveTaskText; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "changeTaskPriority", function() { return changeTaskPriority; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addDeadlineToTask", function() { return addDeadlineToTask; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "deleteTask", function() { return deleteTask; });
@@ -549,11 +548,6 @@ const editTaskText = (event) => {
 
   _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].tasks[index].text = text;
   _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].save();
-};
-
-// Function
-const keyboardShortcutToSaveTaskText = () => {
-  // TODO implement this
 };
 
 /**
@@ -709,7 +703,6 @@ const main = () => {
 
   tasksContainer.addEventListener('click', _edit_task__WEBPACK_IMPORTED_MODULE_2__["markTaskDone"]);
   tasksContainer.addEventListener('keyup', _edit_task__WEBPACK_IMPORTED_MODULE_2__["editTaskText"]);
-  tasksContainer.addEventListener('keydown', _edit_task__WEBPACK_IMPORTED_MODULE_2__["keyboardShortcutToSaveTaskText"]);
   tasksContainer.addEventListener('change', _edit_task__WEBPACK_IMPORTED_MODULE_2__["changeTaskPriority"]);
   tasksContainer.addEventListener('change', _edit_task__WEBPACK_IMPORTED_MODULE_2__["addDeadlineToTask"]);
   tasksContainer.addEventListener('click', _edit_task__WEBPACK_IMPORTED_MODULE_2__["deleteTask"]);
@@ -1140,12 +1133,12 @@ const generateTableWithHeader = () => {
           <th></th>
           <th id="task" class="heading-cell">Task</th>
           <th id="priority" class="heading-cell">
-            <i class="material-icons arrow-down ${priorityArrow}"
-              >arrow_drop_down</i>Priority
+            Priority<i class="material-icons arrow-down ${priorityArrow}"
+              >keyboard_arrow_down</i>
           </th>
           <th id="deadline" class="heading-cell">
-            <i class="material-icons arrow-down ${deadlineArrow}"
-            >arrow_drop_down</i>Deadline
+            Deadline<i class="material-icons arrow-down ${deadlineArrow}"
+            >keyboard_arrow_down</i>
           </th>
           <th class="sorting-cell">
              <select id="sort-by">
@@ -1186,6 +1179,7 @@ const generateListOfTasksDone = (tasksDoneArray = []) => {
   };
 
   const tasksDoneTable = document.querySelector('#tasks-done');
+  // Push the new task in front of tasks that exist.
   tasksDoneTable.innerHTML = tasksDoneArray.map(renderTask).join('');
   Object(autosize_src_autosize__WEBPACK_IMPORTED_MODULE_1__["default"])(tasksDoneTable.querySelectorAll('textarea'));
 };
@@ -1359,7 +1353,6 @@ const handleWindowResize = () => {
 };
 
 const showTasks = () => {
-  console.log('showTasks eventListener is working');
   _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].showDonePanel = false;
   const doneContainer = document.querySelector('#done-container');
   doneContainer.style.display = 'none';
@@ -1371,10 +1364,8 @@ const showTasks = () => {
 
 const showDoneTasks = () => {
   _app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].showDonePanel = true;
-  // Hide the main content.
   const mainContent = document.querySelector('#main-content');
   mainContent.style.display = 'none';
-  // Paint the done tasks UI.
   const doneContainer = document.querySelector('#done-container');
   doneContainer.style.display = 'flex';
   doneContainer.style.width = '100%';
@@ -1384,23 +1375,19 @@ const showDoneTasks = () => {
 const generatePageLayout = () => {
   const mainContent = document.querySelector('#main-content');
   const doneContainer = document.querySelector('#done-container');
-  // const checkboxButton = document.querySelector('#checkbox-button');
-  // checkboxButton.addEventListener('click', showDoneTasks);
 
   if (window.matchMedia('(min-width: 801px)').matches) {
     mainContent.style.display = 'flex';
     mainContent.style.width = '870px';
     doneContainer.style.display = 'flex';
     doneContainer.style.width = '530px';
-
   }
 
   if (window.matchMedia('(max-width: 800px)').matches) {
     if (_app_data__WEBPACK_IMPORTED_MODULE_2__["appData"].showDonePanel) {
       showDoneTasks();
     } else {
-      doneContainer.style.display = 'none';
-      mainContent.style.display = 'flex';
+      showTasks();
     }
   }
 
