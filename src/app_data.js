@@ -77,9 +77,6 @@ class AppData {
   save() {
     Storage.save(this);
   }
-
-  // TODO add editTask (make sure to save)
-  // TODO add removeTask (make sure to save)
 }
 
 /** Enumeration of valid values for sortBy. */

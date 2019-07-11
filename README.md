@@ -6,7 +6,7 @@
   - [Design for desktop](#design-for-desktop)
   - [Design for mobile](#design-for-mobile)
   - [References](#references)
-  - [Tech used](#tech-used)
+  - [Tools and languages](#tools-and-languages)
   - [App features](#app-features)
     - [Edit task](#edit-task)
     - [Edit tasks done](#edit-tasks-done)
@@ -40,16 +40,17 @@ Responsive web application to plan, organize and track tasks.
 
 - https://coryrylan.com/blog/javascript-es6-class-syntax
 
-## Tech used
+## Tools and languages
 
+- Vanilla JS (no frameworks).
+- ES6 (template literals, arrow functions, classes, modules, spread syntax,
+  multiline strings, let and const).
 - CSS grid and CSS Flexbox for page layouts.
 - CSS Variables.
 - CSS and JS media queries for responsive design.
-- ES6 (template literals, arrow functions, classes, modules, spread syntax,
-  multiline strings, let and const).
-- Webpack
-- Eslint
-- JS event delegation
+- Webpack.
+- ESLint.
+- JS event delegation.
 - JS events (keyboard events, mouse events, form events, resource
   events).
 - DOM manipulation.
@@ -60,13 +61,13 @@ Responsive web application to plan, organize and track tasks.
 ### Edit task
 
 - **Add a task** (by using keyboard shortcut Enter or a "+ Add task" button).
-  - **Task highlighting** - When task is added, it's background will be
+  - **Task highlighting** - When a task is added, it's background will be
     highlighted light gray. This helps to identify the added task from the
     rest of the tasks if more than one task is present.
 - **Mark task done**
-  - **Checkbox** - If user hovers over empty checkbox, checked icon will
-    appear. This is to visually indicate that task will marked done if checkbox is
-    clicked.
+  - **Checkbox** - If the user hovers over empty checkbox, checked icon will
+    appear. This is to visually indicate that the task will be marked done if
+    the checkbox is clicked.
 - **Edit task text**
 - **Add a priority to a task (P0, P1 or P2)**
 - **Add a deadline to a task**
@@ -78,15 +79,18 @@ Responsive web application to plan, organize and track tasks.
 ### Edit tasks done
 
 - **Mark task undone**
-  - **Checkbox** - If user hovers over checked checkbox, arrow pointing left
-    icon will appear. This is to visually indicate that task will marked undone
-    and move back to left side of the screen if checked checkbox is clicked.
+  - **Checkbox** - If the user hovers over the checked checkbox, an arrow
+    pointing left
+    icon will appear. This is to visually indicate that task will be marked
+    undone
+    and move back to the left side of the screen if the checked checkbox is
+    clicked.
 - **Delete a task done**
   - Remove a task text and click out of the text area.
 
 ### Empty states
 
-If there are no tasks are present in the planner section, then empty state will
+If there are no tasks present in the planner section, then the empty state will
 appear stating that the user has no tasks and can add a task below on the screen.
 
 Same works for done tasks section. If no tasks are present, then empty state
@@ -94,19 +98,20 @@ will appear stating that tasks that get done will appear in this section.
 
 ### Sorting tasks
 
-Sort tasks by priority or by deadline. I am using array `sort()` with compare function.
+Sort tasks by priority or by deadline. I am using array `sort()` with
+compare function.
 
 ### Local storage
 
-The app stores tasks, tasks done and states in local storage.
+The app stores tasks, tasks that are done and states in local storage.
 
 States are:
 
 - How the tasks are sorted, by priority or by deadline.
-- If browser viewport is <= 800px, then user sees one section on screen,
-  either planner with tasks or done section with tasks done.
-- If browser viewport is >= 801px, then user sees two sections on screen,
-  both planner and done.
+- If browser viewport is <= 800px, then the user sees one section on the screen,
+  either planner with tasks or done section with tasks that are done.
+- If browser viewport is >= 801px, then the user sees two sections on screen,
+  both planner with tasks and also done section with the tasks that are done.
 
 ### Today's date and time
 
@@ -125,23 +130,24 @@ the web app. Maximum design width is set to 1400px.
   - The viewport will show only one section, planner or done, at the time.
     Which panel is shown depends on what state is stored on local storage. JS
     checks the local storage and if the checkbox icon button has been
-    clicked then done tasks section is visible and if not, then tasks
+    clicked then done tasks section is visible and if not, then the tasks
     section is visible.
   - Extra padding is added for clickable table headings.
   - "+ Add task" button is removed with CSS.
-  - Smaller version of "+ Add task" button is made visible with CSS.
+  - A smaller version of "+ Add task" button is made visible with CSS.
 - **Viewport <= 550px (minor breakpoint)**
   - Minor aesthetics changes.
 - **Viewport <= 500px**
-  - Task layout changes. The viewport has become too small to have checkbox,
+  - Task layout changes. The viewport has become too small to have a checkbox,
     task text, priority, deadline and delete icon all in the same line. So I
-    used CSS grid to break content from one line into two lines. First line has
-    checkbox and task text. Second line has priority, deadline and delete icon.
+    used the CSS grid to break content from one line into two lines. The first
+    line
+    has
+    a checkbox and task text. The second line has priority, deadline and delete
+    icon.
 - **Viewport >= 361px**
-  - In JS I check the local storage how tasks are sorted and then paint the
-    new tasks heading that has correct sorted by highlighted by an arrow down.
+  - In JS I check the local storage how tasks are sorted (by priority or by deadline). Then I paint the new tasks heading which highlights are tasks sorted by priority or by deadline.
 - **Viewport <= 360px**
-
   - Tasks headings are hidden in CSS.
   - Dropdown to sort tasks is made visible in CSS.
   - In JS I check the local storage how tasks are sorted and then paint the
@@ -151,7 +157,7 @@ the web app. Maximum design width is set to 1400px.
 
 **Design mobile first**
 
-- I designed the largest viewport design first, because I
+- I designed the largest viewport design first because I
   had already in
   mind how the smallest viewport will look like. I recommend designing
   smallest viewport design first. If you can make something work for a small
@@ -165,11 +171,11 @@ the web app. Maximum design width is set to 1400px.
   large enough for Android and iOS phones.
 
 - As a developer, use Chrome Dev Tools to debug the web app on a remote
-  device like a smart phone. To debug in Chrome Dev Tools:
+  device like a smartphone. To debug in Chrome Dev Tools:
   - Plug in your phone to your computer. Make sure USB debugging is connected
     on Android. Open Chrome on your phone.
   - Open Chrome Dev Tools on your computer.
-  - Click on the overflow icon (three vertical dots) on top right corner.
+  - Click on the overflow icon (three vertical dots) on the top right corner.
     - More tools -> Remote devices
     - Wait until my device appears in Remote devices tab on the bottom of the
       dev tools section.
