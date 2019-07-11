@@ -1,6 +1,7 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+
 - [Planner](#planner)
   - [Description](#description)
   - [Design for desktop](#design-for-desktop)
@@ -9,7 +10,7 @@
   - [Tools and languages](#tools-and-languages)
   - [App features](#app-features)
     - [Edit task](#edit-task)
-    - [Edit tasks done](#edit-tasks-done)
+    - [Edit tasks that are done](#edit-tasks-that-are-done)
     - [Empty states](#empty-states)
     - [Sorting tasks](#sorting-tasks)
     - [Local storage](#local-storage)
@@ -76,7 +77,7 @@ Responsive web application to plan, organize and track tasks.
   - Click on the trash bin icon.
   - Remove all text inside of task and click out of the textarea.
 
-### Edit tasks done
+### Edit tasks that are done
 
 - **Mark task undone**
   - **Checkbox** - If the user hovers over the checked checkbox, an arrow
