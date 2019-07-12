@@ -2,10 +2,12 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Planner](#planner)
+  - [How to run](#how-to-run)
   - [Description](#description)
-  - [Design for desktop](#design-for-desktop)
-  - [Design for mobile](#design-for-mobile)
-  - [References](#references)
+  - [Add and sort tasks](#add-and-sort-tasks)
+  - [Edit task text](#edit-task-text)
+  - [Mark task done, undone and delete tasks](#mark-task-done-undone-and-delete-tasks)
+  - [Responsive design](#responsive-design)
   - [Tools and languages](#tools-and-languages)
   - [App features](#app-features)
     - [Edit task](#edit-task)
@@ -17,6 +19,7 @@
     - [Responsive features](#responsive-features)
       - [Notes on responsive design](#notes-on-responsive-design)
   - [Things to improve](#things-to-improve)
+  - [References](#references)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -33,24 +36,23 @@
 
 Responsive web application to plan, organize and track tasks.
 
-## Design for desktop
+## Designs
 
-<img src="designs/desktop.png" width="600">
+### Add and sort tasks
 
-## Design for mobile
+![](designs/add_and_sort_tasks.gif)
 
-<img src="designs/mobile-planner.png" width="200">
+### Edit task text
 
-<img src="designs/mobile-done.png" width="200">
+![](designs/edit_task_text.gif)
 
-## References
+### Mark task done, undone and delete tasks
 
-- [Material design icons](https://google.github.io/material-design-icons/)
-- [Google fonts](https://fonts.google.com/)
-- [How to stop done task checkbox icon from flickering](https://dev.to/linxea/css-flicker-on-hover-5gj5)
-- [A beginners guide to Webpack](https://www.sitepoint.com/webpack-beginner-guide/)
-- [Using Media Queries For Responsive Design In 2018](https://www.smashingmagazine.com/2018/02/media-queries-responsive-design-2018/)
-- [JS ES6 Class Syntax](https://coryrylan.com/blog/javascript-es6-class-syntax)
+![](designs/mark_task_done_undone_delete_task.gif)
+
+### Responsive design
+
+![](designs/responsive_design.gif)
 
 ## Tools and languages
 
@@ -67,7 +69,8 @@ Responsive web application to plan, organize and track tasks.
   events).
 - DOM manipulation.
 - `sort()` function with compare function.
-- [Autosize](https://github.com/jackmoore/autosize) stand-alone script to automatically adjust textarea to fit text.
+- [Autosize](https://github.com/jackmoore/autosize), stand-alone script to
+  automatically adjust textarea to fit text.
 
 ## App features
 
@@ -216,3 +219,12 @@ the web app. Maximum design width is set to 1400px.
 - Add CSS animation.
 - Add option to add multiple lists and a search all lists feature.
 - Add option to rearrange tasks by drag and drop.
+
+## References
+
+- [Material design icons](https://google.github.io/material-design-icons/)
+- [Google fonts](https://fonts.google.com/)
+- [How to stop done task checkbox icon from flickering](https://dev.to/linxea/css-flicker-on-hover-5gj5)
+- [A beginners guide to Webpack](https://www.sitepoint.com/webpack-beginner-guide/)
+- [Using Media Queries For Responsive Design In 2018](https://www.smashingmagazine.com/2018/02/media-queries-responsive-design-2018/)
+- [JS ES6 Class Syntax](https://coryrylan.com/blog/javascript-es6-class-syntax)
