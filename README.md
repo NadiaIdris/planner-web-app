@@ -1,9 +1,8 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
 - [Planner](#planner)
-  - [How to run the app](#how-to-run-the-app)
+  - [How to run the app on your computer](#how-to-run-the-app-on-your-computer)
   - [Description](#description)
   - [Designs](#designs)
     - [Add and sort tasks](#add-and-sort-tasks)
@@ -28,7 +27,10 @@
 
 # Planner
 
-## How to run the app
+To run the app in your browser, [click
+here](https://maretidris.github.io/planner-web-app/).
+
+## How to run the app on your computer
 
 1. Clone this repo to your computer.
 2. Open a terminal and go the folder in which you cloned this repo.
@@ -216,8 +218,8 @@ the web app. Maximum design width is set to 1400px.
   task text.
 - Allow users to create a profile and store the data using Firebase.
 - Custom build and design date picker that looks the same in all browsers.
-- Add a button "Add deadline" instead of "mm/dd/yyyy ðŸ”½" in web and empty area
-  with ðŸ”½ icon in Android web.
+- Add a button "Add deadline" instead of "mm/dd/yyyy 🔽" in web and empty area
+  with 🔽 icon in Android web.
 - Format date into month and day (e.g. Dec 15).
 - Add CSS animation.
 - Add option to add multiple lists and a search all lists feature.
@@ -225,12 +227,12 @@ the web app. Maximum design width is set to 1400px.
 
 ## References
 
-- [Material design icons](https://google.github.io/material-design-icons/)
-- [Google fonts](https://fonts.google.com/)
-- [How to stop done task checkbox icon from flickering](https://dev.to/linxea/css-flicker-on-hover-5gj5)
-- [A beginners guide to Webpack](https://www.sitepoint.com/webpack-beginner-guide/)
-- [Using Media Queries For Responsive Design In 2018](https://www.smashingmagazine.com/2018/02/media-queries-responsive-design-2018/)
-- [JS ES6 Class Syntax](https://coryrylan.com/blog/javascript-es6-class-syntax)
+- [Material design icons](https://google.github.io/material-design-icons/).
+- [Google fonts](https://fonts.google.com/).
+- [How to stop done task checkbox icon from flickering](https://dev.to/linxea/css-flicker-on-hover-5gj5).
+- [A beginners guide to Webpack](https://www.sitepoint.com/webpack-beginner-guide/).
+- [Using Media Queries For Responsive Design In 2018](https://www.smashingmagazine.com/2018/02/media-queries-responsive-design-2018/).
+- [JS ES6 Class Syntax](https://coryrylan.com/blog/javascript-es6-class-syntax).
 
 ## Deploying to GitHub pages
 
