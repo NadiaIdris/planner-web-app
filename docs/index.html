@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Planner</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+        rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link
+      href="https://fonts.googleapis.com/css?family=Nunito+Sans:400,800|Poppins:700"
+      rel="stylesheet">
+</head>
+<body>
+<main>
+  <div id="main-content">
+    <div id="tasks-container">
+      <header>
+        <h1 class="heading">Planner</h1>
+        <h2 id="date"></h2>
+      </header>
+    </div>
+
+    <div id="add-tasks">
+      <form id="form">
+        <input type="text" id="add-task" placeholder="Task..." autofocus>
+        <button
+            id="add-button"><img src="../images/add.svg"
+                                 alt="add icon"><span>Add task</span></button>
+        <button id="add-button-small"><img src="../images/add.svg"
+                                           alt="add icon">
+        </button>
+      </form>
+      <button id="checkbox-button"><img src="../images/checkbox-checked.svg">
+      </button>
+    </div>
+  </div>
+
+  <aside id="done-container">
+    <div id="done-tasks-container">
+      <h4 class="heading">Done</h4>
+    </div>
+
+    <button id="back-to-planner"><i
+        class="material-icons">chevron_left</i><span>Planner
+        </span></button>
+  </aside>
+</main>
+
+<script src="main.js"></script>
+</body>
+</html>
