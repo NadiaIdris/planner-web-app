@@ -1,7 +1,6 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
 - [Planner](#planner)
   - [How to run](#how-to-run)
   - [Description](#description)
@@ -42,15 +41,15 @@ Responsive web application to plan, organize and track tasks.
 
 ### Add and sort tasks
 
-![](https://raw.githubusercontent.com/MaretIdris/planner-web-app/master/designs/add_and_sort_tasks.gif?token=AFIE3YFVGIHAU5MYUQ3QM5C5FIHSI)
+![](https://raw.githubusercontent.com/MaretIdris/planner-web-app/master/designs/add_and_sort_tasks.gif?token=AFIE3YGMGXSL2XFU33ZKHGS5FIJPU)
 
 ### Edit task text
 
-![](https://raw.githubusercontent.com/MaretIdris/planner-web-app/master/designs/edit_task_text.gif?token=AFIE3YCEYERRHGALG4JIT7C5FIHQY)
+![](https://raw.githubusercontent.com/MaretIdris/planner-web-app/master/designs/edit_task_text.gif?token=AFIE3YCXYHO7N3JXTV47JES5FIJOG)
 
 ### Mark task done, undone and delete tasks
 
-![](https://raw.githubusercontent.com/MaretIdris/planner-web-app/master/designs/mark_task_done_undone_delete_task.gif?token=AFIE3YDMQ7Y4ALYHLBAZKAS5FIHNO)
+![](https://raw.githubusercontent.com/MaretIdris/planner-web-app/master/designs/mark_task_done_undone_delete_task.gif?token=AFIE3YA27ONTO7YH7Q3AN7S5FIJMA)
 
 ### Responsive design
 
