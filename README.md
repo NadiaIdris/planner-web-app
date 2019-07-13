@@ -1,8 +1,9 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+
 - [Planner](#planner)
-  - [How to run](#how-to-run)
+  - [How to run the app](#how-to-run-the-app)
   - [Description](#description)
   - [Designs](#designs)
     - [Add and sort tasks](#add-and-sort-tasks)
@@ -17,16 +18,17 @@
     - [Sorting tasks](#sorting-tasks)
     - [Local storage](#local-storage)
     - [Today's date and time](#todays-date-and-time)
-    - [Responsive features](#responsive-features)
-      - [Notes on responsive design](#notes-on-responsive-design)
-  - [Things to improve](#things-to-improve)
+    - [Responsive design features](#responsive-design-features)
+  - [Notes on responsive design](#notes-on-responsive-design)
+  - [Future Enhancements](#future-enhancements)
   - [References](#references)
+  - [Deploying to GitHub pages](#deploying-to-github-pages)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # Planner
 
-## How to run
+## How to run the app
 
 1. Clone this repo to your computer.
 2. Open a terminal and go the folder in which you cloned this repo.
