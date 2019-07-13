@@ -1,6 +1,7 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+
 - [Planner](#planner)
   - [How to run](#how-to-run)
   - [Description](#description)
@@ -53,7 +54,7 @@ Responsive web application to plan, organize and track tasks.
 
 ### Responsive design
 
-![](https://raw.githubusercontent.com/MaretIdris/planner-web-app/master/designs/responsive_design.gif?token=AFIE3YCHTJSQHGI3HDKFH325FIHK4)
+![](https://raw.githubusercontent.com/MaretIdris/planner-web-app/master/designs/responsive_design.gif?token=AFIE3YGZK7YL5QTDDBI53BK5FIJCO)
 
 ## Tools and languages
 
