@@ -85,7 +85,7 @@ header {
 }
 
 .checked {
-  content: url("../images/checkbox-checked.svg");
+  content: url("images/checkbox-checked.svg");
   cursor: pointer;
 }
 
@@ -106,11 +106,11 @@ header {
 }
 
 .chkbx-img-unchecked:hover {
-  content: url(../images/checkbox-checked.svg);
+  content: url(images/checkbox-checked.svg);
 }
 
 .chkbx-img-checked:hover {
-  content: url("../images/checkbox-unchecked-green.svg");
+  content: url("images/checkbox-unchecked-green.svg");
   padding-right: 2px;
   padding-top: 1px;
 }
