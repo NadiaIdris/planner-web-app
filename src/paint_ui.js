@@ -65,7 +65,7 @@ const generateListOfTasksDone = (tasksDoneArray = []) => {
         <td class="chkbx-cell-done">
           <img
              class="chkbx-img-checked"
-             src="../images/checkbox-checked.svg"
+             src="images/checkbox-checked.svg"
              data-index="${index}">
         </td>
         <td>
@@ -107,7 +107,7 @@ const generateListOfTasks = (tasksArray = []) => {
         <td class="chkbx-cell">
           <img
             class="chkbx-img-unchecked"
-            src="../images/checkbox-unchecked.svg"
+            src="images/checkbox-unchecked.svg"
             data-index="${index}">
         </td>
         <td class="textarea-cell">
@@ -171,7 +171,7 @@ const addEmptyStateToDone = () => {
   container.appendChild(div);
 
   div.innerHTML =
-      '<img class="checkbox" src="../images/checkbox_icon.svg">' +
+      '<img class="checkbox" src="images/checkbox_icon.svg">' +
       '<p class="empty-stage-text">' +
       'Tasks you get done<br>will appear here.</p>';
 };
@@ -187,7 +187,7 @@ const addEmptyStateToPlanner = () => {
   div.setAttribute('class', 'empty-stage');
 
   div.innerHTML =
-      '<img class="sun" src="../images/sun.svg">' +
+      '<img class="sun" src="images/sun.svg">' +
       '<p class="empty-stage-text gray">' +
       'You have no tasks.<br>Add a task below.</p>';
 };
