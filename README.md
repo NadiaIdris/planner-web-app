@@ -4,10 +4,11 @@
 - [Planner](#planner)
   - [How to run](#how-to-run)
   - [Description](#description)
-  - [Add and sort tasks](#add-and-sort-tasks)
-  - [Edit task text](#edit-task-text)
-  - [Mark task done, undone and delete tasks](#mark-task-done-undone-and-delete-tasks)
-  - [Responsive design](#responsive-design)
+  - [Designs](#designs)
+    - [Add and sort tasks](#add-and-sort-tasks)
+    - [Edit task text](#edit-task-text)
+    - [Mark task done, undone and delete tasks](#mark-task-done-undone-and-delete-tasks)
+    - [Responsive design](#responsive-design)
   - [Tools and languages](#tools-and-languages)
   - [App features](#app-features)
     - [Edit task](#edit-task)
@@ -40,19 +41,19 @@ Responsive web application to plan, organize and track tasks.
 
 ### Add and sort tasks
 
-![](designs/add_and_sort_tasks.gif)
+![](https://raw.githubusercontent.com/MaretIdris/planner-web-app/master/designs/add_and_sort_tasks.gif?token=AFIE3YFVGIHAU5MYUQ3QM5C5FIHSI)
 
 ### Edit task text
 
-![](designs/edit_task_text.gif)
+![](https://raw.githubusercontent.com/MaretIdris/planner-web-app/master/designs/edit_task_text.gif?token=AFIE3YCEYERRHGALG4JIT7C5FIHQY)
 
 ### Mark task done, undone and delete tasks
 
-![](designs/mark_task_done_undone_delete_task.gif)
+![](https://raw.githubusercontent.com/MaretIdris/planner-web-app/master/designs/mark_task_done_undone_delete_task.gif?token=AFIE3YDMQ7Y4ALYHLBAZKAS5FIHNO)
 
 ### Responsive design
 
-![](designs/responsive_design.gif)
+![](https://raw.githubusercontent.com/MaretIdris/planner-web-app/master/designs/responsive_design.gif?token=AFIE3YCHTJSQHGI3HDKFH325FIHK4)
 
 ## Tools and languages
 
