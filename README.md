@@ -69,7 +69,6 @@ Responsive web application to plan, organize and track tasks.
 - JS events (keyboard events, mouse events, form events, resource
   events).
 - DOM manipulation.
-- `sort()` function with compare function.
 - [Autosize](https://github.com/jackmoore/autosize), stand-alone script to
   automatically adjust textarea to fit text.
 
@@ -115,14 +114,14 @@ will appear stating that tasks that get done will appear in this section.
 
 ### Sorting tasks
 
-Sort tasks by priority or by deadline. I am using array `sort()` with
-compare function.
+Sort tasks by priority or by deadline. I used the array `sort()` with
+compare function to implement this.
 
 ### Local storage
 
-The app stores tasks, tasks that are done and states in local storage.
+The app stores tasks, tasks that are done, and UI state data in local storage.
 
-States are:
+Here is a list of UI state data:
 
 - How the tasks are sorted, by priority or by deadline.
 - If browser viewport is <= 800px, then the user sees one section on the screen,
@@ -133,9 +132,10 @@ States are:
 ### Today's date and time
 
 Today's date and time appear on the right top area above the tasks. This is
-to make setting deadlines for tasks easier.
+to make setting deadlines for tasks easier. I used the `setTimeout()` function
+to re-render the time / date section of the UI every 1000 ms.
 
-### Responsive features
+### Responsive design features
 
 I created **6 media query breakpoints** based on _usability_ and _aesthetics_ of
 the web app. Maximum design width is set to 1400px.
@@ -170,7 +170,7 @@ the web app. Maximum design width is set to 1400px.
   - In JS I check the local storage how tasks are sorted and then paint the
     sorted by dropdown with that value selected.
 
-#### Notes on responsive design
+## Notes on responsive design
 
 **Make web application responsive**
 
@@ -208,14 +208,14 @@ the web app. Maximum design width is set to 1400px.
     - Enter the `localhost:8080` or whatever port you use and click Open.
     - Click on Inspect button beside `localhost:8080`.
 
-## Things to improve
+## Future Enhancements
 
 - Keyboard shortcut (Shift + Enter) for exiting task after finishing editing
   task text.
 - Allow users to create a profile and store the data using Firebase.
 - Custom build and design date picker that looks the same in all browsers.
-- Add a button "Add deadline" instead of "mm/dd/yyyy 🔽" in web and empty area
-  with 🔽 icon in Android web.
+- Add a button "Add deadline" instead of "mm/dd/yyyy ðŸ”½" in web and empty area
+  with ðŸ”½ icon in Android web.
 - Format date into month and day (e.g. Dec 15).
 - Add CSS animation.
 - Add option to add multiple lists and a search all lists feature.
@@ -229,3 +229,15 @@ the web app. Maximum design width is set to 1400px.
 - [A beginners guide to Webpack](https://www.sitepoint.com/webpack-beginner-guide/)
 - [Using Media Queries For Responsive Design In 2018](https://www.smashingmagazine.com/2018/02/media-queries-responsive-design-2018/)
 - [JS ES6 Class Syntax](https://coryrylan.com/blog/javascript-es6-class-syntax)
+
+## Deploying to GitHub pages
+
+Once all the HTML, JS, CSS files have been updated, make sure to run:
+
+```
+npm run build
+cp -r dist/* docs/
+```
+
+This will generate the Webpack bundle (`dist/main.js`) and it will copy it
+to the folder that is served by GitHub Pages (`docs/`).
