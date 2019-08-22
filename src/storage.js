@@ -1,6 +1,5 @@
-// import {appData} from './app_data';
 
-const Key = 'appData';
+const key = 'appData';
 
 class Storage {
   /**
@@ -8,7 +7,7 @@ class Storage {
    * @param {AppData} appData
    */
   static load(appData) {
-    const dataFromStorage = JSON.parse(localStorage.getItem(Key));
+    const dataFromStorage = JSON.parse(localStorage.getItem(key));
     if (!dataFromStorage) return;
     Object.assign(appData, dataFromStorage);
   }
@@ -17,7 +16,7 @@ class Storage {
    * @param {AppData} appData
    */
   static save(appData) {
-    localStorage.setItem(Key, JSON.stringify(appData));
+    localStorage.setItem(key, JSON.stringify(appData));
   }
 }
 
