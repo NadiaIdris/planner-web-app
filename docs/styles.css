@@ -392,7 +392,7 @@ input:focus, textarea:focus {
   }
 
   #date {
-    padding: 0 15px 17px 15px;
+    padding: 0 15px 17px 10px;
   }
 
   .heading {
