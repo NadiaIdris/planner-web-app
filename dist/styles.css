@@ -311,6 +311,18 @@ p {
   font-family: 'Nunito Sans', sans-serif;
 }
 
+.text {
+  color: var(--mid_gray);
+}
+
+.text a {
+  color: var(--black);
+}
+
+.text a:link {
+  text-decoration: none;
+}
+
 input {
   border: none;
   font-size: 13px;
@@ -396,6 +408,10 @@ input:focus, textarea:focus {
   }
 
   .heading {
+    padding: 0 5px 0 15px;
+  }
+
+  .text {
     padding: 0 5px 17px 15px;
   }
 
