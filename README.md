@@ -1,8 +1,12 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+
 - [Planner](#planner)
   - [How to run the app on your computer](#how-to-run-the-app-on-your-computer)
+  - [How to make changes to source code](#how-to-make-changes-to-source-code)
+    - [Notes](#notes)
+  - [Deploying to GitHub pages](#deploying-to-github-pages)
   - [Description](#description)
   - [Designs](#designs)
     - [Add and sort tasks](#add-and-sort-tasks)
@@ -21,14 +25,13 @@
   - [Notes on responsive design](#notes-on-responsive-design)
   - [Future Enhancements](#future-enhancements)
   - [References](#references)
-  - [Deploying to GitHub pages](#deploying-to-github-pages)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # Planner
 
-To run the app in your browser, [click
-here](https://maretidris.github.io/planner-web-app/).
+To run the app in your browser,
+[click here](https://maretidris.github.io/planner-web-app/).
 
 ## How to run the app on your computer
 
@@ -36,6 +39,35 @@ here](https://maretidris.github.io/planner-web-app/).
 2. Open a terminal and go the folder in which you cloned this repo.
 3. Run `npm install`.
 4. Run `npm run start`.
+
+## How to make changes to source code
+
+1. Make all the changes to HTML, CSS, images (ie, static assets) in the `dist`
+   folder because this is directory that Webpack will compile and run on
+   localhost when `npm run start` is executing. This is because we are not using
+   a `webpack.config.js` file and this is the default behavior.
+2. To make JS code changes, apply these to the `src` folder.
+
+### Notes
+
+1. Any changes made to the `dist` folder will not affect the `docs` folder
+   (which is used for deployment to GitHub Pages).
+2. In order to enable webpack-dev-server to automatically deploy changes to
+   static assets and JS, when running, the following option had to be enabled
+   [devServer.watchContentBase](https://webpack.js.org/configuration/dev-server/#devserverwatchcontentbase)
+
+## Deploying to GitHub pages
+
+Once all the HTML, JS, CSS files have been updated, make sure to run:
+
+```
+npm run build
+cp -r dist/* docs/
+git push
+```
+
+This will generate the Webpack bundle (`dist/main.js`) and it will copy it to
+the folder that is served by GitHub Pages (`docs/`).
 
 ## Description
 
@@ -70,8 +102,7 @@ Responsive web application to plan, organize and track tasks.
 - Webpack.
 - ESLint.
 - JS event delegation.
-- JS events (keyboard events, mouse events, form events, resource
-  events).
+- JS events (keyboard events, mouse events, form events, resource events).
 - DOM manipulation.
 - [Autosize](https://github.com/jackmoore/autosize), stand-alone script to
   automatically adjust textarea to fit text.
@@ -82,8 +113,8 @@ Responsive web application to plan, organize and track tasks.
 
 - **Add a task** (by using keyboard shortcut Enter or a "+ Add task" button).
   - **Task highlighting** - When a task is added, it's background will be
-    highlighted light gray. This helps to identify the added task from the
-    rest of the tasks if more than one task is present.
+    highlighted light gray. This helps to identify the added task from the rest
+    of the tasks if more than one task is present.
 - **Mark task done**
   - **Checkbox** - If the user hovers over empty checkbox, checked icon will
     appear. This is to visually indicate that the task will be marked done if
@@ -100,26 +131,25 @@ Responsive web application to plan, organize and track tasks.
 
 - **Mark task undone**
   - **Checkbox** - If the user hovers over the checked checkbox, an arrow
-    pointing left
-    icon will appear. This is to visually indicate that task will be marked
-    undone
-    and move back to the left side of the screen if the checked checkbox is
-    clicked.
+    pointing left icon will appear. This is to visually indicate that task will
+    be marked undone and move back to the left side of the screen if the checked
+    checkbox is clicked.
 - **Delete a task done**
   - Remove a task text and click out of the text area.
 
 ### Empty states
 
 If there are no tasks present in the planner section, then the empty state will
-appear stating that the user has no tasks and can add a task below on the screen.
+appear stating that the user has no tasks and can add a task below on the
+screen.
 
 Same works for done tasks section. If no tasks are present, then empty state
 will appear stating that tasks that get done will appear in this section.
 
 ### Sorting tasks
 
-Sort tasks by priority or by deadline. I used the array `sort()` with
-compare function to implement this.
+Sort tasks by priority or by deadline. I used the array `sort()` with compare
+function to implement this.
 
 ### Local storage
 
@@ -135,9 +165,9 @@ Here is a list of UI state data:
 
 ### Today's date and time
 
-Today's date and time appear on the right top area above the tasks. This is
-to make setting deadlines for tasks easier. I used the `setTimeout()` function
-to re-render the time / date section of the UI every 1000 ms.
+Today's date and time appear on the right top area above the tasks. This is to
+make setting deadlines for tasks easier. I used the `setTimeout()` function to
+re-render the time / date section of the UI every 1000 ms.
 
 ### Responsive design features
 
@@ -148,11 +178,10 @@ the web app. Maximum design width is set to 1400px.
   - The viewport will show two sections, planner and done, at the same time.
 - **Viewport <= 800px**
   - New button with a checkbox icon to view done tasks is made visible with CSS.
-  - The viewport will show only one section, planner or done, at the time.
-    Which panel is shown depends on what state is stored on local storage. JS
-    checks the local storage and if the checkbox icon button has been
-    clicked then done tasks section is visible and if not, then the tasks
-    section is visible.
+  - The viewport will show only one section, planner or done, at the time. Which
+    panel is shown depends on what state is stored on local storage. JS checks
+    the local storage and if the checkbox icon button has been clicked then done
+    tasks section is visible and if not, then the tasks section is visible.
   - Extra padding is added for clickable table headings.
   - "+ Add task" button is removed with CSS.
   - A smaller version of "+ Add task" button is made visible with CSS.
@@ -162,12 +191,12 @@ the web app. Maximum design width is set to 1400px.
   - Task layout changes. The viewport has become too small to have a checkbox,
     task text, priority, deadline and delete icon all in the same line. So I
     used the CSS grid to break content from one line into two lines. The first
-    line
-    has
-    a checkbox and task text. The second line has priority, deadline and delete
-    icon.
+    line has a checkbox and task text. The second line has priority, deadline
+    and delete icon.
 - **Viewport >= 361px**
-  - In JS I check the local storage how tasks are sorted (by priority or by deadline). Then I paint the new tasks heading which highlights are tasks sorted by priority or by deadline.
+  - In JS I check the local storage how tasks are sorted (by priority or by
+    deadline). Then I paint the new tasks heading which highlights are tasks
+    sorted by priority or by deadline.
 - **Viewport <= 360px**
   - Tasks headings are hidden in CSS.
   - Dropdown to sort tasks is made visible in CSS.
@@ -183,32 +212,30 @@ the web app. Maximum design width is set to 1400px.
 
 **Design mobile first**
 
-- I designed the largest viewport design first because I
-  had already in
-  mind how the smallest viewport will look like. I recommend designing
-  smallest viewport design first. If you can make something work for a small
-  viewport, then it's much easier to generate a large viewport version of
-  the same design.
+- I designed the largest viewport design first because I had already in mind how
+  the smallest viewport will look like. I recommend designing smallest viewport
+  design first. If you can make something work for a small viewport, then it's
+  much easier to generate a large viewport version of the same design.
 
 **Use tools to test usability in mobile devices**
 
 - As a designer, use tools like
-  [Skala Preview](https://bjango.com/mac/skalapreview/) to make sure that fonts and clickable areas are
-  large enough for Android and iOS phones.
+  [Skala Preview](https://bjango.com/mac/skalapreview/) to make sure that fonts
+  and clickable areas are large enough for Android and iOS phones.
 
-- As a developer, use Chrome Dev Tools to debug the web app on a remote
-  device like a smartphone. To debug in Chrome Dev Tools:
-  - Plug in your phone to your computer. Make sure USB debugging is connected
-    on Android. Open Chrome on your phone.
+- As a developer, use Chrome Dev Tools to debug the web app on a remote device
+  like a smartphone. To debug in Chrome Dev Tools:
+  - Plug in your phone to your computer. Make sure USB debugging is connected on
+    Android. Open Chrome on your phone.
   - Open Chrome Dev Tools on your computer.
   - Click on the overflow icon (three vertical dots) on the top right corner.
     - More tools -> Remote devices
     - Wait until my device appears in Remote devices tab on the bottom of the
       dev tools section.
-    - In Port forwarding section add a rule `localhost:8080` or whatever
-      network port Webpack uses to run the code.
-    - On the left hand of the dev tools under "Devices", click on the device
-      you are testing on.
+    - In Port forwarding section add a rule `localhost:8080` or whatever network
+      port Webpack uses to run the code.
+    - On the left hand of the dev tools under "Devices", click on the device you
+      are testing on.
     - Enter the `localhost:8080` or whatever port you use and click Open.
     - Click on Inspect button beside `localhost:8080`.
 
@@ -233,15 +260,3 @@ the web app. Maximum design width is set to 1400px.
 - [A beginners guide to Webpack](https://www.sitepoint.com/webpack-beginner-guide/).
 - [Using Media Queries For Responsive Design In 2018](https://www.smashingmagazine.com/2018/02/media-queries-responsive-design-2018/).
 - [JS ES6 Class Syntax](https://coryrylan.com/blog/javascript-es6-class-syntax).
-
-## Deploying to GitHub pages
-
-Once all the HTML, JS, CSS files have been updated, make sure to run:
-
-```
-npm run build
-cp -r dist/* docs/
-```
-
-This will generate the Webpack bundle (`dist/main.js`) and it will copy it
-to the folder that is served by GitHub Pages (`docs/`).
