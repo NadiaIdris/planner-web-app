@@ -33,14 +33,17 @@
 To run the app in your browser,
 [click here](https://maretidris.github.io/planner-web-app/).
 
-## How to run the app on your computer
+## Development and deployment workflow
+
+### How to run the app on your computer
 
 1. Clone this repo to your computer.
 2. Open a terminal and go the folder in which you cloned this repo.
-3. Run `npm install`.
-4. Run `npm run start`.
+3. Run `npm install` to download and install all the packages in `package.json`
+   to the `node_modules` directory.
+4. Run `npm run start` to launch the webpack dev server on localhost port 8080.
 
-## How to make changes to source code
+### How to make changes locally
 
 1. Make all the changes to HTML, CSS, images (ie, static assets) in the `dist`
    folder because this is directory that Webpack will compile and run on
@@ -48,7 +51,7 @@ To run the app in your browser,
    a `webpack.config.js` file and this is the default behavior.
 2. To make JS code changes, apply these to the `src` folder.
 
-### Notes
+#### Notes
 
 1. Any changes made to the `dist` folder will not affect the `docs` folder
    (which is used for deployment to GitHub Pages).
@@ -56,7 +59,7 @@ To run the app in your browser,
    static assets and JS, when running, the following option had to be enabled
    [devServer.watchContentBase](https://webpack.js.org/configuration/dev-server/#devserverwatchcontentbase)
 
-## Deploying to GitHub pages
+### How to deploy to GitHub pages (for production)
 
 Once all the HTML, JS, CSS files have been updated, make sure to run:
 
