@@ -440,6 +440,7 @@ input:focus, textarea:focus {
     border-right: none;
     border-bottom: none;
     background-color: var(--white);
+    align-items: center;
   }
 
   #add-button-small {
@@ -447,6 +448,7 @@ input:focus, textarea:focus {
     border: none;
     background-color: var(--white);
     display: flex;
+    align-items: center;
   }
 
   #add-button {
